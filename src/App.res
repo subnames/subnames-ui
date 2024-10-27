@@ -1,20 +1,21 @@
 @react.component
 let make = () => {
-  let (count, setCount) = React.useState(() => 0)
+  let (validSubname, setValidSubname) = React.useState(_ => ("", false))
 
-  <div className="p-6">
-    <h1 className="text-3xl font-semibold"> {"What is this about?"->React.string} </h1>
-    <p>
-      {React.string("This is a simple template for a Vite project using ReScript & Tailwind CSS.")}
-    </p>
-    <h2 className="text-2xl font-semibold mt-5"> {React.string("Fast Refresh Test")} </h2>
-    <Button onClick={_ => setCount(count => count + 1)}>
-      {React.string(`count is ${count->Int.toString}`)}
-    </Button>
-    <p>
-      {React.string("Edit ")}
-      <code> {React.string("src/App.res")} </code>
-      {React.string(" and save to test Fast Refresh.")}
-    </p>
+  let handleValidChange = (value, isValid) => {
+    setValidSubname(_ => (value, isValid))
+  }
+
+  <div className="p-8">
+    <h1 className="text-2xl font-bold mb-4"> {React.string("Subnames")} </h1>
+    <SubnameInput onValidChange={handleValidChange} />
+    
+    {if snd(validSubname) && fst(validSubname) != "" {
+      <p className="mt-4 text-green-600">
+        {React.string(`"${fst(validSubname)}" is a valid ENS subname`)}
+      </p>
+    } else {
+      React.null
+    }}
   </div>
 }
