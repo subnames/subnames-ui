@@ -165,7 +165,7 @@ function SubnameInput(props) {
                                   children: JsxRuntime.jsxs("div", {
                                         children: [
                                           JsxRuntime.jsx("p", {
-                                                children: state.value,
+                                                children: state.value + ".ringdao.eth",
                                                 className: "text-gray-700"
                                               }),
                                           JsxRuntime.jsx("button", {

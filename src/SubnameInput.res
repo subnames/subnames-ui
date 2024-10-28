@@ -128,7 +128,7 @@ let make = (~onValidChange: (string, bool) => unit) => {
           <div className="px-6 py-4">
             <div className="flex items-center justify-between">
               <p className="text-gray-700">
-                {React.string(state.value)}
+                {React.string(state.value ++ ".ringdao.eth")}
               </p>
               <button
                 type_="button"
