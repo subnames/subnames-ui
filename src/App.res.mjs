@@ -31,13 +31,16 @@ function App$Layout(props) {
                                   children: [
                                     JsxRuntime.jsx("div", {
                                           children: JsxRuntime.jsx("h1", {
-                                                children: "Subnames",
+                                                children: "ǝɯɐuqns",
                                                 className: "text-xl font-bold text-gray-900"
                                               }),
                                           className: "flex-shrink-0"
                                         }),
                                     JsxRuntime.jsx("div", {
-                                          children: JsxRuntime.jsx(Rainbowkit.ConnectButton, {}),
+                                          children: JsxRuntime.jsx(Rainbowkit.ConnectButton, {
+                                                label: "Connect",
+                                                accountStatus: "address"
+                                              }),
                                           className: "flex items-center"
                                         })
                                   ],
