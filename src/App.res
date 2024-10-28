@@ -63,7 +63,7 @@ module Layout = {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-gray-900"> {"ǝɯɐuqns"->React.string} </h1>
+              <h1 className="text-xl font-bold text-gray-900"> {"ringdao.eth"->React.string} </h1>
             </div>
             <div className="flex items-center">
               <ConnectButton label="Connect" accountStatus="address"/>
@@ -89,16 +89,8 @@ module Subname = {
 
     <div className="p-8">
       <SubnameInput onValidChange={handleValidChange} />
-      
-      {if snd(validSubname) && fst(validSubname) != "" {
-        <p className="mt-4 text-green-600">
-          {React.string(`"${fst(validSubname)}" is a valid ENS subname`)}
-        </p>
-      } else {
-        React.null
-      }}
     </div>
-    }
+  }
 }
 
 @react.component

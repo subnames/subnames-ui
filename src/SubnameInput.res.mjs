@@ -151,7 +151,7 @@ function SubnameInput(props) {
                                   })
                             ],
                             className: "relative " + (
-                              Core__Option.isSome(state.errorMessage) ? "divide-y-short" : ""
+                              Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
                             )
                           }),
                       error !== undefined ? JsxRuntime.jsx("div", {
@@ -160,7 +160,25 @@ function SubnameInput(props) {
                                     className: "text-gray-600 text-md"
                                   }),
                               className: "px-6 py-4"
-                            }) : null
+                            }) : (
+                          state.isValid && state.value !== "" ? JsxRuntime.jsx("div", {
+                                  children: JsxRuntime.jsxs("div", {
+                                        children: [
+                                          JsxRuntime.jsx("p", {
+                                                children: state.value,
+                                                className: "text-gray-700"
+                                              }),
+                                          JsxRuntime.jsx("button", {
+                                                children: "Register",
+                                                className: "rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500",
+                                                type: "button"
+                                              })
+                                        ],
+                                        className: "flex items-center justify-between"
+                                      }),
+                                  className: "px-6 py-4"
+                                }) : null
+                        )
                     ],
                     className: "bg-white rounded-custom shadow-lg overflow-hidden"
                   }),

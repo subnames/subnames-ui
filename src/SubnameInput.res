@@ -72,7 +72,7 @@ let make = (~onValidChange: (string, bool) => unit) => {
 
   <div className="w-full max-w-xl mx-auto">
     <div className={`bg-white rounded-custom shadow-lg overflow-hidden`}>
-      <div className={`relative ${state.errorMessage->Option.isSome ? "divide-y-short" : ""}`}>
+      <div className={`relative ${state.errorMessage->Option.isSome || (state.isValid && state.value != "") ? "divide-y-short" : ""}`}>
         <input
           type_="text"
           value={state.value}
@@ -123,7 +123,23 @@ let make = (~onValidChange: (string, bool) => unit) => {
             {React.string(error)}
           </div>
         </div>
-      | None => React.null
+      | None => 
+        if state.isValid && state.value != "" {
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <p className="text-gray-700">
+                {React.string(state.value)}
+              </p>
+              <button
+                type_="button"
+                className="rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500">
+                {React.string("Register")}
+              </button>
+            </div>
+          </div>
+        } else {
+          React.null
+        }
       }}
     </div>
   </div>

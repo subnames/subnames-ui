@@ -31,7 +31,7 @@ function App$Layout(props) {
                                   children: [
                                     JsxRuntime.jsx("div", {
                                           children: JsxRuntime.jsx("h1", {
-                                                children: "ǝɯɐuqns",
+                                                children: "ringdao.eth",
                                                 className: "text-xl font-bold text-gray-900"
                                               }),
                                           className: "flex-shrink-0"
@@ -68,7 +68,6 @@ function App$Subname(props) {
               ];
       });
   var setValidSubname = match[1];
-  var validSubname = match[0];
   var handleValidChange = function (value, isValid) {
     setValidSubname(function (param) {
           return [
@@ -77,16 +76,10 @@ function App$Subname(props) {
                 ];
         });
   };
-  return JsxRuntime.jsxs("div", {
-              children: [
-                JsxRuntime.jsx(SubnameInput.make, {
-                      onValidChange: handleValidChange
-                    }),
-                validSubname[1] && validSubname[0] !== "" ? JsxRuntime.jsx("p", {
-                        children: "\"" + validSubname[0] + "\" is a valid ENS subname",
-                        className: "mt-4 text-green-600"
-                      }) : null
-              ],
+  return JsxRuntime.jsx("div", {
+              children: JsxRuntime.jsx(SubnameInput.make, {
+                    onValidChange: handleValidChange
+                  }),
               className: "p-8"
             });
 }
