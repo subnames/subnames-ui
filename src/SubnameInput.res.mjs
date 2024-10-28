@@ -48,25 +48,71 @@ function isValidSubname(name) {
   }
 }
 
+function checkAvailability(name) {
+  return new Promise((function (resolve, reject) {
+                setTimeout((function () {
+                        resolve(true);
+                      }), 2000);
+              }));
+}
+
 function SubnameInput(props) {
   var onValidChange = props.onValidChange;
   var match = React.useState(function () {
         return {
                 value: "",
                 isValid: false,
-                errorMessage: undefined
+                errorMessage: undefined,
+                isChecking: false,
+                isAvailable: undefined
               };
       });
   var setState = match[1];
   var state = match[0];
   var timeoutRef = React.useRef(undefined);
+  var checkNameAvailability = async function (value) {
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: true,
+                  isAvailable: undefined
+                };
+        });
+    try {
+      var available = await checkAvailability(value);
+      return setState(function (prev) {
+                  return {
+                          value: prev.value,
+                          isValid: prev.isValid,
+                          errorMessage: prev.errorMessage,
+                          isChecking: false,
+                          isAvailable: available
+                        };
+                });
+    }
+    catch (exn){
+      return setState(function (prev) {
+                  return {
+                          value: prev.value,
+                          isValid: prev.isValid,
+                          errorMessage: "Failed to check availability",
+                          isChecking: false,
+                          isAvailable: prev.isAvailable
+                        };
+                });
+    }
+  };
   var handleChange = function ($$event) {
     var newValue = $$event.target.value;
     setState(function (prev) {
           return {
                   value: newValue,
                   isValid: prev.isValid,
-                  errorMessage: prev.errorMessage
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable
                 };
         });
     var timeout = timeoutRef.current;
@@ -81,10 +127,16 @@ function SubnameInput(props) {
                   return {
                           value: prev.value,
                           isValid: isValid,
-                          errorMessage: errorMessage
+                          errorMessage: errorMessage,
+                          isChecking: prev.isChecking,
+                          isAvailable: prev.isAvailable
                         };
                 });
             onValidChange(newValue, isValid);
+            if (isValid && newValue !== "") {
+              checkNameAvailability(newValue);
+            }
+            
           }), 500);
     timeoutRef.current = Caml_option.some(timeout$1);
   };
@@ -93,12 +145,79 @@ function SubnameInput(props) {
           return {
                   value: "",
                   isValid: false,
-                  errorMessage: undefined
+                  errorMessage: undefined,
+                  isChecking: false,
+                  isAvailable: undefined
                 };
         });
     onValidChange("", false);
   };
   var error = state.errorMessage;
+  var tmp;
+  if (error !== undefined) {
+    tmp = JsxRuntime.jsx("div", {
+          children: JsxRuntime.jsx("div", {
+                children: error,
+                className: "text-gray-600 text-md"
+              }),
+          className: "px-6 py-4"
+        });
+  } else if (state.isValid && state.value !== "") {
+    var tmp$1;
+    if (state.isChecking) {
+      tmp$1 = JsxRuntime.jsx("div", {
+            children: JsxRuntime.jsxs("svg", {
+                  children: [
+                    JsxRuntime.jsx("circle", {
+                          className: "opacity-25",
+                          cx: "12",
+                          cy: "12",
+                          r: "10",
+                          stroke: "currentColor",
+                          strokeWidth: "4"
+                        }),
+                    JsxRuntime.jsx("path", {
+                          className: "opacity-75",
+                          d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
+                          fill: "currentColor"
+                        })
+                  ],
+                  className: "w-5 h-5 text-blue-600",
+                  fill: "none",
+                  viewBox: "0 0 24 24",
+                  xmlns: "http://www.w3.org/2000/svg"
+                }),
+            className: "animate-spin"
+          });
+    } else {
+      var match$1 = state.isAvailable;
+      tmp$1 = match$1 !== undefined ? (
+          match$1 ? JsxRuntime.jsx("button", {
+                  children: "Register",
+                  className: "rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500",
+                  type: "button"
+                }) : JsxRuntime.jsx("span", {
+                  children: "Already registered",
+                  className: "text-red-500 text-sm"
+                })
+        ) : null;
+    }
+    tmp = JsxRuntime.jsx("div", {
+          children: JsxRuntime.jsxs("div", {
+                children: [
+                  JsxRuntime.jsx("p", {
+                        children: state.value + ".ringdao.eth",
+                        className: "text-gray-700"
+                      }),
+                  tmp$1
+                ],
+                className: "flex items-center justify-between"
+              }),
+          className: "px-6 py-4"
+        });
+  } else {
+    tmp = null;
+  }
   return JsxRuntime.jsx("div", {
               children: JsxRuntime.jsxs("div", {
                     children: [
@@ -154,31 +273,7 @@ function SubnameInput(props) {
                               Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
                             )
                           }),
-                      error !== undefined ? JsxRuntime.jsx("div", {
-                              children: JsxRuntime.jsx("div", {
-                                    children: error,
-                                    className: "text-gray-600 text-md"
-                                  }),
-                              className: "px-6 py-4"
-                            }) : (
-                          state.isValid && state.value !== "" ? JsxRuntime.jsx("div", {
-                                  children: JsxRuntime.jsxs("div", {
-                                        children: [
-                                          JsxRuntime.jsx("p", {
-                                                children: state.value + ".ringdao.eth",
-                                                className: "text-gray-700"
-                                              }),
-                                          JsxRuntime.jsx("button", {
-                                                children: "Register",
-                                                className: "rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500",
-                                                type: "button"
-                                              })
-                                        ],
-                                        className: "flex items-center justify-between"
-                                      }),
-                                  className: "px-6 py-4"
-                                }) : null
-                        )
+                      tmp
                     ],
                     className: "bg-white rounded-custom shadow-lg overflow-hidden"
                   }),

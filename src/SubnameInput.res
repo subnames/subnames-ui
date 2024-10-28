@@ -2,6 +2,8 @@ type state = {
   value: string,
   isValid: bool,
   errorMessage: option<string>,
+  isChecking: bool,
+  isAvailable: option<bool>,
 }
 
 // Validation rules for ENS subnames
@@ -29,20 +31,51 @@ let isValidSubname = (name: string): (bool, option<string>) => {
   }
 }
 
+// Add this new function to check availability
+let checkAvailability: string => promise<bool> = (name) => {
+  // Simulate network delay
+  Js.Promise.make((~resolve, ~reject) => {
+    let _ = Js.Global.setTimeout(() => {
+      resolve(. true)
+    }, 2000)
+  })
+}
+
 @react.component
 let make = (~onValidChange: (string, bool) => unit) => {
   let (state, setState) = React.useState(_ => {
     value: "",
     isValid: false,
     errorMessage: None,
+    isChecking: false,
+    isAvailable: None,
   })
 
   let timeoutRef = React.useRef(None)
+
+  let checkNameAvailability = async value => {
+    setState(prev => {...prev, isChecking: true, isAvailable: None})
+    try {
+      let available = await checkAvailability(value)
+      setState(prev => {...prev, isChecking: false, isAvailable: Some(available)})
+    } catch {
+    | _ =>
+      setState(prev => {
+        ...prev,
+        isChecking: false,
+        errorMessage: Some("Failed to check availability"),
+      })
+    }
+  }
 
   let runValidation = value => {
     let (isValid, errorMessage) = isValidSubname(value)
     setState(prev => {...prev, isValid, errorMessage})
     onValidChange(value, isValid)
+    if isValid && value != "" {
+      let _ = checkNameAvailability(value)
+    }
+    ()
   }
 
   let handleChange = event => {
@@ -66,6 +99,8 @@ let make = (~onValidChange: (string, bool) => unit) => {
       value: "",
       isValid: false,
       errorMessage: None,
+      isChecking: false,
+      isAvailable: None,
     })
     onValidChange("", false)
   }
@@ -130,11 +165,43 @@ let make = (~onValidChange: (string, bool) => unit) => {
               <p className="text-gray-700">
                 {React.string(state.value ++ ".ringdao.eth")}
               </p>
-              <button
-                type_="button"
-                className="rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500">
-                {React.string("Register")}
-              </button>
+              {if state.isChecking {
+                <div className="animate-spin">
+                  <svg
+                    className="w-5 h-5 text-blue-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                </div>
+              } else {
+                switch state.isAvailable {
+                | Some(true) =>
+                  <button
+                    type_="button"
+                    className="rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500">
+                    {React.string("Register")}
+                  </button>
+                | Some(false) =>
+                  <span className="text-red-500 text-sm">
+                    {React.string("Already registered")}
+                  </span>
+                | None => React.null
+                }
+              }}
             </div>
           </div>
         } else {
