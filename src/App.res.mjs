@@ -23,10 +23,6 @@ function App(props) {
   };
   return JsxRuntime.jsxs("div", {
               children: [
-                JsxRuntime.jsx("h1", {
-                      children: "Subnames",
-                      className: "text-2xl font-bold mb-4"
-                    }),
                 JsxRuntime.jsx(SubnameInput.make, {
                       onValidChange: handleValidChange
                     }),

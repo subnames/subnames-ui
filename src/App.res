@@ -7,7 +7,6 @@ let make = () => {
   }
 
   <div className="p-8">
-    <h1 className="text-2xl font-bold mb-4"> {React.string("Subnames")} </h1>
     <SubnameInput onValidChange={handleValidChange} />
     
     {if snd(validSubname) && fst(validSubname) != "" {

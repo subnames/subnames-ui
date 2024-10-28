@@ -70,15 +70,15 @@ let make = (~onValidChange: (string, bool) => unit) => {
     onValidChange("", false)
   }
 
-  <div className="w-full max-w-2xl">
-    <div className={`bg-white rounded-2xl shadow-lg overflow-hidden ${state.errorMessage->Option.isSome ? "divide-y" : ""}`}>
-      <div className="relative">
+  <div className="w-full max-w-xl mx-auto">
+    <div className={`bg-white rounded-custom shadow-lg overflow-hidden`}>
+      <div className={`relative ${state.errorMessage->Option.isSome ? "divide-y-short" : ""}`}>
         <input
           type_="text"
           value={state.value}
           onChange={handleChange}
-          className="w-full px-6 py-4 text-2xl focus:outline-none"
           placeholder="SEARCH FOR A NAME"
+          className="w-full px-6 py-4 text-lg focus:outline-none"
         />
         <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
           {if state.value != "" {
@@ -100,22 +100,26 @@ let make = (~onValidChange: (string, bool) => unit) => {
           } else {
             React.null
           }}
-          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <path 
-              d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" 
-              stroke="#999999" 
-              strokeWidth="2" 
-              strokeLinecap="round" 
-              strokeLinejoin="round"
-            />
-          </svg>
+          {if state.value == "" {
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path 
+                d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" 
+                stroke="#999999" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round"
+              />
+            </svg>
+          } else {
+            React.null
+          }}
         </div>
       </div>
       
       {switch state.errorMessage {
       | Some(error) =>
         <div className="px-6 py-4">
-          <div className="text-gray-600 text-lg">
+          <div className="text-gray-600 text-md">
             {React.string(error)}
           </div>
         </div>

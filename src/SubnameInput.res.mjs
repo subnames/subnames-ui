@@ -105,7 +105,7 @@ function SubnameInput(props) {
                       JsxRuntime.jsxs("div", {
                             children: [
                               JsxRuntime.jsx("input", {
-                                    className: "w-full px-6 py-4 text-2xl focus:outline-none",
+                                    className: "w-full px-6 py-4 text-lg focus:outline-none",
                                     placeholder: "SEARCH FOR A NAME",
                                     type: "text",
                                     value: state.value,
@@ -132,39 +132,39 @@ function SubnameInput(props) {
                                               type: "button",
                                               onClick: handleClear
                                             }) : null,
-                                      JsxRuntime.jsx("svg", {
-                                            children: JsxRuntime.jsx("path", {
-                                                  d: "M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z",
-                                                  stroke: "#999999",
-                                                  strokeLinecap: "round",
-                                                  strokeLinejoin: "round",
-                                                  strokeWidth: "2"
-                                                }),
-                                            height: "24",
-                                            width: "24",
-                                            fill: "none",
-                                            viewBox: "0 0 24 24",
-                                            xmlns: "http://www.w3.org/2000/svg"
-                                          })
+                                      state.value === "" ? JsxRuntime.jsx("svg", {
+                                              children: JsxRuntime.jsx("path", {
+                                                    d: "M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z",
+                                                    stroke: "#999999",
+                                                    strokeLinecap: "round",
+                                                    strokeLinejoin: "round",
+                                                    strokeWidth: "2"
+                                                  }),
+                                              height: "24",
+                                              width: "24",
+                                              fill: "none",
+                                              viewBox: "0 0 24 24",
+                                              xmlns: "http://www.w3.org/2000/svg"
+                                            }) : null
                                     ],
                                     className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
                                   })
                             ],
-                            className: "relative"
+                            className: "relative " + (
+                              Core__Option.isSome(state.errorMessage) ? "divide-y-short" : ""
+                            )
                           }),
                       error !== undefined ? JsxRuntime.jsx("div", {
                               children: JsxRuntime.jsx("div", {
                                     children: error,
-                                    className: "text-gray-600 text-lg"
+                                    className: "text-gray-600 text-md"
                                   }),
                               className: "px-6 py-4"
                             }) : null
                     ],
-                    className: "bg-white rounded-2xl shadow-lg overflow-hidden " + (
-                      Core__Option.isSome(state.errorMessage) ? "divide-y" : ""
-                    )
+                    className: "bg-white rounded-custom shadow-lg overflow-hidden"
                   }),
-              className: "w-full max-w-2xl"
+              className: "w-full max-w-xl mx-auto"
             });
 }
 

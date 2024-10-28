@@ -3,9 +3,23 @@
 @tailwind utilities;
 
 body {
-  background: #0052FF;
+  background: #ff00882e;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.divide-y-short {
+  position: relative;
+}
+
+.divide-y-short:after {
+  content: '';
+  position: absolute;
+  left: 24px;
+  right: 24px;
+  height: 1px;
+  background-color: #e5e7eb; /* This is Tailwind's gray-200 color */
+  bottom: 0;
 }
