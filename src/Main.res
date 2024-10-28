@@ -1,4 +1,5 @@
 %%raw("import './index.css'")
+%%raw("import '@rainbow-me/rainbowkit/styles.css'")
 
 switch ReactDOM.querySelector("#root") {
 | Some(domElement) =>
