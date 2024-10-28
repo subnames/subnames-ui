@@ -55,18 +55,60 @@ let config = getDefaultConfig({
   "ssr": false,
 })
 
+module Layout = {
+  @react.component
+  let make = (~children: React.element) => {
+    <div className="min-h-screen bg-gray-50">
+      <header>
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex justify-between items-center h-16">
+            <div className="flex-shrink-0">
+              <h1 className="text-xl font-bold text-gray-900"> {"Subnames"->React.string} </h1>
+            </div>
+            <div className="flex items-center">
+              <ConnectButton />
+            </div>
+          </div>
+        </div>
+      </header>
+      <main>
+        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"> {children} </div>
+      </main>
+    </div>
+  }
+}
+
+module Subname = {
+  @react.component
+  let make = () => {
+    let (validSubname, setValidSubname) = React.useState(_ => ("", false))
+
+    let handleValidChange = (value, isValid) => {
+      setValidSubname(_ => (value, isValid))
+    }
+
+    <div className="p-8">
+      <SubnameInput onValidChange={handleValidChange} />
+      
+      {if snd(validSubname) && fst(validSubname) != "" {
+        <p className="mt-4 text-green-600">
+          {React.string(`"${fst(validSubname)}" is a valid ENS subname`)}
+        </p>
+      } else {
+        React.null
+      }}
+    </div>
+    }
+}
+
 @react.component
 let make = () => {
-  // let (validSubname, setValidSubname) = React.useState(_ => ("", false))
-
-  // let handleValidChange = (value, isValid) => {
-  //   setValidSubname(_ => (value, isValid))
-  // }
-
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
       <RainbowKitProvider>
-        <ConnectButton />
+        <Layout>
+            <Subname />
+        </Layout>
       </RainbowKitProvider>
     </QueryClientProvider>
   </WagmiProvider>
