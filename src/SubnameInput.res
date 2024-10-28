@@ -1,3 +1,63 @@
+// Add these Viem bindings at the top of your file
+type publicClient
+type address = string
+type abi
+type hash
+
+@module("viem") external createPublicClient: 'a => publicClient = "createPublicClient"
+@module("viem") external http: string => 'transport = "http"
+@module("viem") external koi: 'chain = "koi"
+
+// Contract interaction bindings
+type readContractParams = {
+  address: address,
+  abi: abi,
+  functionName: string,
+  args: array<string>,
+}
+
+@send external readContract: (publicClient, readContractParams) => promise<bool> = "readContract"
+
+// Contract configuration
+let contractConfig = {
+  address: %raw(`process.env.VITE_REGISTRY_ADDR`),
+  abi: [
+    {
+      "inputs": [{"name": "name", "type": "string"}],
+      "name": "available",
+      "outputs": [{"name": "", "type": "bool"}],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
+}
+
+// Initialize Viem client
+let publicClient = createPublicClient({
+  "chain": koi,
+  "transport": http(%raw(`process.env.VITE_RPC_URL`))
+})
+
+// Update the checkAvailability function
+let checkAvailability = (name: string): promise<bool> => {
+  try {
+    readContract(
+      publicClient,
+      {
+        address: contractConfig.address,
+        abi: contractConfig.abi,
+        functionName: "available",
+        args: [name],
+      }
+    )
+  } catch {
+  | err => {
+      Js.Console.error2("Error checking availability:", err)
+      Js.Promise.reject(err)
+    }
+  }
+}
+
 type state = {
   value: string,
   isValid: bool,
@@ -29,16 +89,6 @@ let isValidSubname = (name: string): (bool, option<string>) => {
       (true, None)
     }
   }
-}
-
-// Add this new function to check availability
-let checkAvailability: string => promise<bool> = (name) => {
-  // Simulate network delay
-  Js.Promise.make((~resolve, ~reject) => {
-    let _ = Js.Global.setTimeout(() => {
-      resolve(. true)
-    }, 2000)
-  })
 }
 
 @react.component
