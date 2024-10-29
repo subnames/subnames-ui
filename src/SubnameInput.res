@@ -1,66 +1,4 @@
-type publicClient
-type address = string
-type abi = array<{
-  "inputs": array<{"name": string, "type": string}>,
-  "name": string,
-  "outputs": array<{"name": string, "type": string}>,
-  "stateMutability": string,
-  "type": string,
-}>
-
-@module("viem") external createPublicClient: 'a => publicClient = "createPublicClient"
-@module("viem") external http: string => 'transport = "http"
-@module("viem") external koi: 'chain = "koi"
-
-type readContractParams = {
-  address: address,
-  abi: abi,
-  functionName: string,
-  args: array<string>,
-}
-
-@send external readContract: (publicClient, readContractParams) => promise<bool> = "readContract" 
-
-@module("viem/ens") external namehash: string => string = "namehash"
-
-let contract = {
-  "address": "0xd3E89BB05F63337a450711156683d533db976C85",
-  "abi": [
-    {
-      "inputs": [{"name": "node", "type": "bytes32"}],
-      "name": "recordExists",
-      "outputs": [{"name": "", "type": "bool"}],
-      "stateMutability": "view",
-      "type": "function"
-    }
-  ]
-}
-
-let client = createPublicClient({
-  "chain": koi,
-  "transport": http("https://koi-rpc.darwinia.network")
-})
-
-let recordExists = (name: string): promise<bool> => {
-  try {
-    let node = namehash(`${name}.ringdao.eth`)
-    Console.log(node)
-    readContract(
-      client,
-      {
-        address: contract["address"],
-        abi: contract["abi"],
-        functionName: "recordExists",
-        args: [node],
-      }
-    )
-  } catch {
-  | err => {
-      Js.Console.error2("Error checking recordExists:", err)
-      Js.Promise.reject(err)
-    }
-  }
-}
+open ReadContract
 
 type feeState = {
   years: int,
@@ -122,7 +60,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   let checkNameAvailability = async value => {
     setState(prev => {...prev, isChecking: true, isAvailable: None})
     try {
-      let available = !(await recordExists(value))
+      let available = await available(value)
       Console.log(available)
       setState(prev => {...prev, isChecking: false, isAvailable: Some(available)})
     } catch {
@@ -298,7 +236,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                     </button>
                   | Some(false) =>
                     <span className="text-red-500 text-sm">
-                      {React.string("Already registered")}
+                      {React.string("Not available")}
                     </span>
                   | None => React.null
                   }
