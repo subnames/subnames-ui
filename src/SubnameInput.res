@@ -293,8 +293,8 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                     <button
                       onClick={_ => handleRegisterClick()}
                       type_="button"
-                      className="rounded-xl bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-500">
-                      {React.string("Register")}
+                      className="rounded-custom2 bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+                      {React.string("Next")}
                     </button>
                   | Some(false) =>
                     <span className="text-red-500 text-sm">
@@ -369,13 +369,13 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
             {if !isWalletConnected {
               <button
                 onClick={_ => onConnectWallet()}
-                className="w-full py-3 px-4 bg-black text-white rounded-full font-medium">
+                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-custom2 font-medium">
                 {React.string("Connect wallet")}
               </button>
             } else {
               <button
                 onClick={_ => ()} // Add your registration handler here
-                className="w-full py-3 px-4 bg-black text-white rounded-full font-medium">
+                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-custom2 font-medium">
                 {React.string("Register name")}
               </button>
             }}

@@ -6,7 +6,8 @@ module.exports = {
   theme: {
     extend: {
       borderRadius: {
-        'custom': '20px',
+        'custom': '1.25rem',
+        'custom2': '0.75rem',
       },
     },
   },
