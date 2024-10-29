@@ -82,13 +82,22 @@ module Subname = {
   @react.component
   let make = () => {
     let (validSubname, setValidSubname) = React.useState(_ => ("", false))
+    let (isWalletConnected, setWalletConnected) = React.useState(() => false)
 
     let handleValidChange = (value, isValid) => {
       setValidSubname(_ => (value, isValid))
     }
 
+    let handleConnectWallet = () => {
+      setWalletConnected(_ => true)
+    }
+
     <div className="p-8">
-      <SubnameInput onValidChange={handleValidChange} />
+      <SubnameInput 
+        onValidChange={handleValidChange}
+        isWalletConnected
+        onConnectWallet={handleConnectWallet}
+      />
     </div>
   }
 }

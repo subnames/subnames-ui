@@ -68,6 +68,10 @@ function App$Subname(props) {
               ];
       });
   var setValidSubname = match[1];
+  var match$1 = React.useState(function () {
+        return false;
+      });
+  var setWalletConnected = match$1[1];
   var handleValidChange = function (value, isValid) {
     setValidSubname(function (param) {
           return [
@@ -76,9 +80,16 @@ function App$Subname(props) {
                 ];
         });
   };
+  var handleConnectWallet = function () {
+    setWalletConnected(function (param) {
+          return true;
+        });
+  };
   return JsxRuntime.jsx("div", {
               children: JsxRuntime.jsx(SubnameInput.make, {
-                    onValidChange: handleValidChange
+                    onValidChange: handleValidChange,
+                    isWalletConnected: match$1[0],
+                    onConnectWallet: handleConnectWallet
                   }),
               className: "p-8"
             });
