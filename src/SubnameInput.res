@@ -1,14 +1,17 @@
-// Add these Viem bindings at the top of your file
 type publicClient
 type address = string
-type abi
-type hash
+type abi = array<{
+  "inputs": array<{"name": string, "type": string}>,
+  "name": string,
+  "outputs": array<{"name": string, "type": string}>,
+  "stateMutability": string,
+  "type": string,
+}>
 
 @module("viem") external createPublicClient: 'a => publicClient = "createPublicClient"
 @module("viem") external http: string => 'transport = "http"
 @module("viem") external koi: 'chain = "koi"
 
-// Contract interaction bindings
 type readContractParams = {
   address: address,
   abi: abi,
@@ -16,15 +19,16 @@ type readContractParams = {
   args: array<string>,
 }
 
-@send external readContract: (publicClient, readContractParams) => promise<bool> = "readContract"
+@send external readContract: (publicClient, readContractParams) => promise<bool> = "readContract" 
 
-// Contract configuration
-let contractConfig = {
-  address: %raw(`process.env.VITE_REGISTRY_ADDR`),
-  abi: [
+@module("viem/ens") external namehash: string => string = "namehash"
+
+let contract = {
+  "address": "0xd3E89BB05F63337a450711156683d533db976C85",
+  "abi": [
     {
-      "inputs": [{"name": "name", "type": "string"}],
-      "name": "available",
+      "inputs": [{"name": "node", "type": "bytes32"}],
+      "name": "recordExists",
       "outputs": [{"name": "", "type": "bool"}],
       "stateMutability": "view",
       "type": "function"
@@ -32,27 +36,27 @@ let contractConfig = {
   ]
 }
 
-// Initialize Viem client
-let publicClient = createPublicClient({
+let client = createPublicClient({
   "chain": koi,
-  "transport": http(%raw(`process.env.VITE_RPC_URL`))
+  "transport": http("https://koi-rpc.darwinia.network")
 })
 
-// Update the checkAvailability function
-let checkAvailability = (name: string): promise<bool> => {
+let recordExists = (name: string): promise<bool> => {
   try {
+    let node = namehash(`${name}.ringdao.eth`)
+    Console.log(node)
     readContract(
-      publicClient,
+      client,
       {
-        address: contractConfig.address,
-        abi: contractConfig.abi,
-        functionName: "available",
-        args: [name],
+        address: contract["address"],
+        abi: contract["abi"],
+        functionName: "recordExists",
+        args: [node],
       }
     )
   } catch {
   | err => {
-      Js.Console.error2("Error checking availability:", err)
+      Js.Console.error2("Error checking recordExists:", err)
       Js.Promise.reject(err)
     }
   }
@@ -106,7 +110,8 @@ let make = (~onValidChange: (string, bool) => unit) => {
   let checkNameAvailability = async value => {
     setState(prev => {...prev, isChecking: true, isAvailable: None})
     try {
-      let available = await checkAvailability(value)
+      let available = !(await recordExists(value))
+      Console.log(available)
       setState(prev => {...prev, isChecking: false, isAvailable: Some(available)})
     } catch {
     | _ =>
