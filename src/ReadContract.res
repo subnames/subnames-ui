@@ -18,7 +18,7 @@ type abi = array<{
 @module("viem") external http: string => 'transport = "http"
 @module("viem") external koi: 'chain = "koi"
 
-@unboxed type argType = String(string) | Int(int)
+@unboxed type argType = String(string) | Int(int) | BigInt(bigint)
 type readContractParams = {
   address: address,
   abi: abi,
@@ -80,9 +80,9 @@ let available: string => promise<bool> = async (name) => {
 let secondsPerYear = 31536000
 // price is denominated in wei
 // duration is in seconds
-let registerPrice: (string, int) => promise<int> = async (name, duration) => {
+let registerPrice: (string, int) => promise<bigint> = async (name, duration) => {
   let args: array<argType> = [String(name), Int(duration)]
-  await readContract(
+  let result = await readContract(
     client,
     {
       address: controllerContract["address"],
@@ -91,4 +91,5 @@ let registerPrice: (string, int) => promise<int> = async (name, duration) => {
       args: args,
     },
   )
+  BigInt.fromInt(result)
 }

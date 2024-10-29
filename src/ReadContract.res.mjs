@@ -104,12 +104,12 @@ async function registerPrice(name, duration) {
     name,
     duration
   ];
-  return await client.readContract({
-              address: controllerContract.address,
-              abi: controllerContract.abi,
-              functionName: "registerPrice",
-              args: args
-            });
+  return BigInt(await client.readContract({
+                  address: controllerContract.address,
+                  abi: controllerContract.abi,
+                  functionName: "registerPrice",
+                  args: args
+                }));
 }
 
 var secondsPerYear = 31536000;

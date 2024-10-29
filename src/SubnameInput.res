@@ -2,7 +2,7 @@ open ReadContract
 
 type feeState = {
   years: int,
-  feeAmount: float, // Fixed fee amount in ETH
+  feeAmount: string, // Fee amount in ETH
 }
 
 type state = {
@@ -51,7 +51,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     showFeeSelect: false,
     fee: {
       years: 1,
-      feeAmount: 0.1, // Fixed fee amount
+      feeAmount: "0.1", // Fixed fee amount
     },
   })
 
@@ -109,36 +109,50 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
       showFeeSelect: false,
       fee: {
         years: 1,
-        feeAmount: 0.1, // Fixed fee amount
+        feeAmount: "0.1", // Fixed fee amount
       },
     })
     onValidChange("", false)
   }
 
+  let calculateFee = async years => {
+    try {
+      let duration = years * secondsPerYear
+      let priceInWei = await registerPrice(state.value, duration)
+      // Convert BigInt wei to float ETH by first converting to string
+      let priceInEth = Float.fromString(priceInWei->BigInt.toString)->Option.getOr(0.0) /. 10e18
+      let priceInEthWith3decimals = Float.toFixed(priceInEth, ~digits=4)
+      setState(prev => {
+        ...prev,
+        fee: {
+          years: years,
+          feeAmount: priceInEthWith3decimals,
+        },
+      })
+    } catch {
+    | err => {
+        Console.error(err)
+        // Handle error case if needed
+      }
+    }
+  }
+
   let incrementYears = () => {
-    setState(prev => {
-      ...prev,
-      fee: {
-        years: prev.fee.years + 1,
-        feeAmount: 0.1 *. Float.fromInt(prev.fee.years + 1),
-      },
-    })
+    let newYears = state.fee.years + 1
+    let _ = calculateFee(newYears)
   }
 
   let decrementYears = () => {
     if state.fee.years > 1 {
-      setState(prev => {
-        ...prev,
-        fee: {
-          years: prev.fee.years - 1,
-          feeAmount: 0.1 *. Float.fromInt(prev.fee.years - 1),
-        },
-      })
+      let newYears = state.fee.years - 1
+      let _ = calculateFee(newYears)
     }
   }
 
   let handleRegisterClick = () => {
     setState(prev => {...prev, showFeeSelect: true})
+    // Calculate initial fee for 1 year
+    let _ = calculateFee(1)
   }
 
   <div className="w-full max-w-xl mx-auto">
@@ -299,7 +313,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
             </div>
 
             <div className="text-3xl font-bold">
-              {React.string(`${state.fee.feeAmount->Float.toString} ETH`)}
+              {React.string(`${state.fee.feeAmount} ETH`)}
             </div>
           </div>
 

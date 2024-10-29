@@ -3,9 +3,11 @@
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Float from "@rescript/core/src/Core__Float.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as ReadContract from "./ReadContract.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
+import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 
 function isValidSubname(name) {
   var length = name.length;
@@ -62,7 +64,7 @@ function SubnameInput(props) {
                 showFeeSelect: false,
                 fee: {
                   years: 1,
-                  feeAmount: 0.1
+                  feeAmount: "0.1"
                 }
               };
       });
@@ -161,30 +163,18 @@ function SubnameInput(props) {
                   showFeeSelect: false,
                   fee: {
                     years: 1,
-                    feeAmount: 0.1
+                    feeAmount: "0.1"
                   }
                 };
         });
     onValidChange("", false);
   };
-  var incrementYears = function () {
-    setState(function (prev) {
-          return {
-                  value: prev.value,
-                  isValid: prev.isValid,
-                  errorMessage: prev.errorMessage,
-                  isChecking: prev.isChecking,
-                  isAvailable: prev.isAvailable,
-                  showFeeSelect: prev.showFeeSelect,
-                  fee: {
-                    years: prev.fee.years + 1 | 0,
-                    feeAmount: 0.1 * (prev.fee.years + 1 | 0)
-                  }
-                };
-        });
-  };
-  var decrementYears = function () {
-    if (state.fee.years > 1) {
+  var calculateFee = async function (years) {
+    try {
+      var duration = Math.imul(years, ReadContract.secondsPerYear);
+      var priceInWei = await ReadContract.registerPrice(state.value, duration);
+      var priceInEth = Core__Option.getOr(Core__Float.fromString(priceInWei.toString()), 0.0) / 10e18;
+      var priceInEthWith3decimals = priceInEth.toFixed(4);
       return setState(function (prev) {
                   return {
                           value: prev.value,
@@ -194,13 +184,28 @@ function SubnameInput(props) {
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
                           fee: {
-                            years: prev.fee.years - 1 | 0,
-                            feeAmount: 0.1 * (prev.fee.years - 1 | 0)
+                            years: years,
+                            feeAmount: priceInEthWith3decimals
                           }
                         };
                 });
     }
-    
+    catch (raw_err){
+      var err = Caml_js_exceptions.internalToOCamlException(raw_err);
+      console.error(err);
+      return ;
+    }
+  };
+  var incrementYears = function () {
+    var newYears = state.fee.years + 1 | 0;
+    calculateFee(newYears);
+  };
+  var decrementYears = function () {
+    if (state.fee.years <= 1) {
+      return ;
+    }
+    var newYears = state.fee.years - 1 | 0;
+    calculateFee(newYears);
   };
   var handleRegisterClick = function () {
     setState(function (prev) {
@@ -214,6 +219,7 @@ function SubnameInput(props) {
                   fee: prev.fee
                 };
         });
+    calculateFee(1);
   };
   var tmp;
   if (state.showFeeSelect) {
@@ -304,7 +310,7 @@ function SubnameInput(props) {
                                 className: "flex items-center gap-4"
                               }),
                           JsxRuntime.jsx("div", {
-                                children: state.fee.feeAmount.toString() + " ETH",
+                                children: state.fee.feeAmount + " ETH",
                                 className: "text-3xl font-bold"
                               })
                         ],
