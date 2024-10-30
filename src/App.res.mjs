@@ -69,10 +69,16 @@ function App$Subname(props) {
               ];
       });
   var setValidSubname = match[1];
+  var account = Wagmi.useAccount();
   var match$1 = React.useState(function () {
         return false;
       });
   var setWalletConnected = match$1[1];
+  React.useEffect((function () {
+          setWalletConnected(function (param) {
+                return account.isConnected;
+              });
+        }), [account.isConnected]);
   var handleValidChange = function (value, isValid) {
     setValidSubname(function (param) {
           return [
@@ -82,9 +88,8 @@ function App$Subname(props) {
         });
   };
   var handleConnectWallet = function () {
-    setWalletConnected(function (param) {
-          return true;
-        });
+    var connectButton = document.querySelector("[data-testid='rk-connect-button']");
+    connectButton.click();
   };
   return JsxRuntime.jsx("div", {
               children: JsxRuntime.jsx(SubnameInput.make, {

@@ -86,18 +86,39 @@ module Layout = {
   }
 }
 
+type document
+@val external doc: document = "document"
+@send external querySelector: (document, string) => Dom.element = "querySelector"
+@send external click: Dom.element => unit = "click"
+
+module UseAccount = {
+  type account = {
+    address: option<string>,
+    isConnected: bool,
+  }
+  @module("wagmi")
+  external use: unit => account = "useAccount"
+}
+
 module Subname = {
   @react.component
   let make = () => {
     let (validSubname, setValidSubname) = React.useState(_ => ("", false))
+    let account = UseAccount.use()
     let (isWalletConnected, setWalletConnected) = React.useState(() => false)
+
+    React.useEffect1(() => {
+      setWalletConnected(_ => account.isConnected)
+      None
+    }, [account.isConnected])
 
     let handleValidChange = (value, isValid) => {
       setValidSubname(_ => (value, isValid))
     }
 
     let handleConnectWallet = () => {
-      setWalletConnected(_ => true)
+      let connectButton = doc->querySelector("[data-testid='rk-connect-button']")
+      connectButton->click
     }
 
     <div className="p-8">
