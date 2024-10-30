@@ -104,6 +104,11 @@ function App(props) {
                     children: JsxRuntime.jsx(Rainbowkit.RainbowKitProvider, {
                           children: JsxRuntime.jsx(App$Layout, {
                                 children: JsxRuntime.jsx(App$Subname, {})
+                              }),
+                          theme: Rainbowkit.lightTheme({
+                                accentColor: "rgb(39, 39, 42)",
+                                accentColorForeground: "white",
+                                borderRadius: "large"
                               })
                         })
                   })

@@ -15,7 +15,7 @@ external getDefaultConfig: params => 'config = "getDefaultConfig"
 
 module RainbowKitProvider = {
   @module("@rainbow-me/rainbowkit") @react.component
-  external make: (~children: React.element) => React.element =
+  external make: (~children: React.element, ~theme: 'theme) => React.element =
     "RainbowKitProvider"
 }
 
@@ -37,6 +37,14 @@ external makeQueryClient: unit => 'client = "QueryClient"
 
 @module("wagmi")
 external http: unit => transport = "http"
+
+type themeParams = {
+  accentColor: string,
+  accentColorForeground: string,
+  borderRadius: string,
+}
+@module("@rainbow-me/rainbowkit")
+external lightTheme: themeParams => 'theme = "lightTheme"
 
 module ConnectButton = {
   @module("@rainbow-me/rainbowkit") @react.component
@@ -106,7 +114,11 @@ module Subname = {
 let make = () => {
   <WagmiProvider config={config}>
     <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider>
+      <RainbowKitProvider theme={lightTheme({
+        accentColor: "rgb(39, 39, 42)",
+        accentColorForeground: "white",
+        borderRadius: "large",
+      })}>
         <Layout>
             <Subname />
         </Layout>
