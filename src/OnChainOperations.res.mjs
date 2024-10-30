@@ -3,6 +3,8 @@
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Chains from "viem/chains";
 
 var registryContract = {
   address: Constants.registryContractAddress,
@@ -72,11 +74,54 @@ var controllerContract = {
       outputs: [],
       stateMutability: "payable"
     }
-  ]
+  ],
+  abiForWrite: [{
+      inputs: [{
+          components: [
+            {
+              internalType: "string",
+              name: "name",
+              type: "string"
+            },
+            {
+              internalType: "address",
+              name: "owner",
+              type: "address"
+            },
+            {
+              internalType: "uint256",
+              name: "duration",
+              type: "uint256"
+            },
+            {
+              internalType: "address",
+              name: "resolver",
+              type: "address"
+            },
+            {
+              internalType: "bytes[]",
+              name: "data",
+              type: "bytes[]"
+            },
+            {
+              internalType: "bool",
+              name: "reverseRecord",
+              type: "bool"
+            }
+          ],
+          internalType: "struct RegistrarController.RegisterRequest",
+          name: "request",
+          type: "tuple"
+        }],
+      name: "register",
+      outputs: undefined,
+      stateMutability: "payable",
+      type: "function"
+    }]
 };
 
 var client = Viem.createPublicClient({
-      chain: Viem.koi,
+      chain: Chains.koi,
       transport: Viem.http(Constants.rpcUrl)
     });
 
@@ -114,6 +159,25 @@ async function registerPrice(name, duration) {
                 }));
 }
 
+var publicClient = Viem.createPublicClient({
+      chain: Chains.koi,
+      transport: Viem.http(Constants.rpcUrl)
+    });
+
+var walletClient = Viem.createWalletClient({
+      chain: Chains.koi,
+      transport: Viem.custom(window.ethereum)
+    });
+
+async function currentAddress() {
+  var result = await walletClient.getAddresses();
+  if (result.length === 0) {
+    return ;
+  } else {
+    return Caml_option.some(result[0]);
+  }
+}
+
 export {
   registryContract ,
   controllerContract ,
@@ -121,5 +185,8 @@ export {
   recordExists ,
   available ,
   registerPrice ,
+  publicClient ,
+  walletClient ,
+  currentAddress ,
 }
 /* client Not a pure module */

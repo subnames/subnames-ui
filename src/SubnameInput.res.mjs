@@ -7,7 +7,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "./Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as ReadContract from "./ReadContract.res.mjs";
+import * as OnChainOperations from "./OnChainOperations.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
 function isValidSubname(name) {
@@ -87,7 +87,7 @@ function SubnameInput(props) {
                 };
         });
     try {
-      var available = await ReadContract.available(value);
+      var available = await OnChainOperations.available(value);
       console.log(available);
       return setState(function (prev) {
                   return {
@@ -384,7 +384,7 @@ function SubnameInput(props) {
                   JsxRuntime.jsx("div", {
                         children: props.isWalletConnected ? JsxRuntime.jsx("button", {
                                 children: "Register name",
-                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-medium",
+                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
                                 onClick: (function (param) {
                                     
                                   })

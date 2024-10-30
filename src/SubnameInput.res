@@ -1,4 +1,4 @@
-open ReadContract
+open OnChainOperations
 
 type feeState = {
   years: int,
@@ -296,8 +296,8 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
               </button>
             } else {
               <button
-                onClick={_ => ()} // Add your registration handler here
-                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-medium">
+                onClick={_ => ()}
+                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium">
                 {React.string("Register name")}
               </button>
             }}
