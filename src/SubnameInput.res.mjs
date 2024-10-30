@@ -3,7 +3,6 @@
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
-import * as Core__Float from "@rescript/core/src/Core__Float.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as ReadContract from "./ReadContract.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -65,7 +64,8 @@ function SubnameInput(props) {
                 fee: {
                   years: 1,
                   feeAmount: "0.1"
-                }
+                },
+                isCalculatingFee: false
               };
       });
   var setState = match[1];
@@ -80,7 +80,8 @@ function SubnameInput(props) {
                   isChecking: true,
                   isAvailable: undefined,
                   showFeeSelect: prev.showFeeSelect,
-                  fee: prev.fee
+                  fee: prev.fee,
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
     try {
@@ -94,7 +95,8 @@ function SubnameInput(props) {
                           isChecking: false,
                           isAvailable: available,
                           showFeeSelect: prev.showFeeSelect,
-                          fee: prev.fee
+                          fee: prev.fee,
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
     }
@@ -107,7 +109,8 @@ function SubnameInput(props) {
                           isChecking: false,
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
-                          fee: prev.fee
+                          fee: prev.fee,
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
     }
@@ -122,7 +125,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
-                  fee: prev.fee
+                  fee: prev.fee,
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
     var timeout = timeoutRef.current;
@@ -141,7 +145,8 @@ function SubnameInput(props) {
                           isChecking: prev.isChecking,
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
-                          fee: prev.fee
+                          fee: prev.fee,
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
             onValidChange(newValue, isValid);
@@ -164,17 +169,21 @@ function SubnameInput(props) {
                   fee: {
                     years: 1,
                     feeAmount: "0.1"
-                  }
+                  },
+                  isCalculatingFee: false
                 };
         });
     onValidChange("", false);
   };
   var calculateFee = async function (years) {
     try {
+      console.log("years: " + years.toString());
+      console.log("state.value: " + state.value);
       var duration = Math.imul(years, ReadContract.secondsPerYear);
+      console.log("duration: " + duration.toString());
       var priceInWei = await ReadContract.registerPrice(state.value, duration);
-      var priceInEth = Core__Option.getOr(Core__Float.fromString(priceInWei.toString()), 0.0) / 10e18;
-      var priceInEthWith3decimals = priceInEth.toFixed(4);
+      console.log("price: " + priceInWei.toString());
+      var priceInEth = (Number(priceInWei) / 10e18).toFixed(8);
       return setState(function (prev) {
                   return {
                           value: prev.value,
@@ -185,8 +194,9 @@ function SubnameInput(props) {
                           showFeeSelect: prev.showFeeSelect,
                           fee: {
                             years: years,
-                            feeAmount: priceInEthWith3decimals
-                          }
+                            feeAmount: priceInEth
+                          },
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
     }
@@ -197,15 +207,70 @@ function SubnameInput(props) {
     }
   };
   var incrementYears = function () {
+    if (state.isCalculatingFee) {
+      return ;
+    }
     var newYears = state.fee.years + 1 | 0;
-    calculateFee(newYears);
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  showFeeSelect: prev.showFeeSelect,
+                  fee: prev.fee,
+                  isCalculatingFee: true
+                };
+        });
+    calculateFee(newYears).then(function () {
+          setState(function (prev) {
+                return {
+                        value: prev.value,
+                        isValid: prev.isValid,
+                        errorMessage: prev.errorMessage,
+                        isChecking: prev.isChecking,
+                        isAvailable: prev.isAvailable,
+                        showFeeSelect: prev.showFeeSelect,
+                        fee: prev.fee,
+                        isCalculatingFee: false
+                      };
+              });
+          return Promise.resolve();
+        });
   };
   var decrementYears = function () {
-    if (state.fee.years <= 1) {
+    if (!(!state.isCalculatingFee && state.fee.years > 1)) {
       return ;
     }
     var newYears = state.fee.years - 1 | 0;
-    calculateFee(newYears);
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  showFeeSelect: prev.showFeeSelect,
+                  fee: prev.fee,
+                  isCalculatingFee: true
+                };
+        });
+    calculateFee(newYears).then(function () {
+          setState(function (prev) {
+                return {
+                        value: prev.value,
+                        isValid: prev.isValid,
+                        errorMessage: prev.errorMessage,
+                        isChecking: prev.isChecking,
+                        isAvailable: prev.isAvailable,
+                        showFeeSelect: prev.showFeeSelect,
+                        fee: prev.fee,
+                        isCalculatingFee: false
+                      };
+              });
+          return Promise.resolve();
+        });
   };
   var handleRegisterClick = function () {
     setState(function (prev) {
@@ -216,7 +281,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: true,
-                  fee: prev.fee
+                  fee: prev.fee,
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
     calculateFee(1);
@@ -255,7 +321,8 @@ function SubnameInput(props) {
                                                         isChecking: prev.isChecking,
                                                         isAvailable: prev.isAvailable,
                                                         showFeeSelect: false,
-                                                        fee: prev.fee
+                                                        fee: prev.fee,
+                                                        isCalculatingFee: prev.isCalculatingFee
                                                       };
                                               });
                                         })
@@ -288,7 +355,10 @@ function SubnameInput(props) {
                                 children: [
                                   JsxRuntime.jsx("button", {
                                         children: "-",
-                                        className: "w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center",
+                                        className: "w-10 h-10 rounded-full " + (
+                                          state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
+                                        ) + " flex items-center justify-center",
+                                        disabled: state.isCalculatingFee,
                                         onClick: (function (param) {
                                             decrementYears();
                                           })
@@ -301,7 +371,10 @@ function SubnameInput(props) {
                                       }),
                                   JsxRuntime.jsx("button", {
                                         children: "+",
-                                        className: "w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center",
+                                        className: "w-10 h-10 rounded-full " + (
+                                          state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
+                                        ) + " flex items-center justify-center",
+                                        disabled: state.isCalculatingFee,
                                         onClick: (function (param) {
                                             incrementYears();
                                           })
@@ -310,7 +383,30 @@ function SubnameInput(props) {
                                 className: "flex items-center gap-4"
                               }),
                           JsxRuntime.jsx("div", {
-                                children: state.fee.feeAmount + " ETH",
+                                children: state.isCalculatingFee ? JsxRuntime.jsx("div", {
+                                        children: JsxRuntime.jsxs("svg", {
+                                              children: [
+                                                JsxRuntime.jsx("circle", {
+                                                      className: "opacity-25",
+                                                      cx: "12",
+                                                      cy: "12",
+                                                      r: "10",
+                                                      stroke: "currentColor",
+                                                      strokeWidth: "4"
+                                                    }),
+                                                JsxRuntime.jsx("path", {
+                                                      className: "opacity-75",
+                                                      d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
+                                                      fill: "currentColor"
+                                                    })
+                                              ],
+                                              className: "w-8 h-8 text-zinc-600",
+                                              fill: "none",
+                                              viewBox: "0 0 24 24",
+                                              xmlns: "http://www.w3.org/2000/svg"
+                                            }),
+                                        className: "animate-spin"
+                                      }) : state.fee.feeAmount + " RING",
                                 className: "text-3xl font-bold"
                               })
                         ],

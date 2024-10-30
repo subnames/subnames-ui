@@ -13,6 +13,7 @@ type state = {
   isAvailable: option<bool>,
   showFeeSelect: bool, // New field
   fee: feeState, // New field
+  isCalculatingFee: bool, // Add this new field
 }
 
 // Validation rules for ENS subnames
@@ -53,6 +54,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
       years: 1,
       feeAmount: "0.1", // Fixed fee amount
     },
+    isCalculatingFee: false, // Initialize the new field
   })
 
   let timeoutRef = React.useRef(None)
@@ -111,22 +113,25 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
         years: 1,
         feeAmount: "0.1", // Fixed fee amount
       },
+      isCalculatingFee: false, // Initialize the new field
     })
     onValidChange("", false)
   }
 
   let calculateFee = async years => {
     try {
+      Console.log(`years: ${Int.toString(years)}`)
+      Console.log(`state.value: ${state.value}`)
       let duration = years * secondsPerYear
+      Console.log(`duration: ${Int.toString(duration)}`)
       let priceInWei = await registerPrice(state.value, duration)
-      // Convert BigInt wei to float ETH by first converting to string
-      let priceInEth = Float.fromString(priceInWei->BigInt.toString)->Option.getOr(0.0) /. 10e18
-      let priceInEthWith3decimals = Float.toFixed(priceInEth, ~digits=4)
+      Console.log(`price: ${BigInt.toString(priceInWei)}`)
+      let priceInEth = Float.toFixed(BigInt.toFloat(priceInWei) /. 10e18, ~digits=8)
       setState(prev => {
         ...prev,
         fee: {
           years: years,
-          feeAmount: priceInEthWith3decimals,
+          feeAmount: priceInEth,
         },
       })
     } catch {
@@ -138,14 +143,24 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   }
 
   let incrementYears = () => {
-    let newYears = state.fee.years + 1
-    let _ = calculateFee(newYears)
+    if !state.isCalculatingFee {
+      let newYears = state.fee.years + 1
+      setState(prev => {...prev, isCalculatingFee: true})
+      let _ = calculateFee(newYears)->Promise.then(_ => {
+        setState(prev => {...prev, isCalculatingFee: false})
+        Promise.resolve()
+      })
+    }
   }
 
   let decrementYears = () => {
-    if state.fee.years > 1 {
+    if !state.isCalculatingFee && state.fee.years > 1 {
       let newYears = state.fee.years - 1
-      let _ = calculateFee(newYears)
+      setState(prev => {...prev, isCalculatingFee: true})
+      let _ = calculateFee(newYears)->Promise.then(_ => {
+        setState(prev => {...prev, isCalculatingFee: false})
+        Promise.resolve()
+      })
     }
   }
 
@@ -297,7 +312,8 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
             <div className="flex items-center gap-4">
               <button
                 onClick={_ => decrementYears()}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                disabled={state.isCalculatingFee}
+                className={`w-10 h-10 rounded-full ${state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"} flex items-center justify-center`}>
                 {React.string("-")}
               </button>
               
@@ -307,13 +323,38 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
               
               <button
                 onClick={_ => incrementYears()}
-                className="w-10 h-10 rounded-full bg-gray-100 flex items-center justify-center">
+                disabled={state.isCalculatingFee}
+                className={`w-10 h-10 rounded-full ${state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"} flex items-center justify-center`}>
                 {React.string("+")}
               </button>
             </div>
 
             <div className="text-3xl font-bold">
-              {React.string(`${state.fee.feeAmount} ETH`)}
+              {if state.isCalculatingFee {
+                <div className="animate-spin">
+                  <svg
+                    className="w-8 h-8 text-zinc-600"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24">
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                </div>
+              } else {
+                React.string(`${state.fee.feeAmount} RING`)
+              }}
             </div>
           </div>
 
