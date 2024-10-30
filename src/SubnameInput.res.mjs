@@ -384,13 +384,13 @@ function SubnameInput(props) {
                   JsxRuntime.jsx("div", {
                         children: props.isWalletConnected ? JsxRuntime.jsx("button", {
                                 children: "Register name",
-                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium",
+                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-xl font-medium",
                                 onClick: (function (param) {
                                     
                                   })
                               }) : JsxRuntime.jsx("button", {
                                 children: "Connect wallet",
-                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full font-medium",
+                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
                                 onClick: (function (param) {
                                     onConnectWallet();
                                   })
@@ -424,7 +424,7 @@ function SubnameInput(props) {
         tmp$2 = match$1 !== undefined ? (
             match$1 ? JsxRuntime.jsx("button", {
                     children: "Next",
-                    className: "rounded-full bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                    className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
                     type: "button",
                     onClick: (function (param) {
                         handleNextClick();
