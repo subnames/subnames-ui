@@ -31,14 +31,14 @@ type readContractParams = {
 @module("viem/ens") external namehash: string => string = "namehash"
 
 let registryContract = {
-  "address": "0xd3E89BB05F63337a450711156683d533db976C85",
+  "address": Constants.registryContractAddress,
   "abi": [
     {"type": "function","name": "recordExists","inputs": [{"name": "node", "type": "bytes32"}],"outputs": [{"name": "", "type": "bool"}],"stateMutability": "view",},
   ],
 }
 
 let controllerContract = {
-  "address": "0x50d634E43F5aD7748cf2860760b887655524B593",
+  "address": Constants.controllerContractAddress,
   "abi": [
     {"type":"function","name":"available","inputs":[{"name":"name","type":"string"}],"outputs":[{"name":"","type":"bool"}],"stateMutability":"view"},
     {"type":"function","name":"registerPrice","inputs":[{"name":"name","type":"string"},{"name":"duration","type":"uint256"}],"outputs":[{"name":"","type":"uint256"}],"stateMutability":"view"},
@@ -48,7 +48,7 @@ let controllerContract = {
 
 let client = createPublicClient({
   "chain": koi,
-  "transport": http("https://koi-rpc.darwinia.network"),
+  "transport": http(Constants.rpcUrl),
 })
 
 let recordExists: string => promise<bool> = async name => {
@@ -77,7 +77,6 @@ let available: string => promise<bool> = async (name) => {
   )
 }
 
-let secondsPerYear = 31536000
 // price is denominated in wei
 // duration is in seconds
 let registerPrice: (string, int) => promise<bigint> = async (name, duration) => {

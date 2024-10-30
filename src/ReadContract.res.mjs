@@ -2,9 +2,10 @@
 
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
+import * as Constants from "./Constants.res.mjs";
 
 var registryContract = {
-  address: "0xd3E89BB05F63337a450711156683d533db976C85",
+  address: Constants.registryContractAddress,
   abi: [{
       type: "function",
       name: "recordExists",
@@ -21,7 +22,7 @@ var registryContract = {
 };
 
 var controllerContract = {
-  address: "0x50d634E43F5aD7748cf2860760b887655524B593",
+  address: Constants.controllerContractAddress,
   abi: [
     {
       type: "function",
@@ -76,7 +77,7 @@ var controllerContract = {
 
 var client = Viem.createPublicClient({
       chain: Viem.koi,
-      transport: Viem.http("https://koi-rpc.darwinia.network")
+      transport: Viem.http(Constants.rpcUrl)
     });
 
 async function recordExists(name) {
@@ -112,15 +113,12 @@ async function registerPrice(name, duration) {
                 }));
 }
 
-var secondsPerYear = 31536000;
-
 export {
   registryContract ,
   controllerContract ,
   client ,
   recordExists ,
   available ,
-  secondsPerYear ,
   registerPrice ,
 }
 /* client Not a pure module */

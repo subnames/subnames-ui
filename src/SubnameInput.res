@@ -119,27 +119,14 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   }
 
   let calculateFee = async years => {
-    try {
-      Console.log(`years: ${Int.toString(years)}`)
-      Console.log(`state.value: ${state.value}`)
-      let duration = years * secondsPerYear
-      Console.log(`duration: ${Int.toString(duration)}`)
-      let priceInWei = await registerPrice(state.value, duration)
-      Console.log(`price: ${BigInt.toString(priceInWei)}`)
-      let priceInEth = Float.toFixed(BigInt.toFloat(priceInWei) /. 10e18, ~digits=8)
-      setState(prev => {
-        ...prev,
-        fee: {
-          years: years,
-          feeAmount: priceInEth,
-        },
-      })
-    } catch {
-    | err => {
-        Console.error(err)
-        // Handle error case if needed
-      }
-    }
+    let priceInEth = await Fee.calculate(state.value, years)
+    setState(prev => {
+      ...prev,
+      fee: {
+        years: years,
+        feeAmount: priceInEth,
+      },
+    })
   }
 
   let incrementYears = () => {
@@ -164,7 +151,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     }
   }
 
-  let handleRegisterClick = () => {
+  let handleNextClick = () => {
     setState(prev => {
       ...prev, 
       showFeeSelect: true,
@@ -228,7 +215,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                   switch state.isAvailable {
                   | Some(true) =>
                     <button
-                      onClick={_ => handleRegisterClick()}
+                      onClick={_ => handleNextClick()}
                       type_="button"
                       className="rounded-full bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
                       {React.string("Next")}
