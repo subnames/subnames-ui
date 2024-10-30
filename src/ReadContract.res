@@ -52,8 +52,9 @@ let client = createPublicClient({
 })
 
 let recordExists: string => promise<bool> = async name => {
-  let node = namehash(`${name}.ringdao.eth`)
-  Console.log(node)
+  let domain = `${name}.${Constants.sld}`
+  let node = namehash(domain)
+  Console.log(`domain: "${domain}", node: "${node}"`)
   await readContract(
     client,
     {

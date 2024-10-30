@@ -207,7 +207,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
             <div className="px-6 py-4">
               <div className="flex items-center justify-between">
                 <p className="text-gray-700">
-                  {React.string(state.value ++ ".ringdao.eth")}
+                  {React.string(`${state.value}.${Constants.sld}`)}
                 </p>
                 {if state.isChecking {
                   <Icons.Spinner className="w-5 h-5 text-zinc-600" />
@@ -247,7 +247,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                 <Icons.Back />
               </button>
               <span className="text-lg font-medium text-gray-700">
-                {React.string(state.value ++ ".ringdao.eth")}
+                {React.string(`${state.value}.${Constants.sld}`)}
               </span>
             </div>
           </div>

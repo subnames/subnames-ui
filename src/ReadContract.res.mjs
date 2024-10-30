@@ -81,8 +81,9 @@ var client = Viem.createPublicClient({
     });
 
 async function recordExists(name) {
-  var node = Ens.namehash(name + ".ringdao.eth");
-  console.log(node);
+  var domain = name + "." + Constants.sld;
+  var node = Ens.namehash(domain);
+  console.log("domain: \"" + domain + "\", node: \"" + node + "\"");
   return await client.readContract({
               address: registryContract.address,
               abi: registryContract.abi,

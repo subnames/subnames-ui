@@ -4,12 +4,9 @@ import * as Constants from "./Constants.res.mjs";
 import * as ReadContract from "./ReadContract.res.mjs";
 
 async function calculate(name, years) {
-  console.log("years: " + years.toString());
-  console.log("name: " + name);
   var duration = Math.imul(years, Constants.secondsPerYear);
-  console.log("duration: " + duration.toString());
   var priceInWei = await ReadContract.registerPrice(name, duration);
-  console.log("price: " + priceInWei.toString());
+  console.log("name: \"" + name + "\", duration: " + duration.toString() + ", price: " + priceInWei.toString());
   return (Number(priceInWei) / 10e18).toFixed(8);
 }
 

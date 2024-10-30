@@ -4,6 +4,7 @@ import * as Fee from "./Fee.res.mjs";
 import * as Icons from "./components/Icons.res.mjs";
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as Constants from "./Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as ReadContract from "./ReadContract.res.mjs";
@@ -317,7 +318,7 @@ function SubnameInput(props) {
                                         })
                                     }),
                                 JsxRuntime.jsx("span", {
-                                      children: state.value + ".ringdao.eth",
+                                      children: state.value + "." + Constants.sld,
                                       className: "text-lg font-medium text-gray-700"
                                     })
                               ],
@@ -438,7 +439,7 @@ function SubnameInput(props) {
             children: JsxRuntime.jsxs("div", {
                   children: [
                     JsxRuntime.jsx("p", {
-                          children: state.value + ".ringdao.eth",
+                          children: state.value + "." + Constants.sld,
                           className: "text-gray-700"
                         }),
                     tmp$2

@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Constants from "./Constants.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
 import * as JsxRuntime from "react/jsx-runtime";
@@ -31,7 +32,7 @@ function App$Layout(props) {
                                   children: [
                                     JsxRuntime.jsx("div", {
                                           children: JsxRuntime.jsx("h1", {
-                                                children: "ringdao.eth",
+                                                children: Constants.sld,
                                                 className: "text-xl font-bold text-gray-900"
                                               }),
                                           className: "flex-shrink-0"
