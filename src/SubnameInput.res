@@ -52,9 +52,9 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     showFeeSelect: false,
     fee: {
       years: 1,
-      feeAmount: "0.1", // Fixed fee amount
+      feeAmount: "0.1",
     },
-    isCalculatingFee: false, // Initialize the new field
+    isCalculatingFee: false,
   })
 
   let timeoutRef = React.useRef(None)
@@ -165,9 +165,16 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   }
 
   let handleRegisterClick = () => {
-    setState(prev => {...prev, showFeeSelect: true})
+    setState(prev => {
+      ...prev, 
+      showFeeSelect: true,
+      isCalculatingFee: true // Set to true immediately when opening the panel
+    })
     // Calculate initial fee for 1 year
-    let _ = calculateFee(1)
+    let _ = calculateFee(1)->Promise.then(_ => {
+      setState(prev => {...prev, isCalculatingFee: false})
+      Promise.resolve()
+    })
   }
 
   <div className="w-full max-w-xl mx-auto">
@@ -187,31 +194,14 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
               <button
                 onClick={handleClear}
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                type_="button"
-              >
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path 
-                    d="M18 6L6 18M6 6L18 18" 
-                    stroke="#999999" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                type_="button">
+                <Icons.Close />
               </button>
             } else {
               React.null
             }}
             {if state.value == "" {
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path 
-                  d="M21 21L16.5 16.5M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" 
-                  stroke="#999999" 
-                  strokeWidth="2" 
-                  strokeLinecap="round" 
-                  strokeLinejoin="round"
-                />
-              </svg>
+              <Icons.Search />
             } else {
               React.null
             }}
@@ -233,27 +223,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                   {React.string(state.value ++ ".ringdao.eth")}
                 </p>
                 {if state.isChecking {
-                  <div className="animate-spin">
-                    <svg
-                      className="w-5 h-5 text-blue-600"
-                      xmlns="http://www.w3.org/2000/svg"
-                      fill="none"
-                      viewBox="0 0 24 24">
-                      <circle
-                        className="opacity-25"
-                        cx="12"
-                        cy="12"
-                        r="10"
-                        stroke="currentColor"
-                        strokeWidth="4"
-                      />
-                      <path
-                        className="opacity-75"
-                        fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                      />
-                    </svg>
-                  </div>
+                  <Icons.Spinner className="w-5 h-5 text-zinc-600" />
                 } else {
                   switch state.isAvailable {
                   | Some(true) =>
@@ -287,15 +257,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                 onClick={_ => setState(prev => {...prev, showFeeSelect: false})}
                 className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                 type_="button">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <path 
-                    d="M19 12H5M5 12L12 19M5 12L12 5" 
-                    stroke="#999999" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <Icons.Back />
               </button>
               <span className="text-lg font-medium text-gray-700">
                 {React.string(state.value ++ ".ringdao.eth")}
@@ -331,27 +293,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
 
             <div className="text-3xl font-bold">
               {if state.isCalculatingFee {
-                <div className="animate-spin">
-                  <svg
-                    className="w-8 h-8 text-zinc-600"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24">
-                    <circle
-                      className="opacity-25"
-                      cx="12"
-                      cy="12"
-                      r="10"
-                      stroke="currentColor"
-                      strokeWidth="4"
-                    />
-                    <path
-                      className="opacity-75"
-                      fill="currentColor"
-                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                    />
-                  </svg>
-                </div>
+                <Icons.Spinner className="w-8 h-8 text-zinc-600" />
               } else {
                 React.string(`${state.fee.feeAmount} RING`)
               }}
