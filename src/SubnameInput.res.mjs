@@ -67,7 +67,8 @@ function SubnameInput(props) {
                   years: 1,
                   feeAmount: "0.1"
                 },
-                isCalculatingFee: false
+                isCalculatingFee: false,
+                isRegistering: false
               };
       });
   var setState = match[1];
@@ -83,7 +84,8 @@ function SubnameInput(props) {
                   isAvailable: undefined,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: prev.isCalculatingFee
+                  isCalculatingFee: prev.isCalculatingFee,
+                  isRegistering: prev.isRegistering
                 };
         });
     try {
@@ -98,7 +100,8 @@ function SubnameInput(props) {
                           isAvailable: available,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee
+                          isCalculatingFee: prev.isCalculatingFee,
+                          isRegistering: prev.isRegistering
                         };
                 });
     }
@@ -112,7 +115,8 @@ function SubnameInput(props) {
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee
+                          isCalculatingFee: prev.isCalculatingFee,
+                          isRegistering: prev.isRegistering
                         };
                 });
     }
@@ -128,7 +132,8 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: prev.isCalculatingFee
+                  isCalculatingFee: prev.isCalculatingFee,
+                  isRegistering: prev.isRegistering
                 };
         });
     var timeout = timeoutRef.current;
@@ -148,7 +153,8 @@ function SubnameInput(props) {
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee
+                          isCalculatingFee: prev.isCalculatingFee,
+                          isRegistering: prev.isRegistering
                         };
                 });
             onValidChange(newValue, isValid);
@@ -172,7 +178,8 @@ function SubnameInput(props) {
                     years: 1,
                     feeAmount: "0.1"
                   },
-                  isCalculatingFee: false
+                  isCalculatingFee: false,
+                  isRegistering: false
                 };
         });
     onValidChange("", false);
@@ -191,7 +198,8 @@ function SubnameInput(props) {
                           years: years,
                           feeAmount: priceInEth
                         },
-                        isCalculatingFee: prev.isCalculatingFee
+                        isCalculatingFee: prev.isCalculatingFee,
+                        isRegistering: prev.isRegistering
                       };
               });
   };
@@ -209,7 +217,8 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: true
+                  isCalculatingFee: true,
+                  isRegistering: prev.isRegistering
                 };
         });
     calculateFee(newYears).then(function () {
@@ -222,7 +231,8 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false
+                        isCalculatingFee: false,
+                        isRegistering: prev.isRegistering
                       };
               });
           return Promise.resolve();
@@ -242,7 +252,8 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: true
+                  isCalculatingFee: true,
+                  isRegistering: prev.isRegistering
                 };
         });
     calculateFee(newYears).then(function () {
@@ -255,7 +266,8 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false
+                        isCalculatingFee: false,
+                        isRegistering: prev.isRegistering
                       };
               });
           return Promise.resolve();
@@ -271,7 +283,8 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: true,
                   fee: prev.fee,
-                  isCalculatingFee: true
+                  isCalculatingFee: true,
+                  isRegistering: prev.isRegistering
                 };
         });
     calculateFee(1).then(function () {
@@ -284,7 +297,39 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false
+                        isCalculatingFee: false,
+                        isRegistering: prev.isRegistering
+                      };
+              });
+          return Promise.resolve();
+        });
+  };
+  var handleRegister = function () {
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  showFeeSelect: prev.showFeeSelect,
+                  fee: prev.fee,
+                  isCalculatingFee: prev.isCalculatingFee,
+                  isRegistering: true
+                };
+        });
+    OnChainOperations.register(state.value, state.fee.years, undefined).then(function () {
+          setState(function (prev) {
+                return {
+                        value: prev.value,
+                        isValid: prev.isValid,
+                        errorMessage: prev.errorMessage,
+                        isChecking: prev.isChecking,
+                        isAvailable: prev.isAvailable,
+                        showFeeSelect: prev.showFeeSelect,
+                        fee: prev.fee,
+                        isCalculatingFee: prev.isCalculatingFee,
+                        isRegistering: false
                       };
               });
           return Promise.resolve();
@@ -312,7 +357,8 @@ function SubnameInput(props) {
                                                         isAvailable: prev.isAvailable,
                                                         showFeeSelect: false,
                                                         fee: prev.fee,
-                                                        isCalculatingFee: prev.isCalculatingFee
+                                                        isCalculatingFee: prev.isCalculatingFee,
+                                                        isRegistering: prev.isRegistering
                                                       };
                                               });
                                         })
@@ -383,10 +429,15 @@ function SubnameInput(props) {
                       }),
                   JsxRuntime.jsx("div", {
                         children: props.isWalletConnected ? JsxRuntime.jsx("button", {
-                                children: "Register name",
-                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
+                                children: state.isRegistering ? "Registering..." : (
+                                    state.isCalculatingFee ? "Calculating..." : "Register name"
+                                  ),
+                                className: "w-full py-3 px-4 " + (
+                                  state.isCalculatingFee || state.isRegistering ? "bg-zinc-400" : "bg-zinc-800 hover:bg-zinc-700"
+                                ) + " text-white rounded-2xl font-medium",
+                                disabled: state.isCalculatingFee || state.isRegistering,
                                 onClick: (function (param) {
-                                    
+                                    handleRegister();
                                   })
                               }) : JsxRuntime.jsx("button", {
                                 children: "Connect wallet",

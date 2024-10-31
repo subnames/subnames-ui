@@ -3,8 +3,9 @@
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
-import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Chains from "viem/chains";
+import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
 var registryContract = {
   address: Constants.registryContractAddress,
@@ -114,7 +115,7 @@ var controllerContract = {
           type: "tuple"
         }],
       name: "register",
-      outputs: undefined,
+      outputs: Core__Array.make(0, undefined),
       stateMutability: "payable",
       type: "function"
     }]
@@ -170,12 +171,71 @@ var walletClient = Viem.createWalletClient({
     });
 
 async function currentAddress() {
-  var result = await walletClient.getAddresses();
-  if (result.length === 0) {
-    return ;
-  } else {
-    return Caml_option.some(result[0]);
+  var result = await walletClient.requestAddresses();
+  if (result.length < 1) {
+    throw {
+          RE_EXN_ID: "Assert_failure",
+          _1: [
+            "OnChainOperations.res",
+            179,
+            2
+          ],
+          Error: new Error()
+        };
   }
+  return result[0];
+}
+
+function encodeSetAddr(name, owner) {
+  var node = Ens.namehash(name + "." + Constants.sld);
+  var abi = [{
+      type: "function",
+      name: "setAddr",
+      inputs: [
+        {
+          name: "node",
+          type: "bytes32"
+        },
+        {
+          name: "addr",
+          type: "address"
+        }
+      ],
+      outputs: [],
+      stateMutability: "view"
+    }];
+  return Viem.encodeFunctionData({
+              abi: abi,
+              functionName: "setAddr",
+              args: [
+                node,
+                owner
+              ]
+            });
+}
+
+async function register(name, years, owner) {
+  var duration = Math.imul(years, 31536000);
+  var currentAddress$1 = await currentAddress();
+  var resolvedAddress = Core__Option.getOr(owner, currentAddress$1);
+  var setAddrData = encodeSetAddr(name, resolvedAddress);
+  var priceInWei = await registerPrice(name, duration);
+  var match = await publicClient.simulateContract({
+        account: currentAddress$1,
+        address: controllerContract.address,
+        abi: controllerContract.abiForWrite,
+        functionName: "register",
+        args: [{
+            name: name,
+            owner: resolvedAddress,
+            duration: duration,
+            resolver: Constants.resolverContractAddress,
+            data: [setAddrData],
+            reverseRecord: false
+          }],
+        value: priceInWei
+      });
+  return await walletClient.writeContract(match.request);
 }
 
 export {
@@ -188,5 +248,7 @@ export {
   publicClient ,
   walletClient ,
   currentAddress ,
+  encodeSetAddr ,
+  register ,
 }
-/* client Not a pure module */
+/* controllerContract Not a pure module */

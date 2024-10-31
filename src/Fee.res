@@ -1,5 +1,5 @@
 let calculate = async (name, years) => {
-  let duration = years * Constants.secondsPerYear
+  let duration = years * 31536000
   let priceInWei = await OnChainOperations.registerPrice(name, duration)
   Console.log(`name: "${name}", duration: ${Int.toString(duration)}, price: ${BigInt.toString(priceInWei)}`)
 

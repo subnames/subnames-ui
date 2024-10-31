@@ -3,19 +3,19 @@
 
 var sld = "ringdao.eth";
 
-var secondsPerYear = 31536000;
-
 var registryContractAddress = "0xd3E89BB05F63337a450711156683d533db976C85";
 
 var controllerContractAddress = "0x50d634E43F5aD7748cf2860760b887655524B593";
+
+var resolverContractAddress = "0x537F40580bB46Ad299F522D1cAC2B7cb71bE7892";
 
 var rpcUrl = "https://koi-rpc.darwinia.network";
 
 export {
   sld ,
-  secondsPerYear ,
   registryContractAddress ,
   controllerContractAddress ,
+  resolverContractAddress ,
   rpcUrl ,
 }
 /* No side effect */

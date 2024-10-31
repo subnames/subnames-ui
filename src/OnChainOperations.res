@@ -92,7 +92,7 @@ let controllerContract = {
         },
       ],
       "name": "register",
-      "outputs": (),
+      "outputs": Array.make(~length=0, ()),
       "stateMutability": "payable",
       "type": "function",
     },
@@ -154,7 +154,15 @@ type walletClient
 @module("viem") external createWalletClient: 'a => walletClient = "createWalletClient"
 @module("viem") external custom: 'a => 'b = "custom"
 @val @scope("window") external ethereum: Dom.window = "ethereum"
+@send external requestAddresses: walletClient => promise<array<string>> = "requestAddresses"
 @send external getAddresses: walletClient => promise<array<string>> = "getAddresses"
+type request
+type requestResult = { request: request }
+@send
+external simulateContract: (publicClient, 'simulateContractParams) => promise<requestResult> =
+  "simulateContract"
+@send external writeContract: (walletClient, request) => promise<'result> = "writeContract"
+@module("viem") external encodeFunctionData: 'a => string = "encodeFunctionData"
 
 let publicClient = createPublicClient({
   "chain": koi,
@@ -167,10 +175,56 @@ let walletClient = createWalletClient({
 })
 
 let currentAddress = async () => {
-  let result = await getAddresses(walletClient)
-  if result->Array.length == 0 {
-    None
-  } else {
-    Some(result->Array.get(0))
-  }
+  let result = await requestAddresses(walletClient)
+  assert(result->Array.length >= 1)
+  result->Array.get(0)->Option.getUnsafe
+}
+
+open Constants
+
+let encodeSetAddr: (string, string) => string = (name, owner) => {
+  let node = namehash(`${name}.${sld}`)
+  let abi = [
+    {
+      "type": "function",
+      "name": "setAddr",
+      "inputs": [{"name": "node", "type": "bytes32"}, {"name": "addr", "type": "address"}],
+      "outputs": [],
+      "stateMutability": "view",
+    },
+  ]
+  encodeFunctionData({
+    "abi": abi,
+    "functionName": "setAddr",
+    "args": [String(node), String(owner)],
+  })
+}
+
+let register: (string, int, option<string>) => promise<unit> = async (name, years, owner) => {
+  let duration = years * 31536000
+  let currentAddress = await currentAddress()
+  let resolvedAddress = owner->Option.getOr(currentAddress)
+  let setAddrData = encodeSetAddr(name, resolvedAddress)
+  let priceInWei = await registerPrice(name, duration)
+  let { request } = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": controllerContract["address"],
+      "abi": controllerContract["abiForWrite"],
+      "functionName": "register",
+      "args": [
+        {
+          "name": name,
+          "owner": resolvedAddress,
+          "duration": duration,
+          "resolver": resolverContractAddress,
+          "data": [setAddrData],
+          "reverseRecord": false,
+        },
+      ],
+      "value": priceInWei,
+    },
+  )
+  await writeContract(walletClient, request)
 }

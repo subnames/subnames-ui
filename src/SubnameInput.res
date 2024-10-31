@@ -2,7 +2,7 @@ open OnChainOperations
 
 type feeState = {
   years: int,
-  feeAmount: string, // Fee amount in ETH
+  feeAmount: string,
 }
 
 type state = {
@@ -11,9 +11,10 @@ type state = {
   errorMessage: option<string>,
   isChecking: bool,
   isAvailable: option<bool>,
-  showFeeSelect: bool, // New field
-  fee: feeState, // New field
-  isCalculatingFee: bool, // Add this new field
+  showFeeSelect: bool,
+  fee: feeState,
+  isCalculatingFee: bool,
+  isRegistering: bool,
 }
 
 // Validation rules for ENS subnames
@@ -55,6 +56,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
       feeAmount: "0.1",
     },
     isCalculatingFee: false,
+    isRegistering: false,
   })
 
   let timeoutRef = React.useRef(None)
@@ -114,6 +116,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
         feeAmount: "0.1", // Fixed fee amount
       },
       isCalculatingFee: false, // Initialize the new field
+      isRegistering: false,
     })
     onValidChange("", false)
   }
@@ -160,6 +163,14 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     // Calculate initial fee for 1 year
     let _ = calculateFee(1)->Promise.then(_ => {
       setState(prev => {...prev, isCalculatingFee: false})
+      Promise.resolve()
+    })
+  }
+
+  let handleRegister = () => {
+    setState(prev => {...prev, isRegistering: true})
+    let _ = register(state.value, state.fee.years, None)->Promise.then(_ => {
+      setState(prev => {...prev, isRegistering: false})
       Promise.resolve()
     })
   }
@@ -296,9 +307,20 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
               </button>
             } else {
               <button
-                onClick={_ => ()}
-                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium">
-                {React.string("Register name")}
+                onClick={_ => handleRegister()}
+                disabled={state.isCalculatingFee || state.isRegistering}
+                className={`w-full py-3 px-4 ${
+                  state.isCalculatingFee || state.isRegistering 
+                    ? "bg-zinc-400" 
+                    : "bg-zinc-800 hover:bg-zinc-700"
+                } text-white rounded-2xl font-medium`}>
+                {if state.isRegistering {
+                  React.string("Registering...")
+                } else if state.isCalculatingFee {
+                  React.string("Calculating...")
+                } else {
+                  React.string("Register name")
+                }}
               </button>
             }}
           </div>
