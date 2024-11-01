@@ -40,7 +40,7 @@ let make = () => {
         {
           (() => {
             if (!connected) {
-              <button onClick={openConnectModal}>
+              <button onClick={openConnectModal} dataTestId="rk-connect-button">
                 {React.string("Connect Wallet")}
               </button>
             } else if (Option.getUnsafe(chain).unsupported) {

@@ -69,6 +69,7 @@ function MyConnectButton(props) {
                                     }
                                   } else {
                                     return React.createElement("button", {
+                                                "data-testid": "rk-connect-button",
                                                 onClick: openConnectModal
                                               }, "Connect Wallet");
                                   }
