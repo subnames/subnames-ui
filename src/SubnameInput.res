@@ -209,7 +209,8 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
               {React.string("Registration Successful!")}
             </h2>
             <p className="text-lg text-gray-700 mb-6">
-              {React.string(`${state.registeredName->Option.getWithDefault("")}.${Constants.sld}`)}
+              <Confetti recycle=false />
+              {React.string(`${state.registeredName->Option.getOr("")}.${Constants.sld}`)}
             </p>
             <button
               onClick={_ => setState(_ => initialState)}

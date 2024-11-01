@@ -7,6 +7,7 @@ import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "./Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import ConfettiReact from "confetti-react";
 import * as OnChainOperations from "./OnChainOperations.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
@@ -453,8 +454,13 @@ function SubnameInput(props) {
                               children: "Registration Successful!",
                               className: "text-2xl font-bold mb-2"
                             }),
-                        JsxRuntime.jsx("p", {
-                              children: Core__Option.getWithDefault(state.registeredName, "") + "." + Constants.sld,
+                        JsxRuntime.jsxs("p", {
+                              children: [
+                                JsxRuntime.jsx(ConfettiReact, {
+                                      recycle: false
+                                    }),
+                                Core__Option.getOr(state.registeredName, "") + "." + Constants.sld
+                              ],
                               className: "text-lg text-gray-700 mb-6"
                             }),
                         JsxRuntime.jsx("button", {
