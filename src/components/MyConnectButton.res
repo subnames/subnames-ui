@@ -32,19 +32,6 @@ module ConnectButton = {
 let make = () => {
   let (name, setName) = React.useState(() => "Loading...")
 
-  let buttonStyle = ReactDOM.Style.make(
-    ~background="rgb(39, 39, 42)",
-    ~color="white",
-    ~padding="8px 16px",
-    ~borderRadius="14px",
-    ~border="none",
-    ~cursor="pointer",
-    ~fontSize="14px",
-    ~fontWeight="500",
-    ~transition="background 0.2s ease",
-    (),
-  )
-
   <ConnectButton.Custom>
     {props => {
       let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
@@ -54,19 +41,22 @@ let make = () => {
       let style = !ready
         ? ReactDOM.Style.make(~opacity="0", ~pointerEvents="none", ~userSelect="none", ())
         : ReactDOM.Style.make()
+
+      let buttonClasses = "bg-zinc-800 text-white px-4 py-2 rounded-xl border-none cursor-pointer text-sm font-medium transition-colors hover:bg-zinc-700"
+
       <div ariaHidden style>
         {(() => {
           if (!connected) {
-            <button onClick={openConnectModal} style={buttonStyle} dataTestId="rk-connect-button">
+            <button onClick={openConnectModal} className=buttonClasses dataTestId="rk-connect-button">
               {React.string("Connect Wallet")}
             </button>
           } else if (Option.getUnsafe(chain).unsupported) {
-            <button onClick={openChainModal} style={buttonStyle}>
+            <button onClick={openChainModal} className=buttonClasses>
               {React.string("Wrong network")}
             </button>
           } else {
-            <div style={ReactDOM.Style.make(~display="flex", ~gap="12px", ())}>
-              <button onClick={openAccountModal} style={buttonStyle}>
+            <div className="flex gap-3">
+              <button onClick={openAccountModal} className=buttonClasses>
                 {Option.getUnsafe(account).address
                 ->OnChainOperations.name
                 ->Promise.then(resolvedName => {

@@ -17,17 +17,6 @@ function MyConnectButton(props) {
       });
   var setName = match[1];
   var name = match[0];
-  var buttonStyle = {
-    background: "rgb(39, 39, 42)",
-    border: "none",
-    color: "white",
-    cursor: "pointer",
-    fontSize: "14px",
-    fontWeight: "500",
-    padding: "8px 16px",
-    borderRadius: "14px",
-    transition: "background 0.2s ease"
-  };
   return React.createElement(Rainbowkit.ConnectButton.Custom, {
               children: (function (props) {
                   var mounted = props.mounted;
@@ -43,6 +32,7 @@ function MyConnectButton(props) {
                         userSelect: "none",
                         pointerEvents: "none"
                       });
+                  var buttonClasses = "bg-zinc-800 text-white px-4 py-2 rounded-xl border-none cursor-pointer text-sm font-medium transition-colors hover:bg-zinc-700";
                   return React.createElement("div", {
                               "aria-hidden": ariaHidden,
                               style: style
@@ -50,17 +40,14 @@ function MyConnectButton(props) {
                                   if (connected) {
                                     if (chain.unsupported) {
                                       return React.createElement("button", {
-                                                  style: buttonStyle,
+                                                  className: buttonClasses,
                                                   onClick: openChainModal
                                                 }, "Wrong network");
                                     } else {
                                       return React.createElement("div", {
-                                                  style: {
-                                                    display: "flex",
-                                                    gap: "12px"
-                                                  }
+                                                  className: "flex gap-3"
                                                 }, React.createElement("button", {
-                                                      style: buttonStyle,
+                                                      className: buttonClasses,
                                                       onClick: openAccountModal
                                                     }, (OnChainOperations.name(account.address).then(function (resolvedName) {
                                                             if (resolvedName === "") {
@@ -77,8 +64,8 @@ function MyConnectButton(props) {
                                     }
                                   } else {
                                     return React.createElement("button", {
+                                                className: buttonClasses,
                                                 "data-testid": "rk-connect-button",
-                                                style: buttonStyle,
                                                 onClick: openConnectModal
                                               }, "Connect Wallet");
                                   }
