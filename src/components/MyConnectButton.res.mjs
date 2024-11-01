@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
 var Custom = {};
@@ -11,6 +12,11 @@ var ConnectButton = {
 };
 
 function MyConnectButton(props) {
+  var match = React.useState(function () {
+        return "Loading...";
+      });
+  var setName = match[1];
+  var name = match[0];
   return React.createElement(Rainbowkit.ConnectButton.Custom, {
               children: (function (props) {
                   var mounted = props.mounted;
@@ -65,7 +71,18 @@ function MyConnectButton(props) {
                                                                   src: chain.iconUrl
                                                                 }) : null) : null, chain.name), React.createElement("button", {
                                                       onClick: openAccountModal
-                                                    }, account.displayName, Core__Option.isSome(account.displayBalance) ? " (" + account.displayBalance + "})" : null));
+                                                    }, (OnChainOperations.name(account.address).then(function (resolvedName) {
+                                                            if (resolvedName === "") {
+                                                              setName(function (param) {
+                                                                    return account.displayName;
+                                                                  });
+                                                            } else {
+                                                              setName(function (param) {
+                                                                    return resolvedName;
+                                                                  });
+                                                            }
+                                                            return Promise.resolve();
+                                                          }), name), Core__Option.isSome(account.displayBalance) ? " (" + account.displayBalance + "})" : null));
                                     }
                                   } else {
                                     return React.createElement("button", {

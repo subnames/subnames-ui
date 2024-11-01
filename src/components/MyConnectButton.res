@@ -1,4 +1,6 @@
+// https://github.com/rainbow-me/rainbowkit/blob/main/packages/rainbowkit/src/components/ConnectButton/ConnectButtonRenderer.tsx
 type account = {
+  address: string,
   displayName: string,
   displayBalance: option<string>,
 }
@@ -28,6 +30,8 @@ module ConnectButton = {
 
 @react.component
 let make = () => {
+  let (name, setName) = React.useState(() => "Loading...")
+
   <ConnectButton.Custom>
     {
       props => {
@@ -74,7 +78,21 @@ let make = () => {
                 </button>
 
                 <button onClick={openAccountModal}>
-                  {React.string(Option.getUnsafe(account).displayName)}
+                  {
+                    Option.getUnsafe(account).address
+                    ->OnChainOperations.name
+                    ->Promise.then(resolvedName => {
+                      if (resolvedName == "") {
+                        setName(_ => Option.getUnsafe(account).displayName)
+                      } else {
+                        setName(_ => resolvedName)
+                      }
+                      Promise.resolve()
+                    })
+                    ->ignore
+                    React.string(name)
+                  }
+
                   {Option.isSome(Option.getUnsafe(account).displayBalance)
                     ? React.string(` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance))})`)
                     : React.null

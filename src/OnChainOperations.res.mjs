@@ -3,9 +3,29 @@
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
+import Sha3Mjs from "./sha3.mjs";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Chains from "viem/chains";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+
+var resolverContract = {
+  address: Constants.resolverContractAddress,
+  abi: [{
+      inputs: [{
+          internalType: "bytes32",
+          name: "node",
+          type: "bytes32"
+        }],
+      name: "name",
+      outputs: [{
+          internalType: "string",
+          name: "",
+          type: "string"
+        }],
+      stateMutability: "view",
+      type: "function"
+    }]
+};
 
 var registryContract = {
   address: Constants.registryContractAddress,
@@ -160,6 +180,26 @@ async function registerPrice(name, duration) {
                 }));
 }
 
+function sha3HexAddress(prim) {
+  return Sha3Mjs(prim);
+}
+
+async function name(address) {
+  var node = Viem.keccak256(Viem.encodePacked([
+            "bytes32",
+            "bytes32"
+          ], [
+            "0x32347c1de91cbc71535aee17456bbe8987cc116a2782950e2697c6fc411ba53f",
+            Sha3Mjs(address)
+          ]));
+  return await client.readContract({
+              address: resolverContract.address,
+              abi: resolverContract.abi,
+              functionName: "name",
+              args: [node]
+            });
+}
+
 var publicClient = Viem.createPublicClient({
       chain: Chains.koi,
       transport: Viem.http(Constants.rpcUrl)
@@ -177,7 +217,7 @@ async function currentAddress() {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperations.res",
-            185,
+            238,
             2
           ],
           Error: new Error()
@@ -246,12 +286,15 @@ async function register(name, years, owner, onStatusChange) {
 }
 
 export {
+  resolverContract ,
   registryContract ,
   controllerContract ,
   client ,
   recordExists ,
   available ,
   registerPrice ,
+  sha3HexAddress ,
+  name ,
   publicClient ,
   walletClient ,
   currentAddress ,

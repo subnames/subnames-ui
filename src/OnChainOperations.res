@@ -12,6 +12,31 @@ external readContract: (publicClient, 'readContractParams) => promise<'result> =
 
 @module("viem/ens") external namehash: string => string = "namehash"
 
+let resolverContract = {
+  "address": Constants.resolverContractAddress,
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32",
+        },
+      ],
+      "name": "name",
+      "outputs": [
+        {
+          "internalType": "string",
+          "name": "",
+          "type": "string",
+        },
+      ],
+      "stateMutability": "view",
+      "type": "function",
+    },
+  ],
+}
+
 let registryContract = {
   "address": Constants.registryContractAddress,
   "abi": [
@@ -147,6 +172,32 @@ let registerPrice: (string, int) => promise<bigint> = async (name, duration) => 
   BigInt.fromInt(result)
 }
 
+@module("./sha3.mjs")
+external sha3HexAddress: string => string = "default"
+@module("viem") external keccak256: string => string = "keccak256"
+@module("viem") external encodePacked: (array<string>, array<string>) => string = "encodePacked"
+
+let name: string => promise<string> = async address => {
+  let node = keccak256(
+    encodePacked(
+      ["bytes32", "bytes32"],
+      [
+        "0x32347c1de91cbc71535aee17456bbe8987cc116a2782950e2697c6fc411ba53f",
+        sha3HexAddress(address),
+      ],
+    ),
+  )
+  await readContract(
+    client,
+    {
+      "address": resolverContract["address"],
+      "abi": resolverContract["abi"],
+      "functionName": "name",
+      "args": [String(node)],
+    },
+  )
+}
+
 ////////////////////////////////////////
 // Wallet client
 ////////////////////////////////////////
@@ -173,7 +224,9 @@ type transaction = {
   blockNumber: bigint,
   status: string,
 }
-@send external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> = "waitForTransactionReceipt"
+@send
+external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
+  "waitForTransactionReceipt"
 
 let walletClient = createWalletClient({
   "chain": koi,
