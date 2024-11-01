@@ -9,7 +9,6 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import ConfettiReact from "confetti-react";
 import * as OnChainOperations from "./OnChainOperations.res.mjs";
-import * as JsxRuntime from "react/jsx-runtime";
 
 var initialState = {
   name: "",
@@ -440,253 +439,178 @@ function SubnameInput(props) {
   }
   var tmp;
   if (state.showResultPanel) {
-    tmp = JsxRuntime.jsx("div", {
-          children: JsxRuntime.jsx("div", {
-                children: JsxRuntime.jsxs("div", {
-                      children: [
-                        JsxRuntime.jsx("div", {
-                              children: JsxRuntime.jsx(Icons.Success.make, {
-                                    className: "w-16 h-16 text-green-500"
-                                  }),
-                              className: "mb-4"
-                            }),
-                        JsxRuntime.jsx("h2", {
-                              children: "Registration Successful!",
-                              className: "text-2xl font-bold mb-2"
-                            }),
-                        JsxRuntime.jsxs("p", {
-                              children: [
-                                JsxRuntime.jsx(ConfettiReact, {
-                                      recycle: false
-                                    }),
-                                Core__Option.getOr(state.registeredName, "") + "." + Constants.sld
-                              ],
-                              className: "text-lg text-gray-700 mb-6"
-                            }),
-                        JsxRuntime.jsx("button", {
-                              children: "Register Another Name",
-                              className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
-                              onClick: (function (param) {
-                                  setState(function (param) {
-                                        return initialState;
-                                      });
-                                })
-                            })
-                      ],
-                      className: "flex flex-col items-center text-center"
-                    }),
-                className: "p-6"
-              }),
+    tmp = React.createElement("div", {
           className: "bg-white rounded-custom shadow-lg overflow-hidden"
-        });
+        }, React.createElement("div", {
+              className: "p-6"
+            }, React.createElement("div", {
+                  className: "flex flex-col items-center text-center"
+                }, React.createElement("div", {
+                      className: "mb-4"
+                    }, React.createElement(Icons.Success.make, {
+                          className: "w-16 h-16 text-green-500"
+                        })), React.createElement("h2", {
+                      className: "text-2xl font-bold mb-2"
+                    }, "Registration Successful!"), React.createElement("p", {
+                      className: "text-lg text-gray-700 mb-6"
+                    }, React.createElement(ConfettiReact, {
+                          recycle: false
+                        }), Core__Option.getOr(state.registeredName, "") + "." + Constants.sld), React.createElement("button", {
+                      className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
+                      onClick: (function (param) {
+                          setState(function (param) {
+                                return initialState;
+                              });
+                        })
+                    }, "Register Another Name"))));
   } else if (state.showFeeSelect) {
-    tmp = JsxRuntime.jsx("div", {
-          children: JsxRuntime.jsxs("div", {
-                children: [
-                  JsxRuntime.jsx("div", {
-                        children: JsxRuntime.jsxs("div", {
-                              children: [
-                                JsxRuntime.jsx("button", {
-                                      children: JsxRuntime.jsx(Icons.Back.make, {}),
-                                      className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
-                                      type: "button",
-                                      onClick: (function (param) {
-                                          setState(function (prev) {
-                                                return {
-                                                        name: prev.name,
-                                                        years: prev.years,
-                                                        isRegistering: prev.isRegistering,
-                                                        onChainStatus: prev.onChainStatus,
-                                                        value: prev.value,
-                                                        isValid: prev.isValid,
-                                                        errorMessage: prev.errorMessage,
-                                                        isChecking: prev.isChecking,
-                                                        isAvailable: prev.isAvailable,
-                                                        showFeeSelect: false,
-                                                        showResultPanel: prev.showResultPanel,
-                                                        registeredName: prev.registeredName,
-                                                        fee: prev.fee,
-                                                        isCalculatingFee: prev.isCalculatingFee
-                                                      };
-                                              });
-                                        })
-                                    }),
-                                JsxRuntime.jsx("span", {
-                                      children: state.value + "." + Constants.sld,
-                                      className: "text-lg font-medium text-gray-700"
-                                    })
-                              ],
-                              className: "flex items-center gap-2"
-                            }),
-                        className: "flex justify-between items-center mb-6"
-                      }),
-                  JsxRuntime.jsxs("div", {
-                        children: [
-                          JsxRuntime.jsx("div", {
-                                children: "CLAIM FOR",
-                                className: "text-lg font-medium"
-                              }),
-                          JsxRuntime.jsx("div", {
-                                children: "AMOUNT",
-                                className: "text-lg font-medium"
-                              })
-                        ],
-                        className: "flex justify-between items-center mb-4"
-                      }),
-                  JsxRuntime.jsxs("div", {
-                        children: [
-                          JsxRuntime.jsxs("div", {
-                                children: [
-                                  JsxRuntime.jsx("button", {
-                                        children: "-",
-                                        className: "w-10 h-10 rounded-full " + (
-                                          state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
-                                        ) + " flex items-center justify-center",
-                                        disabled: state.isCalculatingFee,
-                                        onClick: (function (param) {
-                                            decrementYears();
-                                          })
-                                      }),
-                                  JsxRuntime.jsx("div", {
-                                        children: state.fee.years.toString() + " year" + (
-                                          state.fee.years > 1 ? "s" : ""
-                                        ),
-                                        className: "text-3xl font-bold"
-                                      }),
-                                  JsxRuntime.jsx("button", {
-                                        children: "+",
-                                        className: "w-10 h-10 rounded-full " + (
-                                          state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
-                                        ) + " flex items-center justify-center",
-                                        disabled: state.isCalculatingFee,
-                                        onClick: (function (param) {
-                                            incrementYears();
-                                          })
-                                      })
-                                ],
-                                className: "flex items-center gap-4"
-                              }),
-                          JsxRuntime.jsx("div", {
-                                children: state.isCalculatingFee ? JsxRuntime.jsx(Icons.Spinner.make, {
-                                        className: "w-8 h-8 text-zinc-600"
-                                      }) : state.fee.feeAmount + " RING",
-                                className: "text-3xl font-bold"
-                              })
-                        ],
-                        className: "flex justify-between items-center"
-                      }),
-                  JsxRuntime.jsx("div", {
-                        children: props.isWalletConnected ? JsxRuntime.jsx("button", {
-                                children: state.isRegistering ? "Registering..." : (
-                                    state.isCalculatingFee ? "Calculating..." : "Register name"
-                                  ),
-                                className: "w-full py-3 px-4 " + (
-                                  state.isCalculatingFee || state.isRegistering ? "bg-zinc-400" : "bg-zinc-800 hover:bg-zinc-700"
-                                ) + " text-white rounded-2xl font-medium",
-                                disabled: state.isCalculatingFee || state.isRegistering,
-                                onClick: (function (param) {
-                                    handleRegister();
-                                  })
-                              }) : JsxRuntime.jsx("button", {
-                                children: "Connect wallet",
-                                className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
-                                onClick: (function (param) {
-                                    onConnectWallet();
-                                  })
-                              }),
-                        className: "mt-6"
-                      })
-                ],
-                className: "p-6"
-              }),
+    tmp = React.createElement("div", {
           className: "bg-white rounded-custom shadow-lg overflow-hidden"
-        });
+        }, React.createElement("div", {
+              className: "p-6"
+            }, React.createElement("div", {
+                  className: "flex justify-between items-center mb-6"
+                }, React.createElement("div", {
+                      className: "flex items-center gap-2"
+                    }, React.createElement("button", {
+                          className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                          type: "button",
+                          onClick: (function (param) {
+                              setState(function (prev) {
+                                    return {
+                                            name: prev.name,
+                                            years: prev.years,
+                                            isRegistering: prev.isRegistering,
+                                            onChainStatus: prev.onChainStatus,
+                                            value: prev.value,
+                                            isValid: prev.isValid,
+                                            errorMessage: prev.errorMessage,
+                                            isChecking: prev.isChecking,
+                                            isAvailable: prev.isAvailable,
+                                            showFeeSelect: false,
+                                            showResultPanel: prev.showResultPanel,
+                                            registeredName: prev.registeredName,
+                                            fee: prev.fee,
+                                            isCalculatingFee: prev.isCalculatingFee
+                                          };
+                                  });
+                            })
+                        }, React.createElement(Icons.Back.make, {})), React.createElement("span", {
+                          className: "text-lg font-medium text-gray-700"
+                        }, state.value + "." + Constants.sld))), React.createElement("div", {
+                  className: "flex justify-between items-center mb-4"
+                }, React.createElement("div", {
+                      className: "text-lg font-medium"
+                    }, "CLAIM FOR"), React.createElement("div", {
+                      className: "text-lg font-medium"
+                    }, "AMOUNT")), React.createElement("div", {
+                  className: "flex justify-between items-center"
+                }, React.createElement("div", {
+                      className: "flex items-center gap-4"
+                    }, React.createElement("button", {
+                          className: "w-10 h-10 rounded-full " + (
+                            state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
+                          ) + " flex items-center justify-center",
+                          disabled: state.isCalculatingFee,
+                          onClick: (function (param) {
+                              decrementYears();
+                            })
+                        }, "-"), React.createElement("div", {
+                          className: "text-3xl font-bold"
+                        }, state.fee.years.toString() + " year" + (
+                          state.fee.years > 1 ? "s" : ""
+                        )), React.createElement("button", {
+                          className: "w-10 h-10 rounded-full " + (
+                            state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
+                          ) + " flex items-center justify-center",
+                          disabled: state.isCalculatingFee,
+                          onClick: (function (param) {
+                              incrementYears();
+                            })
+                        }, "+")), React.createElement("div", {
+                      className: "text-3xl font-bold"
+                    }, state.isCalculatingFee ? React.createElement(Icons.Spinner.make, {
+                            className: "w-8 h-8 text-zinc-600"
+                          }) : state.fee.feeAmount + " RING")), React.createElement("div", {
+                  className: "mt-6"
+                }, props.isWalletConnected ? React.createElement("button", {
+                        className: "w-full py-3 px-4 " + (
+                          state.isCalculatingFee || state.isRegistering ? "bg-zinc-400" : "bg-zinc-800 hover:bg-zinc-700"
+                        ) + " text-white rounded-2xl font-medium",
+                        disabled: state.isCalculatingFee || state.isRegistering,
+                        onClick: (function (param) {
+                            handleRegister();
+                          })
+                      }, state.isRegistering ? "Registering..." : (
+                          state.isCalculatingFee ? "Calculating..." : "Register name"
+                        )) : React.createElement("button", {
+                        className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
+                        onClick: (function (param) {
+                            onConnectWallet();
+                          })
+                      }, "Connect wallet"))));
   } else {
     var error$1 = state.errorMessage;
     var tmp$1;
     if (error$1 !== undefined) {
-      tmp$1 = JsxRuntime.jsx("div", {
-            children: JsxRuntime.jsx("div", {
-                  children: error$1,
-                  className: "text-gray-600 text-md"
-                }),
+      tmp$1 = React.createElement("div", {
             className: "px-6 py-4"
-          });
+          }, React.createElement("div", {
+                className: "text-gray-600 text-md"
+              }, error$1));
     } else if (state.isValid && state.value !== "") {
       var tmp$2;
       if (state.isChecking) {
-        tmp$2 = JsxRuntime.jsx(Icons.Spinner.make, {
+        tmp$2 = React.createElement(Icons.Spinner.make, {
               className: "w-5 h-5 text-zinc-600"
             });
       } else {
         var match$1 = state.isAvailable;
         tmp$2 = match$1 !== undefined ? (
-            match$1 ? JsxRuntime.jsx("button", {
-                    children: "Next",
+            match$1 ? React.createElement("button", {
                     className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
                     type: "button",
                     onClick: (function (param) {
                         handleNextClick();
                       })
-                  }) : JsxRuntime.jsx("span", {
-                    children: "Not available",
+                  }, "Next") : React.createElement("span", {
                     className: "text-red-500 text-sm"
-                  })
+                  }, "Not available")
           ) : null;
       }
-      tmp$1 = JsxRuntime.jsx("div", {
-            children: JsxRuntime.jsxs("div", {
-                  children: [
-                    JsxRuntime.jsx("p", {
-                          children: state.value + "." + Constants.sld,
-                          className: "text-gray-700"
-                        }),
-                    tmp$2
-                  ],
-                  className: "flex items-center justify-between"
-                }),
+      tmp$1 = React.createElement("div", {
             className: "px-6 py-4"
-          });
+          }, React.createElement("div", {
+                className: "flex items-center justify-between"
+              }, React.createElement("p", {
+                    className: "text-gray-700"
+                  }, state.value + "." + Constants.sld), tmp$2));
     } else {
       tmp$1 = null;
     }
-    tmp = JsxRuntime.jsxs("div", {
-          children: [
-            JsxRuntime.jsxs("div", {
-                  children: [
-                    JsxRuntime.jsx("input", {
-                          className: "w-full px-6 py-4 text-lg focus:outline-none",
-                          placeholder: "SEARCH FOR A NAME",
-                          type: "text",
-                          value: state.value,
-                          onChange: handleChange
-                        }),
-                    JsxRuntime.jsxs("div", {
-                          children: [
-                            state.value !== "" ? JsxRuntime.jsx("button", {
-                                    children: JsxRuntime.jsx(Icons.Close.make, {}),
-                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
-                                    type: "button",
-                                    onClick: handleClear
-                                  }) : null,
-                            state.value === "" ? JsxRuntime.jsx(Icons.Search.make, {}) : null
-                          ],
-                          className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
-                        })
-                  ],
-                  className: "relative " + (
-                    Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
-                  )
-                }),
-            tmp$1
-          ],
+    tmp = React.createElement("div", {
           className: "bg-white rounded-custom shadow-lg overflow-hidden"
-        });
+        }, React.createElement("div", {
+              className: "relative " + (
+                Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
+              )
+            }, React.createElement("input", {
+                  className: "w-full px-6 py-4 text-lg focus:outline-none",
+                  placeholder: "SEARCH FOR A NAME",
+                  type: "text",
+                  value: state.value,
+                  onChange: handleChange
+                }), React.createElement("div", {
+                  className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
+                }, state.value !== "" ? React.createElement("button", {
+                        className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                        type: "button",
+                        onClick: handleClear
+                      }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement(Icons.Search.make, {}) : null)), tmp$1);
   }
-  return JsxRuntime.jsx("div", {
-              children: tmp,
+  return React.createElement("div", {
               className: "w-full max-w-xl mx-auto"
-            });
+            }, tmp);
 }
 
 var make = SubnameInput;

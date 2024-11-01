@@ -3,7 +3,6 @@
 import * as App from "./App.res.mjs";
 import * as React from "react";
 import * as Client from "react-dom/client";
-import * as JsxRuntime from "react/jsx-runtime";
 
 import './index.css'
 ;
@@ -14,8 +13,8 @@ import '@rainbow-me/rainbowkit/styles.css'
 var domElement = document.querySelector("#root");
 
 if (!(domElement == null)) {
-  Client.createRoot(domElement).render(JsxRuntime.jsx(React.StrictMode, {
-            children: JsxRuntime.jsx(App.make, {})
+  Client.createRoot(domElement).render(React.createElement(React.StrictMode, {
+            children: React.createElement(App.make, {})
           }));
 }
 

@@ -5,7 +5,6 @@ import * as Wagmi from "wagmi";
 import * as Constants from "./Constants.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
-import * as JsxRuntime from "react/jsx-runtime";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
@@ -24,41 +23,24 @@ var config = Rainbowkit.getDefaultConfig({
     });
 
 function App$Layout(props) {
-  return JsxRuntime.jsxs("div", {
-              children: [
-                JsxRuntime.jsx("header", {
-                      children: JsxRuntime.jsx("div", {
-                            children: JsxRuntime.jsxs("div", {
-                                  children: [
-                                    JsxRuntime.jsx("div", {
-                                          children: JsxRuntime.jsx("h1", {
-                                                children: Constants.sld,
-                                                className: "text-xl font-bold text-gray-900"
-                                              }),
-                                          className: "flex-shrink-0"
-                                        }),
-                                    JsxRuntime.jsx("div", {
-                                          children: JsxRuntime.jsx(Rainbowkit.ConnectButton, {
-                                                label: "Connect",
-                                                accountStatus: "address"
-                                              }),
-                                          className: "flex items-center"
-                                        })
-                                  ],
-                                  className: "flex justify-between items-center h-16"
-                                }),
-                            className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-                          })
-                    }),
-                JsxRuntime.jsx("main", {
-                      children: JsxRuntime.jsx("div", {
-                            children: props.children,
-                            className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
-                          })
-                    })
-              ],
+  return React.createElement("div", {
               className: "min-h-screen bg-gray-50"
-            });
+            }, React.createElement("header", undefined, React.createElement("div", {
+                      className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+                    }, React.createElement("div", {
+                          className: "flex justify-between items-center h-16"
+                        }, React.createElement("div", {
+                              className: "flex-shrink-0"
+                            }, React.createElement("h1", {
+                                  className: "text-xl font-bold text-gray-900"
+                                }, Constants.sld)), React.createElement("div", {
+                              className: "flex items-center"
+                            }, React.createElement(Rainbowkit.ConnectButton, {
+                                  label: "Connect",
+                                  accountStatus: "address"
+                                }))))), React.createElement("main", undefined, React.createElement("div", {
+                      className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
+                    }, props.children)));
 }
 
 function App$Subname(props) {
@@ -91,24 +73,23 @@ function App$Subname(props) {
     var connectButton = document.querySelector("[data-testid='rk-connect-button']");
     connectButton.click();
   };
-  return JsxRuntime.jsx("div", {
-              children: JsxRuntime.jsx(SubnameInput.make, {
-                    onValidChange: handleValidChange,
-                    isWalletConnected: match$1[0],
-                    onConnectWallet: handleConnectWallet
-                  }),
+  return React.createElement("div", {
               className: "p-8"
-            });
+            }, React.createElement(SubnameInput.make, {
+                  onValidChange: handleValidChange,
+                  isWalletConnected: match$1[0],
+                  onConnectWallet: handleConnectWallet
+                }));
 }
 
 function App(props) {
-  return JsxRuntime.jsx(Wagmi.WagmiProvider, {
+  return React.createElement(Wagmi.WagmiProvider, {
               config: config,
-              children: JsxRuntime.jsx(ReactQuery.QueryClientProvider, {
+              children: React.createElement(ReactQuery.QueryClientProvider, {
                     client: queryClient,
-                    children: JsxRuntime.jsx(Rainbowkit.RainbowKitProvider, {
-                          children: JsxRuntime.jsx(App$Layout, {
-                                children: JsxRuntime.jsx(App$Subname, {})
+                    children: React.createElement(Rainbowkit.RainbowKitProvider, {
+                          children: React.createElement(App$Layout, {
+                                children: React.createElement(App$Subname, {})
                               }),
                           theme: Rainbowkit.lightTheme({
                                 accentColor: "rgb(39, 39, 42)",
