@@ -76,7 +76,7 @@ module Layout = {
               </h1>
             </div>
             <div className="flex items-center">
-              <ConnectButton label="Connect" accountStatus="address"/>
+              <MyConnectButton />
             </div>
           </div>
         </div>

@@ -5,6 +5,7 @@ import * as Wagmi from "wagmi";
 import * as Constants from "./Constants.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
+import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
@@ -35,10 +36,7 @@ function App$Layout(props) {
                                   className: "text-xl font-bold text-gray-900"
                                 }, Constants.sld)), React.createElement("div", {
                               className: "flex items-center"
-                            }, React.createElement(Rainbowkit.ConnectButton, {
-                                  label: "Connect",
-                                  accountStatus: "address"
-                                }))))), React.createElement("main", undefined, React.createElement("div", {
+                            }, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
                       className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                     }, props.children)));
 }

@@ -13,9 +13,15 @@ var ConnectButton = {
 function MyConnectButton(props) {
   return React.createElement(Rainbowkit.ConnectButton.Custom, {
               children: (function (props) {
-                  var connected = props.mounted && Core__Option.isSome(props.account) && Core__Option.isSome(props.chain);
-                  var ariaHidden = connected ? false : true;
-                  var style = connected ? ({}) : ({
+                  var mounted = props.mounted;
+                  var openConnectModal = props.openConnectModal;
+                  var openChainModal = props.openChainModal;
+                  var openAccountModal = props.openAccountModal;
+                  var chain = props.chain;
+                  var account = props.account;
+                  var connected = mounted && Core__Option.isSome(account) && Core__Option.isSome(chain);
+                  var ariaHidden = !mounted;
+                  var style = mounted ? ({}) : ({
                         opacity: "0",
                         userSelect: "none",
                         pointerEvents: "none"
@@ -23,7 +29,50 @@ function MyConnectButton(props) {
                   return React.createElement("div", {
                               "aria-hidden": ariaHidden,
                               style: style
-                            });
+                            }, (function () {
+                                  if (connected) {
+                                    if (chain.unsupported) {
+                                      return React.createElement("button", {
+                                                  onClick: openChainModal
+                                                }, "Wrong network");
+                                    } else {
+                                      return React.createElement("div", {
+                                                  style: {
+                                                    display: "flex",
+                                                    gap: "12px"
+                                                  }
+                                                }, React.createElement("button", {
+                                                      style: {
+                                                        display: "flex",
+                                                        alignItems: "center"
+                                                      },
+                                                      onClick: openChainModal
+                                                    }, chain.hasIcon ? React.createElement("div", {
+                                                            style: {
+                                                              background: chain.iconBackground,
+                                                              height: "12px",
+                                                              marginRight: "4px",
+                                                              overflow: "hidden",
+                                                              width: "12px",
+                                                              borderRadius: "999px"
+                                                            }
+                                                          }, Core__Option.isSome(chain.iconUrl) ? React.createElement("img", {
+                                                                  style: {
+                                                                    height: "12px",
+                                                                    width: "12px"
+                                                                  },
+                                                                  alt: "",
+                                                                  src: chain.iconUrl
+                                                                }) : null) : null, chain.name), React.createElement("button", {
+                                                      onClick: openAccountModal
+                                                    }, account.displayName, Core__Option.isSome(account.displayBalance) ? " (" + account.displayBalance + "})" : null));
+                                    }
+                                  } else {
+                                    return React.createElement("button", {
+                                                onClick: openConnectModal
+                                              }, "Connect Wallet");
+                                  }
+                                })());
                 })
             });
 }
