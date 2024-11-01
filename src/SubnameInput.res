@@ -16,6 +16,8 @@ type state = {
   isChecking: bool,
   isAvailable: option<bool>,
   showFeeSelect: bool,
+  showResultPanel: bool,
+  registeredName: option<string>,
   fee: feeState,
   isCalculatingFee: bool,
 }
@@ -31,6 +33,8 @@ let initialState = {
   isChecking: false,
   isAvailable: None,
   showFeeSelect: false,
+  showResultPanel: false,
+  registeredName: None,
   fee: {
     years: 1,
     feeAmount: "0.1",
@@ -174,7 +178,11 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
       None,
       handleOnChainStatusChange,
     )->Promise.then(_ => {
-      setState(_ => initialState)
+      setState(prev => {
+        ...initialState,
+        showResultPanel: true,
+        registeredName: Some(state.value),
+      })
       onValidChange("", false)
       Promise.resolve()
     })
@@ -189,7 +197,29 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   }
 
   <div className="w-full max-w-xl mx-auto">
-    {if !state.showFeeSelect {
+    {if state.showResultPanel {
+      // Result panel
+      <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+        <div className="p-6">
+          <div className="flex flex-col items-center text-center">
+            <div className="mb-4">
+              <Icons.Success className="w-16 h-16 text-green-500" />
+            </div>
+            <h2 className="text-2xl font-bold mb-2">
+              {React.string("Registration Successful!")}
+            </h2>
+            <p className="text-lg text-gray-700 mb-6">
+              {React.string(`${state.registeredName->Option.getWithDefault("")}.${Constants.sld}`)}
+            </p>
+            <button
+              onClick={_ => setState(_ => initialState)}
+              className="py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium">
+              {React.string("Register Another Name")}
+            </button>
+          </div>
+        </div>
+      </div>
+    } else if !state.showFeeSelect {
       // Input panel
       <div className={`bg-white rounded-custom shadow-lg overflow-hidden`}>
         <div className={`relative ${state.errorMessage->Option.isSome || (state.isValid && state.value != "") ? "divide-y-short" : ""}`}>

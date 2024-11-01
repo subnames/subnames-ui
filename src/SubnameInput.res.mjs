@@ -21,6 +21,8 @@ var initialState = {
   isChecking: false,
   isAvailable: undefined,
   showFeeSelect: false,
+  showResultPanel: false,
+  registeredName: undefined,
   fee: {
     years: 1,
     feeAmount: "0.1"
@@ -92,6 +94,8 @@ function SubnameInput(props) {
                   isChecking: true,
                   isAvailable: undefined,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: prev.isCalculatingFee
                 };
@@ -111,6 +115,8 @@ function SubnameInput(props) {
                           isChecking: false,
                           isAvailable: available,
                           showFeeSelect: prev.showFeeSelect,
+                          showResultPanel: prev.showResultPanel,
+                          registeredName: prev.registeredName,
                           fee: prev.fee,
                           isCalculatingFee: prev.isCalculatingFee
                         };
@@ -129,6 +135,8 @@ function SubnameInput(props) {
                           isChecking: false,
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
+                          showResultPanel: prev.showResultPanel,
+                          registeredName: prev.registeredName,
                           fee: prev.fee,
                           isCalculatingFee: prev.isCalculatingFee
                         };
@@ -149,6 +157,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: prev.isCalculatingFee
                 };
@@ -173,6 +183,8 @@ function SubnameInput(props) {
                           isChecking: prev.isChecking,
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
+                          showResultPanel: prev.showResultPanel,
+                          registeredName: prev.registeredName,
                           fee: prev.fee,
                           isCalculatingFee: prev.isCalculatingFee
                         };
@@ -205,6 +217,8 @@ function SubnameInput(props) {
                         isChecking: prev.isChecking,
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
+                        showResultPanel: prev.showResultPanel,
+                        registeredName: prev.registeredName,
                         fee: {
                           years: years,
                           feeAmount: priceInEth
@@ -230,6 +244,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: true
                 };
@@ -247,6 +263,8 @@ function SubnameInput(props) {
                         isChecking: prev.isChecking,
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
+                        showResultPanel: prev.showResultPanel,
+                        registeredName: prev.registeredName,
                         fee: prev.fee,
                         isCalculatingFee: false
                       };
@@ -271,6 +289,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: true
                 };
@@ -288,6 +308,8 @@ function SubnameInput(props) {
                         isChecking: prev.isChecking,
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
+                        showResultPanel: prev.showResultPanel,
+                        registeredName: prev.registeredName,
                         fee: prev.fee,
                         isCalculatingFee: false
                       };
@@ -308,6 +330,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: true,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: true
                 };
@@ -325,6 +349,8 @@ function SubnameInput(props) {
                         isChecking: prev.isChecking,
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
+                        showResultPanel: prev.showResultPanel,
+                        registeredName: prev.registeredName,
                         fee: prev.fee,
                         isCalculatingFee: false
                       };
@@ -345,6 +371,8 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: prev.isCalculatingFee
                 };
@@ -363,13 +391,33 @@ function SubnameInput(props) {
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
+                  showResultPanel: prev.showResultPanel,
+                  registeredName: prev.registeredName,
                   fee: prev.fee,
                   isCalculatingFee: prev.isCalculatingFee
                 };
         });
     OnChainOperations.register(state.value, state.fee.years, undefined, handleOnChainStatusChange).then(function () {
-          setState(function (param) {
-                return initialState;
+          setState(function (prev) {
+                return {
+                        name: "",
+                        years: 1,
+                        isRegistering: false,
+                        onChainStatus: "Simulating",
+                        value: "",
+                        isValid: false,
+                        errorMessage: undefined,
+                        isChecking: false,
+                        isAvailable: undefined,
+                        showFeeSelect: false,
+                        showResultPanel: true,
+                        registeredName: state.value,
+                        fee: {
+                          years: 1,
+                          feeAmount: "0.1"
+                        },
+                        isCalculatingFee: false
+                      };
               });
           onValidChange("", false);
           return Promise.resolve();
@@ -390,7 +438,42 @@ function SubnameInput(props) {
     }
   }
   var tmp;
-  if (state.showFeeSelect) {
+  if (state.showResultPanel) {
+    tmp = JsxRuntime.jsx("div", {
+          children: JsxRuntime.jsx("div", {
+                children: JsxRuntime.jsxs("div", {
+                      children: [
+                        JsxRuntime.jsx("div", {
+                              children: JsxRuntime.jsx(Icons.Success.make, {
+                                    className: "w-16 h-16 text-green-500"
+                                  }),
+                              className: "mb-4"
+                            }),
+                        JsxRuntime.jsx("h2", {
+                              children: "Registration Successful!",
+                              className: "text-2xl font-bold mb-2"
+                            }),
+                        JsxRuntime.jsx("p", {
+                              children: Core__Option.getWithDefault(state.registeredName, "") + "." + Constants.sld,
+                              className: "text-lg text-gray-700 mb-6"
+                            }),
+                        JsxRuntime.jsx("button", {
+                              children: "Register Another Name",
+                              className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
+                              onClick: (function (param) {
+                                  setState(function (param) {
+                                        return initialState;
+                                      });
+                                })
+                            })
+                      ],
+                      className: "flex flex-col items-center text-center"
+                    }),
+                className: "p-6"
+              }),
+          className: "bg-white rounded-custom shadow-lg overflow-hidden"
+        });
+  } else if (state.showFeeSelect) {
     tmp = JsxRuntime.jsx("div", {
           children: JsxRuntime.jsxs("div", {
                 children: [
@@ -414,6 +497,8 @@ function SubnameInput(props) {
                                                         isChecking: prev.isChecking,
                                                         isAvailable: prev.isAvailable,
                                                         showFeeSelect: false,
+                                                        showResultPanel: prev.showResultPanel,
+                                                        registeredName: prev.registeredName,
                                                         fee: prev.fee,
                                                         isCalculatingFee: prev.isCalculatingFee
                                                       };
