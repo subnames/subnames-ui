@@ -32,78 +32,61 @@ module ConnectButton = {
 let make = () => {
   let (name, setName) = React.useState(() => "Loading...")
 
+  let buttonStyle = ReactDOM.Style.make(
+    ~background="rgb(39, 39, 42)",
+    ~color="white",
+    ~padding="8px 16px",
+    ~borderRadius="14px",
+    ~border="none",
+    ~cursor="pointer",
+    ~fontSize="14px",
+    ~fontWeight="500",
+    ~transition="background 0.2s ease",
+    (),
+  )
+
   <ConnectButton.Custom>
-    {
-      props => {
-        let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
-        let ready = mounted
-        let connected = ready && Option.isSome(account) && Option.isSome(chain)
-        let ariaHidden = !ready ? true : false
-        let style = !ready ? ReactDOM.Style.make(~opacity="0", ~pointerEvents="none", ~userSelect="none", ()) : ReactDOM.Style.make()
-        <div ariaHidden style>
-        {
-          (() => {
-            if (!connected) {
-              <button onClick={openConnectModal} dataTestId="rk-connect-button">
-                {React.string("Connect Wallet")}
+    {props => {
+      let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
+      let ready = mounted
+      let connected = ready && Option.isSome(account) && Option.isSome(chain)
+      let ariaHidden = !ready ? true : false
+      let style = !ready
+        ? ReactDOM.Style.make(~opacity="0", ~pointerEvents="none", ~userSelect="none", ())
+        : ReactDOM.Style.make()
+      <div ariaHidden style>
+        {(() => {
+          if (!connected) {
+            <button onClick={openConnectModal} style={buttonStyle} dataTestId="rk-connect-button">
+              {React.string("Connect Wallet")}
+            </button>
+          } else if (Option.getUnsafe(chain).unsupported) {
+            <button onClick={openChainModal} style={buttonStyle}>
+              {React.string("Wrong network")}
+            </button>
+          } else {
+            <div style={ReactDOM.Style.make(~display="flex", ~gap="12px", ())}>
+              <button onClick={openAccountModal} style={buttonStyle}>
+                {Option.getUnsafe(account).address
+                ->OnChainOperations.name
+                ->Promise.then(resolvedName => {
+                  if (resolvedName == "") {
+                    setName(_ => Option.getUnsafe(account).displayName)
+                  } else {
+                    setName(_ => resolvedName)
+                  }
+                  Promise.resolve()
+                })
+                ->ignore
+                React.string(name)}
+                {Option.isSome(Option.getUnsafe(account).displayBalance)
+                  ? React.string(` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance)})`)
+                  : React.null}
               </button>
-            } else if (Option.getUnsafe(chain).unsupported) {
-              <button onClick={openChainModal}>
-                {React.string("Wrong network")}
-              </button>
-            } else {
-              <div style={ReactDOM.Style.make(~display="flex", ~gap="12px", ())}>
-                <button
-                  onClick={openChainModal}
-                  style={ReactDOM.Style.make(~display="flex", ~alignItems="center", ())}
-                >
-                  {
-                    if (Option.getUnsafe(chain).hasIcon) {
-                      <div
-                        style={ReactDOM.Style.make(~background=Option.getUnsafe(chain).iconBackground, ~width="12px", ~height="12px", ~borderRadius="999px", ~overflow="hidden", ~marginRight="4px", ())}
-                      >
-                        {
-                          if (Option.isSome(Option.getUnsafe(chain).iconUrl)) {
-                            <img src=Option.getUnsafe(Option.getUnsafe(chain).iconUrl) alt="" style={ReactDOM.Style.make(~width="12px", ~height="12px", ())}/>
-                          } else {
-                            React.null
-                          }
-                        }
-                      </div>
-                    } else {
-                      React.null
-                    }
-                  }
-                  {React.string(Option.getUnsafe(chain).name)}
-                </button>
-
-                <button onClick={openAccountModal}>
-                  {
-                    Option.getUnsafe(account).address
-                    ->OnChainOperations.name
-                    ->Promise.then(resolvedName => {
-                      if (resolvedName == "") {
-                        setName(_ => Option.getUnsafe(account).displayName)
-                      } else {
-                        setName(_ => resolvedName)
-                      }
-                      Promise.resolve()
-                    })
-                    ->ignore
-                    React.string(name)
-                  }
-
-                  {Option.isSome(Option.getUnsafe(account).displayBalance)
-                    ? React.string(` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance))})`)
-                    : React.null
-                  }
-                </button>
-              </div>
-            }
-          })()
-        }
-        </div>
-      }
-    }
+            </div>
+          }
+        })()}
+      </div>
+    }}
   </ConnectButton.Custom>
 }
