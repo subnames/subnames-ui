@@ -6,6 +6,10 @@ type feeState = {
 }
 
 type state = {
+  name: string,
+  years: int,
+  isRegistering: bool,
+  onChainStatus: OnChainOperations.transactionStatus,
   value: string,
   isValid: bool,
   errorMessage: option<string>,
@@ -14,7 +18,24 @@ type state = {
   showFeeSelect: bool,
   fee: feeState,
   isCalculatingFee: bool,
-  isRegistering: bool,
+}
+
+let initialState = {
+  name: "",
+  years: 1,
+  isRegistering: false,
+  onChainStatus: Simulating,
+  value: "",
+  isValid: false,
+  errorMessage: None,
+  isChecking: false,
+  isAvailable: None,
+  showFeeSelect: false,
+  fee: {
+    years: 1,
+    feeAmount: "0.1",
+  },
+  isCalculatingFee: false,
 }
 
 // Validation rules for ENS subnames
@@ -44,20 +65,7 @@ let isValidSubname = (name: string): (bool, option<string>) => {
 
 @react.component
 let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~onConnectWallet: unit => unit) => {
-  let (state, setState) = React.useState(_ => {
-    value: "",
-    isValid: false,
-    errorMessage: None,
-    isChecking: false,
-    isAvailable: None,
-    showFeeSelect: false,
-    fee: {
-      years: 1,
-      feeAmount: "0.1",
-    },
-    isCalculatingFee: false,
-    isRegistering: false,
-  })
+  let (state, setState) = React.useState(_ => initialState)
 
   let timeoutRef = React.useRef(None)
 
@@ -104,20 +112,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
   }
 
   let handleClear = _ => {
-    setState(_ => {
-      value: "",
-      isValid: false,
-      errorMessage: None,
-      isChecking: false,
-      isAvailable: None,
-      showFeeSelect: false,
-      fee: {
-        years: 1,
-        feeAmount: "0.1", // Fixed fee amount
-      },
-      isCalculatingFee: false, // Initialize the new field
-      isRegistering: false,
-    })
+    setState(_ => initialState)
     onValidChange("", false)
   }
 
@@ -167,12 +162,30 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     })
   }
 
+  let handleOnChainStatusChange = (status: transactionStatus) => {
+    setState(prev => {...prev, onChainStatus: status})
+  }
+
   let handleRegister = () => {
     setState(prev => {...prev, isRegistering: true})
-    let _ = register(state.value, state.fee.years, None)->Promise.then(_ => {
-      setState(prev => {...prev, isRegistering: false})
+    let _ = OnChainOperations.register(
+      state.value,
+      state.fee.years,
+      None,
+      handleOnChainStatusChange,
+    )->Promise.then(_ => {
+      setState(_ => initialState)
+      onValidChange("", false)
       Promise.resolve()
     })
+  }
+
+  let statusMessage = switch state.onChainStatus {
+    | Simulating => "Preparing transaction..."
+    | WaitingForSignature => "Please sign the transaction in your wallet"
+    | Broadcasting => "Broadcasting transaction..."
+    | Confirmed => "Registration successful!"
+    | Failed(error) => `Registration failed: ${error}`
   }
 
   <div className="w-full max-w-xl mx-auto">

@@ -177,7 +177,7 @@ async function currentAddress() {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperations.res",
-            179,
+            185,
             2
           ],
           Error: new Error()
@@ -214,7 +214,8 @@ function encodeSetAddr(name, owner) {
             });
 }
 
-async function register(name, years, owner) {
+async function register(name, years, owner, onStatusChange) {
+  onStatusChange("Simulating");
   var duration = Math.imul(years, 31536000);
   var currentAddress$1 = await currentAddress();
   var resolvedAddress = Core__Option.getOr(owner, currentAddress$1);
@@ -231,11 +232,17 @@ async function register(name, years, owner) {
             duration: duration,
             resolver: Constants.resolverContractAddress,
             data: [setAddrData],
-            reverseRecord: false
+            reverseRecord: true
           }],
         value: priceInWei
       });
-  return await walletClient.writeContract(match.request);
+  onStatusChange("WaitingForSignature");
+  var hash = await walletClient.writeContract(match.request);
+  onStatusChange("Broadcasting");
+  await publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  return onStatusChange("Confirmed");
 }
 
 export {

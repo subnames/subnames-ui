@@ -10,6 +10,24 @@ import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "./OnChainOperations.res.mjs";
 import * as JsxRuntime from "react/jsx-runtime";
 
+var initialState = {
+  name: "",
+  years: 1,
+  isRegistering: false,
+  onChainStatus: "Simulating",
+  value: "",
+  isValid: false,
+  errorMessage: undefined,
+  isChecking: false,
+  isAvailable: undefined,
+  showFeeSelect: false,
+  fee: {
+    years: 1,
+    feeAmount: "0.1"
+  },
+  isCalculatingFee: false
+};
+
 function isValidSubname(name) {
   var length = name.length;
   if (length === 0) {
@@ -56,20 +74,7 @@ function SubnameInput(props) {
   var onConnectWallet = props.onConnectWallet;
   var onValidChange = props.onValidChange;
   var match = React.useState(function () {
-        return {
-                value: "",
-                isValid: false,
-                errorMessage: undefined,
-                isChecking: false,
-                isAvailable: undefined,
-                showFeeSelect: false,
-                fee: {
-                  years: 1,
-                  feeAmount: "0.1"
-                },
-                isCalculatingFee: false,
-                isRegistering: false
-              };
+        return initialState;
       });
   var setState = match[1];
   var state = match[0];
@@ -77,6 +82,10 @@ function SubnameInput(props) {
   var checkNameAvailability = async function (value) {
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: prev.onChainStatus,
                   value: prev.value,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -84,8 +93,7 @@ function SubnameInput(props) {
                   isAvailable: undefined,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: prev.isCalculatingFee,
-                  isRegistering: prev.isRegistering
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
     try {
@@ -93,6 +101,10 @@ function SubnameInput(props) {
       console.log(available);
       return setState(function (prev) {
                   return {
+                          name: prev.name,
+                          years: prev.years,
+                          isRegistering: prev.isRegistering,
+                          onChainStatus: prev.onChainStatus,
                           value: prev.value,
                           isValid: prev.isValid,
                           errorMessage: prev.errorMessage,
@@ -100,14 +112,17 @@ function SubnameInput(props) {
                           isAvailable: available,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee,
-                          isRegistering: prev.isRegistering
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
     }
     catch (exn){
       return setState(function (prev) {
                   return {
+                          name: prev.name,
+                          years: prev.years,
+                          isRegistering: prev.isRegistering,
+                          onChainStatus: prev.onChainStatus,
                           value: prev.value,
                           isValid: prev.isValid,
                           errorMessage: "Failed to check availability",
@@ -115,8 +130,7 @@ function SubnameInput(props) {
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee,
-                          isRegistering: prev.isRegistering
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
     }
@@ -125,6 +139,10 @@ function SubnameInput(props) {
     var newValue = $$event.target.value;
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: prev.onChainStatus,
                   value: newValue,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -132,8 +150,7 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: prev.isCalculatingFee,
-                  isRegistering: prev.isRegistering
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
     var timeout = timeoutRef.current;
@@ -146,6 +163,10 @@ function SubnameInput(props) {
             var isValid = match[0];
             setState(function (prev) {
                   return {
+                          name: prev.name,
+                          years: prev.years,
+                          isRegistering: prev.isRegistering,
+                          onChainStatus: prev.onChainStatus,
                           value: prev.value,
                           isValid: isValid,
                           errorMessage: errorMessage,
@@ -153,8 +174,7 @@ function SubnameInput(props) {
                           isAvailable: prev.isAvailable,
                           showFeeSelect: prev.showFeeSelect,
                           fee: prev.fee,
-                          isCalculatingFee: prev.isCalculatingFee,
-                          isRegistering: prev.isRegistering
+                          isCalculatingFee: prev.isCalculatingFee
                         };
                 });
             onValidChange(newValue, isValid);
@@ -167,20 +187,7 @@ function SubnameInput(props) {
   };
   var handleClear = function (param) {
     setState(function (param) {
-          return {
-                  value: "",
-                  isValid: false,
-                  errorMessage: undefined,
-                  isChecking: false,
-                  isAvailable: undefined,
-                  showFeeSelect: false,
-                  fee: {
-                    years: 1,
-                    feeAmount: "0.1"
-                  },
-                  isCalculatingFee: false,
-                  isRegistering: false
-                };
+          return initialState;
         });
     onValidChange("", false);
   };
@@ -188,6 +195,10 @@ function SubnameInput(props) {
     var priceInEth = await Fee.calculate(state.value, years);
     return setState(function (prev) {
                 return {
+                        name: prev.name,
+                        years: prev.years,
+                        isRegistering: prev.isRegistering,
+                        onChainStatus: prev.onChainStatus,
                         value: prev.value,
                         isValid: prev.isValid,
                         errorMessage: prev.errorMessage,
@@ -198,8 +209,7 @@ function SubnameInput(props) {
                           years: years,
                           feeAmount: priceInEth
                         },
-                        isCalculatingFee: prev.isCalculatingFee,
-                        isRegistering: prev.isRegistering
+                        isCalculatingFee: prev.isCalculatingFee
                       };
               });
   };
@@ -210,6 +220,10 @@ function SubnameInput(props) {
     var newYears = state.fee.years + 1 | 0;
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: prev.onChainStatus,
                   value: prev.value,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -217,13 +231,16 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: true,
-                  isRegistering: prev.isRegistering
+                  isCalculatingFee: true
                 };
         });
     calculateFee(newYears).then(function () {
           setState(function (prev) {
                 return {
+                        name: prev.name,
+                        years: prev.years,
+                        isRegistering: prev.isRegistering,
+                        onChainStatus: prev.onChainStatus,
                         value: prev.value,
                         isValid: prev.isValid,
                         errorMessage: prev.errorMessage,
@@ -231,8 +248,7 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false,
-                        isRegistering: prev.isRegistering
+                        isCalculatingFee: false
                       };
               });
           return Promise.resolve();
@@ -245,6 +261,10 @@ function SubnameInput(props) {
     var newYears = state.fee.years - 1 | 0;
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: prev.onChainStatus,
                   value: prev.value,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -252,13 +272,16 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: true,
-                  isRegistering: prev.isRegistering
+                  isCalculatingFee: true
                 };
         });
     calculateFee(newYears).then(function () {
           setState(function (prev) {
                 return {
+                        name: prev.name,
+                        years: prev.years,
+                        isRegistering: prev.isRegistering,
+                        onChainStatus: prev.onChainStatus,
                         value: prev.value,
                         isValid: prev.isValid,
                         errorMessage: prev.errorMessage,
@@ -266,8 +289,7 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false,
-                        isRegistering: prev.isRegistering
+                        isCalculatingFee: false
                       };
               });
           return Promise.resolve();
@@ -276,6 +298,10 @@ function SubnameInput(props) {
   var handleNextClick = function () {
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: prev.onChainStatus,
                   value: prev.value,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -283,13 +309,16 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: true,
                   fee: prev.fee,
-                  isCalculatingFee: true,
-                  isRegistering: prev.isRegistering
+                  isCalculatingFee: true
                 };
         });
     calculateFee(1).then(function () {
           setState(function (prev) {
                 return {
+                        name: prev.name,
+                        years: prev.years,
+                        isRegistering: prev.isRegistering,
+                        onChainStatus: prev.onChainStatus,
                         value: prev.value,
                         isValid: prev.isValid,
                         errorMessage: prev.errorMessage,
@@ -297,16 +326,19 @@ function SubnameInput(props) {
                         isAvailable: prev.isAvailable,
                         showFeeSelect: prev.showFeeSelect,
                         fee: prev.fee,
-                        isCalculatingFee: false,
-                        isRegistering: prev.isRegistering
+                        isCalculatingFee: false
                       };
               });
           return Promise.resolve();
         });
   };
-  var handleRegister = function () {
+  var handleOnChainStatusChange = function (status) {
     setState(function (prev) {
           return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: prev.isRegistering,
+                  onChainStatus: status,
                   value: prev.value,
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
@@ -314,27 +346,49 @@ function SubnameInput(props) {
                   isAvailable: prev.isAvailable,
                   showFeeSelect: prev.showFeeSelect,
                   fee: prev.fee,
-                  isCalculatingFee: prev.isCalculatingFee,
-                  isRegistering: true
+                  isCalculatingFee: prev.isCalculatingFee
                 };
         });
-    OnChainOperations.register(state.value, state.fee.years, undefined).then(function () {
-          setState(function (prev) {
-                return {
-                        value: prev.value,
-                        isValid: prev.isValid,
-                        errorMessage: prev.errorMessage,
-                        isChecking: prev.isChecking,
-                        isAvailable: prev.isAvailable,
-                        showFeeSelect: prev.showFeeSelect,
-                        fee: prev.fee,
-                        isCalculatingFee: prev.isCalculatingFee,
-                        isRegistering: false
-                      };
+  };
+  var handleRegister = function () {
+    setState(function (prev) {
+          return {
+                  name: prev.name,
+                  years: prev.years,
+                  isRegistering: true,
+                  onChainStatus: prev.onChainStatus,
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  showFeeSelect: prev.showFeeSelect,
+                  fee: prev.fee,
+                  isCalculatingFee: prev.isCalculatingFee
+                };
+        });
+    OnChainOperations.register(state.value, state.fee.years, undefined, handleOnChainStatusChange).then(function () {
+          setState(function (param) {
+                return initialState;
               });
+          onValidChange("", false);
           return Promise.resolve();
         });
   };
+  var error = state.onChainStatus;
+  if (typeof error !== "object") {
+    switch (error) {
+      case "Simulating" :
+          break;
+      case "WaitingForSignature" :
+          break;
+      case "Broadcasting" :
+          break;
+      case "Confirmed" :
+          break;
+      
+    }
+  }
   var tmp;
   if (state.showFeeSelect) {
     tmp = JsxRuntime.jsx("div", {
@@ -350,6 +404,10 @@ function SubnameInput(props) {
                                       onClick: (function (param) {
                                           setState(function (prev) {
                                                 return {
+                                                        name: prev.name,
+                                                        years: prev.years,
+                                                        isRegistering: prev.isRegistering,
+                                                        onChainStatus: prev.onChainStatus,
                                                         value: prev.value,
                                                         isValid: prev.isValid,
                                                         errorMessage: prev.errorMessage,
@@ -357,8 +415,7 @@ function SubnameInput(props) {
                                                         isAvailable: prev.isAvailable,
                                                         showFeeSelect: false,
                                                         fee: prev.fee,
-                                                        isCalculatingFee: prev.isCalculatingFee,
-                                                        isRegistering: prev.isRegistering
+                                                        isCalculatingFee: prev.isCalculatingFee
                                                       };
                                               });
                                         })
@@ -454,12 +511,12 @@ function SubnameInput(props) {
           className: "bg-white rounded-custom shadow-lg overflow-hidden"
         });
   } else {
-    var error = state.errorMessage;
+    var error$1 = state.errorMessage;
     var tmp$1;
-    if (error !== undefined) {
+    if (error$1 !== undefined) {
       tmp$1 = JsxRuntime.jsx("div", {
             children: JsxRuntime.jsx("div", {
-                  children: error,
+                  children: error$1,
                   className: "text-gray-600 text-md"
                 }),
             className: "px-6 py-4"

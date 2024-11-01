@@ -157,7 +157,7 @@ type walletClient
 @send external requestAddresses: walletClient => promise<array<string>> = "requestAddresses"
 @send external getAddresses: walletClient => promise<array<string>> = "getAddresses"
 type request
-type requestResult = { request: request }
+type requestResult = {request: request}
 @send
 external simulateContract: (publicClient, 'simulateContractParams) => promise<requestResult> =
   "simulateContract"
@@ -168,6 +168,12 @@ let publicClient = createPublicClient({
   "chain": koi,
   "transport": http(Constants.rpcUrl),
 })
+
+type transaction = {
+  blockNumber: bigint,
+  status: string,
+}
+@send external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> = "waitForTransactionReceipt"
 
 let walletClient = createWalletClient({
   "chain": koi,
@@ -200,13 +206,26 @@ let encodeSetAddr: (string, string) => string = (name, owner) => {
   })
 }
 
-let register: (string, int, option<string>) => promise<unit> = async (name, years, owner) => {
+type transactionStatus =
+  | Simulating
+  | WaitingForSignature
+  | Broadcasting
+  | Confirmed
+  | Failed(string)
+
+let register: (string, int, option<string>, transactionStatus => unit) => promise<unit> = async (
+  name,
+  years,
+  owner,
+  onStatusChange,
+) => {
+  onStatusChange(Simulating)
   let duration = years * 31536000
   let currentAddress = await currentAddress()
   let resolvedAddress = owner->Option.getOr(currentAddress)
   let setAddrData = encodeSetAddr(name, resolvedAddress)
   let priceInWei = await registerPrice(name, duration)
-  let { request } = await simulateContract(
+  let {request} = await simulateContract(
     publicClient,
     {
       "account": currentAddress,
@@ -220,11 +239,18 @@ let register: (string, int, option<string>) => promise<unit> = async (name, year
           "duration": duration,
           "resolver": resolverContractAddress,
           "data": [setAddrData],
-          "reverseRecord": false,
+          "reverseRecord": true,
         },
       ],
       "value": priceInWei,
     },
   )
-  await writeContract(walletClient, request)
+
+  onStatusChange(WaitingForSignature)
+  let hash = await writeContract(walletClient, request)
+
+  onStatusChange(Broadcasting)
+  // Wait for transaction confirmation
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  onStatusChange(Confirmed)
 }
