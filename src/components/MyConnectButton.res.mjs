@@ -30,6 +30,23 @@ function MyConnectButton(props) {
                   var setUpdateName = match$1.setUpdateName;
                   var updateName = match$1.updateName;
                   React.useEffect((function () {
+                          if (account !== undefined) {
+                            OnChainOperations.name(account.address).then(function (resolvedName) {
+                                  if (resolvedName === "") {
+                                    setName(function (param) {
+                                          return account.address;
+                                        });
+                                  } else {
+                                    setName(function (param) {
+                                          return resolvedName;
+                                        });
+                                  }
+                                  return Promise.resolve();
+                                });
+                          }
+                          
+                        }), [account]);
+                  React.useEffect((function () {
                           Core__Option.map(account, (function (a) {
                                   if (updateName) {
                                     OnChainOperations.name(a.address).then(function (resolvedName) {

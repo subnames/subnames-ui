@@ -39,16 +39,31 @@ let make = () => {
       let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
 
       React.useEffect1(() => {
-        // Console.log(`address: ${Option.getUnsafe(account).address}`)
+        switch account {
+        | Some(acc) =>
+          let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
+            if resolvedName == "" {
+              setName(_ => acc.address)
+            } else {
+              setName(_ => resolvedName)
+            }
+            Promise.resolve()
+          })
+        | None => ()
+        }
+        None
+      }, [account])
+
+      React.useEffect1(() => {
         let r = Option.map(account, a => {
-          if (updateName) {
+          if updateName {
             let _ = OnChainOperations.name(a.address)->Promise.then(resolvedName => {
-                if resolvedName == "" {
-                  setName(_ => a.address)
-                } else {
-                  setName(_ => resolvedName)
-                }
-                setUpdateName(_ => false)
+              if resolvedName == "" {
+                setName(_ => a.address)
+              } else {
+                setName(_ => resolvedName)
+              }
+              setUpdateName(_ => false)
               Promise.resolve()
             })
           }
