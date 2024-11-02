@@ -47,26 +47,33 @@ function MyConnectButton(props) {
                           
                         }), [account]);
                   React.useEffect((function () {
-                          Core__Option.map(account, (function (a) {
-                                  if (updateName) {
-                                    OnChainOperations.name(a.address).then(function (resolvedName) {
-                                          if (resolvedName === "") {
-                                            setName(function (param) {
-                                                  return a.address;
-                                                });
-                                          } else {
-                                            setName(function (param) {
-                                                  return resolvedName;
-                                                });
-                                          }
-                                          setUpdateName(function (param) {
-                                                return false;
-                                              });
-                                          return Promise.resolve();
+                          console.log("updateName: " + (
+                                updateName ? "true" : "false"
+                              ));
+                          if (updateName) {
+                            console.log("account: " + (
+                                  Core__Option.isSome(account) ? account.address : "None"
+                                ));
+                            if (account !== undefined) {
+                              OnChainOperations.name(account.address).then(function (resolvedName) {
+                                    if (resolvedName === "") {
+                                      setName(function (param) {
+                                            return account.address;
+                                          });
+                                    } else {
+                                      setName(function (param) {
+                                            return resolvedName;
+                                          });
+                                    }
+                                    setUpdateName(function (param) {
+                                          return false;
                                         });
-                                  }
-                                  
-                                }));
+                                    return Promise.resolve();
+                                  });
+                            }
+                            
+                          }
+                          
                         }), [updateName]);
                   var connected = mounted && Core__Option.isSome(account) && Core__Option.isSome(chain);
                   var ariaHidden = !mounted;

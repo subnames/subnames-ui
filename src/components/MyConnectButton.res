@@ -30,7 +30,6 @@ module ConnectButton = {
 
 @react.component
 let make = () => {
-
   <ConnectButton.Custom>
     {props => {
       let (name, setName) = React.useState(() => "Loading...")
@@ -53,22 +52,24 @@ let make = () => {
         }
         None
       }, [account])
-
       React.useEffect1(() => {
-        let r = Option.map(account, a => {
-          if updateName {
-            let _ = OnChainOperations.name(a.address)->Promise.then(resolvedName => {
+        Console.log(`updateName: ${updateName ? "true" : "false"}`)
+        if updateName {
+          Console.log(`account: ${Option.isSome(account) ? Option.getUnsafe(account).address : "None"}`)
+          switch account {
+          | Some(acc) =>
+            let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
               if resolvedName == "" {
-                setName(_ => a.address)
+                setName(_ => acc.address)
               } else {
                 setName(_ => resolvedName)
               }
               setUpdateName(_ => false)
               Promise.resolve()
             })
+          | None => ()
           }
-          None
-        })
+        }
         None
       }, [updateName])
 
@@ -82,26 +83,31 @@ let make = () => {
       let buttonClasses = "bg-zinc-800 text-white px-4 py-2 rounded-xl border-none cursor-pointer text-sm font-medium transition-colors hover:bg-zinc-700"
 
       <div ariaHidden style>
-        {(() => {
-          if (!connected) {
-            <button onClick={openConnectModal} className=buttonClasses dataTestId="rk-connect-button">
-              {React.string("Connect Wallet")}
-            </button>
-          } else if (Option.getUnsafe(chain).unsupported) {
-            <button onClick={openChainModal} className=buttonClasses>
-              {React.string("Wrong network")}
-            </button>
-          } else {
-            <div className="flex gap-3">
-              <button onClick={openAccountModal} className=buttonClasses>
-                {React.string(name)}
-                {Option.isSome(Option.getUnsafe(account).displayBalance)
-                  ? React.string(` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance)})`)
-                  : React.null}
+        {(
+          () => {
+            if !connected {
+              <button
+                onClick={openConnectModal} className=buttonClasses dataTestId="rk-connect-button">
+                {React.string("Connect Wallet")}
               </button>
-            </div>
+            } else if Option.getUnsafe(chain).unsupported {
+              <button onClick={openChainModal} className=buttonClasses>
+                {React.string("Wrong network")}
+              </button>
+            } else {
+              <div className="flex gap-3">
+                <button onClick={openAccountModal} className=buttonClasses>
+                  {React.string(name)}
+                  {Option.isSome(Option.getUnsafe(account).displayBalance)
+                    ? React.string(
+                        ` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance)})`,
+                      )
+                    : React.null}
+                </button>
+              </div>
+            }
           }
-        })()}
+        )()}
       </div>
     }}
   </ConnectButton.Custom>
