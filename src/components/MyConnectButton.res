@@ -30,11 +30,33 @@ module ConnectButton = {
 
 @react.component
 let make = () => {
-  let (name, setName) = React.useState(() => "Loading...")
 
   <ConnectButton.Custom>
     {props => {
+      let (name, setName) = React.useState(() => "Loading...")
+
+      let {updateName, setUpdateName} = NameContext.use()
       let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
+
+      React.useEffect1(() => {
+        // Console.log(`address: ${Option.getUnsafe(account).address}`)
+        let r = Option.map(account, a => {
+          if (updateName) {
+            let _ = OnChainOperations.name(a.address)->Promise.then(resolvedName => {
+                if resolvedName == "" {
+                  setName(_ => a.address)
+                } else {
+                  setName(_ => resolvedName)
+                }
+                setUpdateName(_ => false)
+              Promise.resolve()
+            })
+          }
+          None
+        })
+        None
+      }, [updateName])
+
       let ready = mounted
       let connected = ready && Option.isSome(account) && Option.isSome(chain)
       let ariaHidden = !ready ? true : false
@@ -57,18 +79,7 @@ let make = () => {
           } else {
             <div className="flex gap-3">
               <button onClick={openAccountModal} className=buttonClasses>
-                {Option.getUnsafe(account).address
-                ->OnChainOperations.name
-                ->Promise.then(resolvedName => {
-                  if (resolvedName == "") {
-                    setName(_ => Option.getUnsafe(account).displayName)
-                  } else {
-                    setName(_ => resolvedName)
-                  }
-                  Promise.resolve()
-                })
-                ->ignore
-                React.string(name)}
+                {React.string(name)}
                 {Option.isSome(Option.getUnsafe(account).displayBalance)
                   ? React.string(` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance)})`)
                   : React.null}

@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Constants from "./Constants.res.mjs";
+import * as NameContext from "./NameContext.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
@@ -81,18 +82,27 @@ function App$Subname(props) {
 }
 
 function App(props) {
-  return React.createElement(Wagmi.WagmiProvider, {
-              config: config,
-              children: React.createElement(ReactQuery.QueryClientProvider, {
-                    client: queryClient,
-                    children: React.createElement(Rainbowkit.RainbowKitProvider, {
-                          children: React.createElement(App$Layout, {
-                                children: React.createElement(App$Subname, {})
-                              }),
-                          theme: Rainbowkit.lightTheme({
-                                accentColor: "rgb(39, 39, 42)",
-                                accentColorForeground: "white",
-                                borderRadius: "large"
+  var match = React.useState(function () {
+        return true;
+      });
+  return React.createElement(NameContext.Provider.make, {
+              value: {
+                updateName: match[0],
+                setUpdateName: match[1]
+              },
+              children: React.createElement(Wagmi.WagmiProvider, {
+                    config: config,
+                    children: React.createElement(ReactQuery.QueryClientProvider, {
+                          client: queryClient,
+                          children: React.createElement(Rainbowkit.RainbowKitProvider, {
+                                children: React.createElement(App$Layout, {
+                                      children: React.createElement(App$Subname, {})
+                                    }),
+                                theme: Rainbowkit.lightTheme({
+                                      accentColor: "rgb(39, 39, 42)",
+                                      accentColorForeground: "white",
+                                      borderRadius: "large"
+                                    })
                               })
                         })
                   })

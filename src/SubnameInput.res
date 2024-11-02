@@ -69,6 +69,7 @@ let isValidSubname = (name: string): (bool, option<string>) => {
 
 @react.component
 let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~onConnectWallet: unit => unit) => {
+  let {updateName, setUpdateName} = NameContext.use()
   let (state, setState) = React.useState(_ => initialState)
 
   let timeoutRef = React.useRef(None)
@@ -184,6 +185,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
         registeredName: Some(state.value),
       })
       onValidChange("", false)
+      setUpdateName(_ => true)
       Promise.resolve()
     })
   }

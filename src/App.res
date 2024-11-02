@@ -46,11 +46,6 @@ type themeParams = {
 @module("@rainbow-me/rainbowkit")
 external lightTheme: themeParams => 'theme = "lightTheme"
 
-module ConnectButton = {
-  @module("@rainbow-me/rainbowkit") @react.component
-  external make: (~label: string, ~accountStatus: string) => React.element = "ConnectButton"
-}
-
 let queryClient = makeQueryClient()
 
 let transports = Map.make()
@@ -135,17 +130,21 @@ module Subname = {
 
 @react.component
 let make = () => {
-  <WagmiProvider config={config}>
-    <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider theme={lightTheme({
-        accentColor: "rgb(39, 39, 42)",
-        accentColorForeground: "white",
-        borderRadius: "large",
-      })}>
-        <Layout>
+  let (updateName, setUpdateName) = React.useState(() => true)
+
+  <NameContext.Provider value={updateName, setUpdateName}>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={lightTheme({
+          accentColor: "rgb(39, 39, 42)",
+          accentColorForeground: "white",
+          borderRadius: "large",
+        })}>
+          <Layout>
             <Subname />
-        </Layout>
-      </RainbowKitProvider>
-    </QueryClientProvider>
-  </WagmiProvider>
+          </Layout>
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </NameContext.Provider>
 }

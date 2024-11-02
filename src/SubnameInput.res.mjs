@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "./Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as NameContext from "./NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import ConfettiReact from "confetti-react";
 import * as OnChainOperations from "./OnChainOperations.res.mjs";
@@ -75,11 +76,13 @@ function isValidSubname(name) {
 function SubnameInput(props) {
   var onConnectWallet = props.onConnectWallet;
   var onValidChange = props.onValidChange;
-  var match = React.useState(function () {
+  var match = NameContext.use();
+  var setUpdateName = match.setUpdateName;
+  var match$1 = React.useState(function () {
         return initialState;
       });
-  var setState = match[1];
-  var state = match[0];
+  var setState = match$1[1];
+  var state = match$1[0];
   var timeoutRef = React.useRef(undefined);
   var checkNameAvailability = async function (value) {
     setState(function (prev) {
@@ -420,6 +423,9 @@ function SubnameInput(props) {
                       };
               });
           onValidChange("", false);
+          setUpdateName(function (param) {
+                return true;
+              });
           return Promise.resolve();
         });
   };
@@ -565,9 +571,9 @@ function SubnameInput(props) {
               className: "w-5 h-5 text-zinc-600"
             });
       } else {
-        var match$1 = state.isAvailable;
-        tmp$2 = match$1 !== undefined ? (
-            match$1 ? React.createElement("button", {
+        var match$2 = state.isAvailable;
+        tmp$2 = match$2 !== undefined ? (
+            match$2 ? React.createElement("button", {
                     className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
                     type: "button",
                     onClick: (function (param) {
