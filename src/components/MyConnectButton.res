@@ -42,7 +42,7 @@ let make = () => {
         | Some(acc) =>
           let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
             if resolvedName == "" {
-              setName(_ => acc.address)
+              setName(_ => acc.displayName)
             } else {
               setName(_ => resolvedName)
             }
@@ -60,7 +60,7 @@ let make = () => {
           | Some(acc) =>
             let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
               if resolvedName == "" {
-                setName(_ => acc.address)
+                setName(_ => acc.displayName)
               } else {
                 setName(_ => resolvedName)
               }

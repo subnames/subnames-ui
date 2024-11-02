@@ -34,7 +34,7 @@ function MyConnectButton(props) {
                             OnChainOperations.name(account.address).then(function (resolvedName) {
                                   if (resolvedName === "") {
                                     setName(function (param) {
-                                          return account.address;
+                                          return account.displayName;
                                         });
                                   } else {
                                     setName(function (param) {
@@ -58,7 +58,7 @@ function MyConnectButton(props) {
                               OnChainOperations.name(account.address).then(function (resolvedName) {
                                     if (resolvedName === "") {
                                       setName(function (param) {
-                                            return account.address;
+                                            return account.displayName;
                                           });
                                     } else {
                                       setName(function (param) {
