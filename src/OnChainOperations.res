@@ -204,7 +204,7 @@ let name: string => promise<string> = async address => {
 type walletClient
 @module("viem") external createWalletClient: 'a => walletClient = "createWalletClient"
 @module("viem") external custom: 'a => 'b = "custom"
-@val @scope("window") external ethereum: Dom.window = "ethereum"
+@val @scope("window") external ethereum: option<Dom.window> = "ethereum"
 @send external requestAddresses: walletClient => promise<array<string>> = "requestAddresses"
 @send external getAddresses: walletClient => promise<array<string>> = "getAddresses"
 type request
@@ -228,12 +228,25 @@ type transaction = {
 external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
   "waitForTransactionReceipt"
 
-let walletClient = createWalletClient({
-  "chain": koi,
-  "transport": custom(ethereum),
-})
 
-let currentAddress = async () => {
+// Console.log("ethereum")
+// Console.log(ethereum)
+
+
+
+// // let walletClient = createWalletClient({
+// //   "chain": koi,
+// //   "transport": custom(ethereum),
+// // })
+
+let buildWalletClient = () => {
+  switch (ethereum) {
+  | Some(ethereum) => Some(createWalletClient({"chain": koi, "transport": custom(ethereum)}))
+  | None => None
+  }
+}
+
+let currentAddress = async (walletClient) => {
   let result = await requestAddresses(walletClient)
   assert(result->Array.length >= 1)
   result->Array.get(0)->Option.getUnsafe
@@ -266,7 +279,8 @@ type transactionStatus =
   | Confirmed
   | Failed(string)
 
-let register: (string, int, option<string>, transactionStatus => unit) => promise<unit> = async (
+let register: (walletClient, string, int, option<string>, transactionStatus => unit) => promise<unit> = async (
+  walletClient,
   name,
   years,
   owner,
@@ -274,7 +288,7 @@ let register: (string, int, option<string>, transactionStatus => unit) => promis
 ) => {
   onStatusChange(Simulating)
   let duration = years * 31536000
-  let currentAddress = await currentAddress()
+  let currentAddress = await currentAddress(walletClient)
   let resolvedAddress = owner->Option.getOr(currentAddress)
   let setAddrData = encodeSetAddr(name, resolvedAddress)
   let priceInWei = await registerPrice(name, duration)

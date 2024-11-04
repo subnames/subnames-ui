@@ -173,7 +173,9 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
 
   let handleRegister = () => {
     setState(prev => {...prev, isRegistering: true})
+    let walletClient = OnChainOperations.buildWalletClient()
     let _ = OnChainOperations.register(
+      walletClient->Option.getUnsafe,
       state.value,
       state.fee.years,
       None,

@@ -400,7 +400,8 @@ function SubnameInput(props) {
                   isCalculatingFee: prev.isCalculatingFee
                 };
         });
-    OnChainOperations.register(state.value, state.fee.years, undefined, handleOnChainStatusChange).then(function () {
+    var walletClient = OnChainOperations.buildWalletClient();
+    OnChainOperations.register(walletClient, state.value, state.fee.years, undefined, handleOnChainStatusChange).then(function () {
           setState(function (prev) {
                 return {
                         name: "",

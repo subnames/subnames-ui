@@ -7,6 +7,7 @@ import * as NameContext from "./NameContext.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
+import * as OnChainOperations from "./OnChainOperations.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
@@ -42,6 +43,10 @@ function App$Layout(props) {
                     }, props.children)));
 }
 
+var walletClient = OnChainOperations.buildWalletClient();
+
+var hasWallet = walletClient !== undefined;
+
 function App$Subname(props) {
   var match = React.useState(function () {
         return [
@@ -74,11 +79,20 @@ function App$Subname(props) {
   };
   return React.createElement("div", {
               className: "p-8"
-            }, React.createElement(SubnameInput.make, {
-                  onValidChange: handleValidChange,
-                  isWalletConnected: match$1[0],
-                  onConnectWallet: handleConnectWallet
-                }));
+            }, hasWallet ? React.createElement(SubnameInput.make, {
+                    onValidChange: handleValidChange,
+                    isWalletConnected: match$1[0],
+                    onConnectWallet: handleConnectWallet
+                  }) : React.createElement("div", {
+                    className: "text-center p-4 bg-yellow-100 rounded-2xl mb-4"
+                  }, React.createElement("p", {
+                        className: "text-yellow-800"
+                      }, "Please install a wallet extension like MetaMask to continue."), React.createElement("a", {
+                        className: "text-blue-600 hover:text-blue-800 underline mt-2 inline-block",
+                        href: "https://metamask.io/download/",
+                        rel: "noopener noreferrer",
+                        target: "_blank"
+                      }, "Install MetaMask")));
 }
 
 function App(props) {

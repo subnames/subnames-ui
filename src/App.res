@@ -38,6 +38,8 @@ external makeQueryClient: unit => 'client = "QueryClient"
 @module("wagmi")
 external http: unit => transport = "http"
 
+
+
 type themeParams = {
   accentColor: string,
   accentColorForeground: string,
@@ -98,6 +100,12 @@ module UseAccount = {
 }
 
 module Subname = {
+  let walletClient = OnChainOperations.buildWalletClient()
+  let hasWallet = switch (walletClient) {
+    | Some(_) => true
+    | None => false
+  }
+
   @react.component
   let make = () => {
     let (validSubname, setValidSubname) = React.useState(_ => ("", false))
@@ -119,11 +127,27 @@ module Subname = {
     }
 
     <div className="p-8">
-      <SubnameInput 
-        onValidChange={handleValidChange}
-        isWalletConnected
-        onConnectWallet={handleConnectWallet}
-      />
+      {if !hasWallet {
+        <div className="text-center p-4 bg-yellow-100 rounded-2xl mb-4">
+          <p className="text-yellow-800">
+            {React.string("Please install a wallet extension like MetaMask to continue.")}
+          </p>
+          <a
+            href="https://metamask.io/download/"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-600 hover:text-blue-800 underline mt-2 inline-block">
+            {React.string("Install MetaMask")}
+          </a>
+        </div>
+      } else {
+        <SubnameInput
+          onValidChange={handleValidChange}
+          isWalletConnected
+          onConnectWallet={handleConnectWallet}
+        />
+      }}
+
     </div>
   }
 }

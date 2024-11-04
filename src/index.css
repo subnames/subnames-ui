@@ -3,7 +3,6 @@
 @tailwind utilities;
 
 body {
-  background: #ff00882e;
   min-height: 100vh;
   display: flex;
   align-items: center;

@@ -4,6 +4,7 @@ import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
 import Sha3Mjs from "./sha3.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Chains from "viem/chains";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -205,19 +206,25 @@ var publicClient = Viem.createPublicClient({
       transport: Viem.http(Constants.rpcUrl)
     });
 
-var walletClient = Viem.createWalletClient({
-      chain: Chains.koi,
-      transport: Viem.custom(window.ethereum)
-    });
+function buildWalletClient() {
+  var ethereum = window.ethereum;
+  if (ethereum !== undefined) {
+    return Caml_option.some(Viem.createWalletClient({
+                    chain: Chains.koi,
+                    transport: Viem.custom(Caml_option.valFromOption(ethereum))
+                  }));
+  }
+  
+}
 
-async function currentAddress() {
+async function currentAddress(walletClient) {
   var result = await walletClient.requestAddresses();
   if (result.length < 1) {
     throw {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperations.res",
-            238,
+            251,
             2
           ],
           Error: new Error()
@@ -254,10 +261,10 @@ function encodeSetAddr(name, owner) {
             });
 }
 
-async function register(name, years, owner, onStatusChange) {
+async function register(walletClient, name, years, owner, onStatusChange) {
   onStatusChange("Simulating");
   var duration = Math.imul(years, 31536000);
-  var currentAddress$1 = await currentAddress();
+  var currentAddress$1 = await currentAddress(walletClient);
   var resolvedAddress = Core__Option.getOr(owner, currentAddress$1);
   var setAddrData = encodeSetAddr(name, resolvedAddress);
   var priceInWei = await registerPrice(name, duration);
@@ -296,7 +303,7 @@ export {
   sha3HexAddress ,
   name ,
   publicClient ,
-  walletClient ,
+  buildWalletClient ,
   currentAddress ,
   encodeSetAddr ,
   register ,
