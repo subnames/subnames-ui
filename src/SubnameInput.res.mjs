@@ -286,6 +286,8 @@ function SubnameInput(props) {
           className: "bg-white rounded-custom shadow-lg overflow-hidden"
         }, React.createElement(FeePanel.make, {
               name: state.value,
+              isWalletConnected: props.isWalletConnected,
+              isRegistering: state.isRegistering,
               onBack: (function () {
                   setState(function (prev) {
                         return {
@@ -303,10 +305,8 @@ function SubnameInput(props) {
                               };
                       });
                 }),
-              isWalletConnected: props.isWalletConnected,
               onConnectWallet: props.onConnectWallet,
-              onRegister: handleRegister,
-              isRegistering: state.isRegistering
+              onRegister: handleRegister
             }));
   } else {
     var error$1 = state.errorMessage;

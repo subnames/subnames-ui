@@ -6,10 +6,10 @@ import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
 
 function FeePanel(props) {
-  var isRegistering = props.isRegistering;
   var onRegister = props.onRegister;
   var onConnectWallet = props.onConnectWallet;
   var onBack = props.onBack;
+  var isRegistering = props.isRegistering;
   var name = props.name;
   var match = React.useState(function () {
         return {

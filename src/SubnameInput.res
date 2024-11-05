@@ -237,11 +237,11 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
       <div className={`bg-white rounded-custom shadow-lg overflow-hidden`}>
         <FeePanel
           name={state.value}
-          onBack={() => setState(prev => {...prev, showFeeSelect: false})}
           isWalletConnected
+          isRegistering={state.isRegistering}
+          onBack={() => setState(prev => {...prev, showFeeSelect: false})}
           onConnectWallet
           onRegister={handleRegister}
-          isRegistering={state.isRegistering}
         />
       </div>
     }}

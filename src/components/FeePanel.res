@@ -6,11 +6,11 @@ type feeState = {
 @react.component
 let make = (
   ~name: string,
-  ~onBack: unit => unit,
   ~isWalletConnected: bool,
+  ~isRegistering: bool,
+  ~onBack: unit => unit,
   ~onConnectWallet: unit => unit,
   ~onRegister: (~years: int) => unit,
-  ~isRegistering: bool,
 ) => {
   let (fee, setFee) = React.useState(_ => {
     years: 1,
