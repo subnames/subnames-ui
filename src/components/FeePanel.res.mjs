@@ -75,59 +75,67 @@ function FeePanel(props) {
               });
         }), []);
   return React.createElement("div", {
-              className: "p-6"
+              className: "p-4 sm:p-6 max-w-2xl mx-auto"
             }, React.createElement("div", {
-                  className: "flex justify-between items-center mb-6"
+                  className: "flex justify-between items-center mb-8"
                 }, React.createElement("div", {
-                      className: "flex items-center gap-2"
+                      className: "flex items-center gap-3"
                     }, React.createElement("button", {
-                          className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                          className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                           type: "button",
                           onClick: (function (param) {
                               onBack();
                             })
-                        }, React.createElement(Icons.Back.make, {})), React.createElement("span", {
-                          className: "text-lg font-medium text-gray-700"
+                        }, React.createElement("div", {
+                              className: "w-5 h-5 text-gray-600"
+                            }, React.createElement(Icons.Back.make, {}))), React.createElement("span", {
+                          className: "text-lg sm:text-xl font-medium text-gray-700 truncate"
                         }, name + "." + Constants.sld))), React.createElement("div", {
-                  className: "flex justify-between items-center mb-4"
+                  className: "flex flex-col sm:flex-row justify-between gap-6 mb-8"
                 }, React.createElement("div", {
-                      className: "text-lg font-medium"
-                    }, "CLAIM FOR"), React.createElement("div", {
-                      className: "text-lg font-medium"
-                    }, "AMOUNT")), React.createElement("div", {
-                  className: "flex justify-between items-center"
-                }, React.createElement("div", {
-                      className: "flex items-center gap-4"
-                    }, React.createElement("button", {
-                          className: "w-10 h-10 rounded-full " + (
-                            isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
-                          ) + " flex items-center justify-center",
-                          disabled: isCalculatingFee,
-                          onClick: (function (param) {
-                              decrementYears();
-                            })
-                        }, "-"), React.createElement("div", {
-                          className: "text-3xl font-bold"
-                        }, fee.years.toString() + " year" + (
-                          fee.years > 1 ? "s" : ""
-                        )), React.createElement("button", {
-                          className: "w-10 h-10 rounded-full " + (
-                            isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"
-                          ) + " flex items-center justify-center",
-                          disabled: isCalculatingFee,
-                          onClick: (function (param) {
-                              incrementYears();
-                            })
-                        }, "+")), React.createElement("div", {
-                      className: "text-3xl font-bold"
-                    }, isCalculatingFee ? React.createElement(Icons.Spinner.make, {
-                            className: "w-8 h-8 text-zinc-600"
-                          }) : fee.feeAmount + " RING")), React.createElement("div", {
-                  className: "mt-6"
+                      className: "space-y-2"
+                    }, React.createElement("div", {
+                          className: "text-base sm:text-lg font-medium text-gray-600"
+                        }, "CLAIM FOR"), React.createElement("div", {
+                          className: "flex items-center justify-center gap-4"
+                        }, React.createElement("button", {
+                              className: "w-12 h-12 rounded-full " + (
+                                isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"
+                              ) + " flex items-center justify-center transition-colors",
+                              disabled: isCalculatingFee,
+                              onClick: (function (param) {
+                                  decrementYears();
+                                })
+                            }, React.createElement("span", {
+                                  className: "text-xl font-medium text-gray-700"
+                                }, "-")), React.createElement("div", {
+                              className: "text-2xl sm:text-3xl font-bold text-gray-900 min-w-[120px] text-center"
+                            }, fee.years.toString() + " year" + (
+                              fee.years > 1 ? "s" : ""
+                            )), React.createElement("button", {
+                              className: "w-12 h-12 rounded-full " + (
+                                isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100 hover:bg-gray-200"
+                              ) + " flex items-center justify-center transition-colors",
+                              disabled: isCalculatingFee,
+                              onClick: (function (param) {
+                                  incrementYears();
+                                })
+                            }, React.createElement("span", {
+                                  className: "text-xl font-medium text-gray-700"
+                                }, "+")))), React.createElement("div", {
+                      className: "space-y-2"
+                    }, React.createElement("div", {
+                          className: "text-base sm:text-lg font-medium text-gray-600"
+                        }, "AMOUNT"), React.createElement("div", {
+                          className: "text-2xl sm:text-3xl font-bold text-gray-900 h-12 flex items-center justify-center sm:justify-end"
+                        }, isCalculatingFee ? React.createElement(Icons.Spinner.make, {
+                                className: "w-8 h-8 text-zinc-600"
+                              }) : fee.feeAmount + " RING"))), React.createElement("div", {
+                  className: "mt-8"
                 }, props.isWalletConnected ? React.createElement("button", {
-                        className: "w-full py-3 px-4 " + (
-                          isCalculatingFee || isRegistering ? "bg-zinc-400" : "bg-zinc-800 hover:bg-zinc-700"
-                        ) + " text-white rounded-2xl font-medium",
+                        className: "w-full py-4 px-6 " + (
+                          isCalculatingFee || isRegistering ? "bg-zinc-400 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"
+                        ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
                         disabled: isCalculatingFee || isRegistering,
                         onClick: (function (param) {
                             onRegister(fee.years);
@@ -135,7 +143,7 @@ function FeePanel(props) {
                       }, isRegistering ? "Registering..." : (
                           isCalculatingFee ? "Calculating..." : "Register name"
                         )) : React.createElement("button", {
-                        className: "w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
+                        className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
                         onClick: (function (param) {
                             onConnectWallet();
                           })
