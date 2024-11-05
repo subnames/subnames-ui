@@ -1,13 +1,7 @@
 open OnChainOperations
 
-type feeState = {
-  years: int,
-  feeAmount: string,
-}
-
 type state = {
   name: string,
-  years: int,
   isRegistering: bool,
   onChainStatus: OnChainOperations.transactionStatus,
   value: string,
@@ -18,13 +12,10 @@ type state = {
   showFeeSelect: bool,
   showResultPanel: bool,
   registeredName: option<string>,
-  fee: feeState,
-  isCalculatingFee: bool,
 }
 
 let initialState = {
   name: "",
-  years: 1,
   isRegistering: false,
   onChainStatus: Simulating,
   value: "",
@@ -35,11 +26,6 @@ let initialState = {
   showFeeSelect: false,
   showResultPanel: false,
   registeredName: None,
-  fee: {
-    years: 1,
-    feeAmount: "0.1",
-  },
-  isCalculatingFee: false,
 }
 
 // Validation rules for ENS subnames
@@ -121,63 +107,17 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
     onValidChange("", false)
   }
 
-  let calculateFee = async years => {
-    let priceInEth = await Fee.calculate(state.value, years)
-    setState(prev => {
-      ...prev,
-      fee: {
-        years: years,
-        feeAmount: priceInEth,
-      },
-    })
-  }
-
-  let incrementYears = () => {
-    if !state.isCalculatingFee {
-      let newYears = state.fee.years + 1
-      setState(prev => {...prev, isCalculatingFee: true})
-      let _ = calculateFee(newYears)->Promise.then(_ => {
-        setState(prev => {...prev, isCalculatingFee: false})
-        Promise.resolve()
-      })
-    }
-  }
-
-  let decrementYears = () => {
-    if !state.isCalculatingFee && state.fee.years > 1 {
-      let newYears = state.fee.years - 1
-      setState(prev => {...prev, isCalculatingFee: true})
-      let _ = calculateFee(newYears)->Promise.then(_ => {
-        setState(prev => {...prev, isCalculatingFee: false})
-        Promise.resolve()
-      })
-    }
-  }
-
-  let handleNextClick = () => {
-    setState(prev => {
-      ...prev, 
-      showFeeSelect: true,
-      isCalculatingFee: true // Set to true immediately when opening the panel
-    })
-    // Calculate initial fee for 1 year
-    let _ = calculateFee(1)->Promise.then(_ => {
-      setState(prev => {...prev, isCalculatingFee: false})
-      Promise.resolve()
-    })
-  }
-
   let handleOnChainStatusChange = (status: transactionStatus) => {
     setState(prev => {...prev, onChainStatus: status})
   }
 
-  let handleRegister = () => {
+  let handleRegister = (~years: int) => {
     setState(prev => {...prev, isRegistering: true})
     let walletClient = OnChainOperations.buildWalletClient()
     let _ = OnChainOperations.register(
       walletClient->Option.getUnsafe,
       state.value,
-      state.fee.years,
+      years,
       None,
       handleOnChainStatusChange,
     )->Promise.then(_ => {
@@ -274,7 +214,7 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
                   switch state.isAvailable {
                   | Some(true) =>
                     <button
-                      onClick={_ => handleNextClick()}
+                      onClick={_ => setState(prev => {...prev, showFeeSelect: true})}
                       type_="button"
                       className="rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
                       {React.string("Next")}
@@ -294,85 +234,15 @@ let make = (~onValidChange: (string, bool) => unit, ~isWalletConnected: bool, ~o
         }}
       </div>
     } else {
-      // Fee panel
       <div className={`bg-white rounded-custom shadow-lg overflow-hidden`}>
-        <div className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center gap-2">
-              <button
-                onClick={_ => setState(prev => {...prev, showFeeSelect: false})}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
-                type_="button">
-                <Icons.Back />
-              </button>
-              <span className="text-lg font-medium text-gray-700">
-                {React.string(`${state.value}.${Constants.sld}`)}
-              </span>
-            </div>
-          </div>
-
-          <div className="flex justify-between items-center mb-4">
-            <div className="text-lg font-medium">{React.string("CLAIM FOR")}</div>
-            <div className="text-lg font-medium">{React.string("AMOUNT")}</div>
-          </div>
-          
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-4">
-              <button
-                onClick={_ => decrementYears()}
-                disabled={state.isCalculatingFee}
-                className={`w-10 h-10 rounded-full ${state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"} flex items-center justify-center`}>
-                {React.string("-")}
-              </button>
-              
-              <div className="text-3xl font-bold">
-                {React.string(`${state.fee.years->Int.toString} year${state.fee.years > 1 ? "s" : ""}`)}
-              </div>
-              
-              <button
-                onClick={_ => incrementYears()}
-                disabled={state.isCalculatingFee}
-                className={`w-10 h-10 rounded-full ${state.isCalculatingFee ? "bg-gray-50 cursor-not-allowed" : "bg-gray-100"} flex items-center justify-center`}>
-                {React.string("+")}
-              </button>
-            </div>
-
-            <div className="text-3xl font-bold">
-              {if state.isCalculatingFee {
-                <Icons.Spinner className="w-8 h-8 text-zinc-600" />
-              } else {
-                React.string(`${state.fee.feeAmount} RING`)
-              }}
-            </div>
-          </div>
-
-          <div className="mt-6">
-            {if !isWalletConnected {
-              <button
-                onClick={_ => onConnectWallet()}
-                className="w-full py-3 px-4 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium">
-                {React.string("Connect wallet")}
-              </button>
-            } else {
-              <button
-                onClick={_ => handleRegister()}
-                disabled={state.isCalculatingFee || state.isRegistering}
-                className={`w-full py-3 px-4 ${
-                  state.isCalculatingFee || state.isRegistering 
-                    ? "bg-zinc-400" 
-                    : "bg-zinc-800 hover:bg-zinc-700"
-                } text-white rounded-2xl font-medium`}>
-                {if state.isRegistering {
-                  React.string("Registering...")
-                } else if state.isCalculatingFee {
-                  React.string("Calculating...")
-                } else {
-                  React.string("Register name")
-                }}
-              </button>
-            }}
-          </div>
-        </div>
+        <FeePanel
+          name={state.value}
+          isWalletConnected
+          isRegistering={state.isRegistering}
+          onBack={() => setState(prev => {...prev, showFeeSelect: false})}
+          onConnectWallet
+          onRegister={handleRegister}
+        />
       </div>
     }}
   </div>
