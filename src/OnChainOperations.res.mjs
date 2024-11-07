@@ -9,6 +9,23 @@ import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Chains from "viem/chains";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
+var baseRegistrarContract = {
+  address: Constants.baseRegistrarContractAddress,
+  abi: [{
+      type: "function",
+      name: "nameExpires",
+      inputs: [{
+          name: "id",
+          type: "uint256"
+        }],
+      outputs: [{
+          name: "expiry",
+          type: "uint256"
+        }],
+      stateMutability: "view"
+    }]
+};
+
 var resolverContract = {
   address: Constants.resolverContractAddress,
   abi: [{
@@ -30,7 +47,8 @@ var resolverContract = {
 
 var registryContract = {
   address: Constants.registryContractAddress,
-  abi: [{
+  abi: [
+    {
       type: "function",
       name: "recordExists",
       inputs: [{
@@ -42,7 +60,21 @@ var registryContract = {
           type: "bool"
         }],
       stateMutability: "view"
-    }]
+    },
+    {
+      type: "function",
+      name: "owner",
+      inputs: [{
+          name: "node",
+          type: "bytes32"
+        }],
+      outputs: [{
+          name: "",
+          type: "address"
+        }],
+      stateMutability: "view"
+    }
+  ]
 };
 
 var controllerContract = {
@@ -201,6 +233,27 @@ async function name(address) {
             });
 }
 
+async function nameExpires(name) {
+  var tokenId = BigInt(Viem.keccak256(name));
+  return await client.readContract({
+              address: baseRegistrarContract.address,
+              abi: baseRegistrarContract.abi,
+              functionName: "nameExpires",
+              args: [tokenId]
+            });
+}
+
+async function owner(name) {
+  var domain = name + "." + Constants.sld;
+  var node = Ens.namehash(domain);
+  return await client.readContract({
+              address: registryContract.address,
+              abi: registryContract.abi,
+              functionName: "owner",
+              args: [node]
+            });
+}
+
 var publicClient = Viem.createPublicClient({
       chain: Chains.koi,
       transport: Viem.http(Constants.rpcUrl)
@@ -224,7 +277,7 @@ async function currentAddress(walletClient) {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperations.res",
-            251,
+            295,
             2
           ],
           Error: new Error()
@@ -293,6 +346,7 @@ async function register(walletClient, name, years, owner, onStatusChange) {
 }
 
 export {
+  baseRegistrarContract ,
   resolverContract ,
   registryContract ,
   controllerContract ,
@@ -302,6 +356,8 @@ export {
   registerPrice ,
   sha3HexAddress ,
   name ,
+  nameExpires ,
+  owner ,
   publicClient ,
   buildWalletClient ,
   currentAddress ,

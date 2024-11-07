@@ -48,41 +48,20 @@ var walletClient = OnChainOperations.buildWalletClient();
 var hasWallet = walletClient !== undefined;
 
 function App$Subname(props) {
-  var match = React.useState(function () {
-        return [
-                "",
-                false
-              ];
-      });
-  var setValidSubname = match[1];
   var account = Wagmi.useAccount();
-  var match$1 = React.useState(function () {
+  var match = React.useState(function () {
         return false;
       });
-  var setWalletConnected = match$1[1];
+  var setWalletConnected = match[1];
   React.useEffect((function () {
           setWalletConnected(function (param) {
                 return account.isConnected;
               });
         }), [account.isConnected]);
-  var handleValidChange = function (value, isValid) {
-    setValidSubname(function (param) {
-          return [
-                  value,
-                  isValid
-                ];
-        });
-  };
-  var handleConnectWallet = function () {
-    var connectButton = document.querySelector("[data-testid='rk-connect-button']");
-    connectButton.click();
-  };
   return React.createElement("div", {
               className: "p-8"
             }, hasWallet ? React.createElement(SubnameInput.make, {
-                    onValidChange: handleValidChange,
-                    isWalletConnected: match$1[0],
-                    onConnectWallet: handleConnectWallet
+                    isWalletConnected: match[0]
                   }) : React.createElement("div", {
                     className: "text-center p-4 bg-yellow-100 rounded-2xl mb-4"
                   }, React.createElement("p", {

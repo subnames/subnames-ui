@@ -12,6 +12,19 @@ external readContract: (publicClient, 'readContractParams) => promise<'result> =
 
 @module("viem/ens") external namehash: string => string = "namehash"
 
+let baseRegistrarContract = {
+  "address": Constants.baseRegistrarContractAddress,
+  "abi": [
+    {
+      "type": "function",
+      "name": "nameExpires",
+      "inputs": [{"name": "id", "type": "uint256"}],
+      "outputs": [{"name": "expiry", "type": "uint256"}],
+      "stateMutability": "view",
+    },
+  ],
+}
+
 let resolverContract = {
   "address": Constants.resolverContractAddress,
   "abi": [
@@ -45,6 +58,13 @@ let registryContract = {
       "name": "recordExists",
       "inputs": [{"name": "node", "type": "bytes32"}],
       "outputs": [{"name": "", "type": "bool"}],
+      "stateMutability": "view",
+    },
+    {
+      "type": "function",
+      "name": "owner",
+      "inputs": [{"name": "node", "type": "bytes32"}],
+      "outputs": [{"name": "", "type": "address"}],
       "stateMutability": "view",
     },
   ],
@@ -198,6 +218,33 @@ let name: string => promise<string> = async address => {
   )
 }
 
+let nameExpires: string => promise<int> = async name => {
+  let tokenId = BigInt.fromString(keccak256(name))
+  await readContract(
+    client,
+    {
+      "address": baseRegistrarContract["address"],
+      "abi": baseRegistrarContract["abi"],
+      "functionName": "nameExpires",
+      "args": [BigInt(tokenId)],
+    },
+  )
+}
+
+let owner: string => promise<string> = async name => {
+  let domain = `${name}.${Constants.sld}`
+  let node = namehash(domain)
+  await readContract(
+    client,
+    {
+      "address": registryContract["address"],
+      "abi": registryContract["abi"],
+      "functionName": "owner",
+      "args": [String(node)],
+    },
+  )
+}
+
 ////////////////////////////////////////
 // Wallet client
 ////////////////////////////////////////
@@ -228,11 +275,8 @@ type transaction = {
 external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
   "waitForTransactionReceipt"
 
-
 // Console.log("ethereum")
 // Console.log(ethereum)
-
-
 
 // // let walletClient = createWalletClient({
 // //   "chain": koi,
@@ -240,13 +284,13 @@ external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
 // // })
 
 let buildWalletClient = () => {
-  switch (ethereum) {
+  switch ethereum {
   | Some(ethereum) => Some(createWalletClient({"chain": koi, "transport": custom(ethereum)}))
   | None => None
   }
 }
 
-let currentAddress = async (walletClient) => {
+let currentAddress = async walletClient => {
   let result = await requestAddresses(walletClient)
   assert(result->Array.length >= 1)
   result->Array.get(0)->Option.getUnsafe
@@ -279,13 +323,13 @@ type transactionStatus =
   | Confirmed
   | Failed(string)
 
-let register: (walletClient, string, int, option<string>, transactionStatus => unit) => promise<unit> = async (
+let register: (
   walletClient,
-  name,
-  years,
-  owner,
-  onStatusChange,
-) => {
+  string,
+  int,
+  option<string>,
+  transactionStatus => unit,
+) => promise<unit> = async (walletClient, name, years, owner, onStatusChange) => {
   onStatusChange(Simulating)
   let duration = years * 31536000
   let currentAddress = await currentAddress(walletClient)
