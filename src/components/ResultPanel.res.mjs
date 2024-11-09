@@ -6,7 +6,11 @@ import * as Constants from "../Constants.res.mjs";
 import ConfettiReact from "confetti-react";
 
 function ResultPanel(props) {
+  var actionResult = props.actionResult;
   var onRegisterAnother = props.onRegisterAnother;
+  var match = actionResult.action;
+  var tmp;
+  tmp = typeof match !== "object" ? "Registration Successful!" : "Extension Successful!";
   return React.createElement("div", {
               className: "bg-white rounded-custom shadow-lg overflow-hidden"
             }, React.createElement("div", {
@@ -19,16 +23,16 @@ function ResultPanel(props) {
                               className: "w-16 h-16 text-green-500"
                             })), React.createElement("h2", {
                           className: "text-2xl font-bold mb-2"
-                        }, "Registration Successful!"), React.createElement("p", {
+                        }, tmp), React.createElement("div", {
                           className: "text-lg text-gray-700 mb-6"
                         }, React.createElement(ConfettiReact, {
                               recycle: false
-                            }), props.registeredName + "." + Constants.sld), React.createElement("button", {
+                            }), React.createElement("p", undefined, props.name + "." + Constants.sld), React.createElement("div", undefined, "until " + actionResult.newExpiryDate.toUTCString())), React.createElement("button", {
                           className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
                           onClick: (function (param) {
                               onRegisterAnother();
                             })
-                        }, "Register Another Name"))));
+                        }, "Go Home"))));
 }
 
 var make = ResultPanel;

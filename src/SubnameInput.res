@@ -1,13 +1,15 @@
 type state = {
   name: string,
   panel: string,
-  registeredName: option<string>,
+  action: Types.action,
+  result: option<Types.actionResult>,
 }
 
-let initialState = {
+let initialState: state = {
   name: "",
   panel: "input",
-  registeredName: None,
+  action: Types.Register,
+  result: None,
 }
 
 @react.component
@@ -15,29 +17,51 @@ let make = (~isWalletConnected: bool) => {
   let {updateName, setUpdateName} = NameContext.use()
   let (state, setState) = React.useState(_ => initialState)
 
-  let onRegisterSuccess = (name: string) => {
+  let onSuccess = (result: Types.actionResult) => {
     setState(prev => {
       ...prev,
       panel: "result",
-      registeredName: Some(name),
+      result: Some(result),
     })
     setUpdateName(_ => true)
+  }
+
+  let onNext = (name: string, action: Types.action) => {
+    setState(prev => {
+      ...prev,
+      name,
+      panel: switch action {
+      | Types.Register => "register"
+      | Types.Extend(_) => "extend"
+      },
+      action,
+    })
   }
 
   <div className="w-full max-w-xl mx-auto">
     {switch state.panel {
     | "input" =>
-      <InputPanel onNext={name => setState(prev => {...prev, panel: "register", name})} />
+      <InputPanel onNext={onNext} isWalletConnected />
     | "register" =>
-      <RegisterPanel
+      <RegisterExtendPanel
         name={state.name}
         isWalletConnected
         onBack={() => setState(prev => {...prev, panel: "input"})}
-        onRegisterSuccess={onRegisterSuccess}
+        onSuccess={onSuccess}
+        action={state.action}
+      />
+    | "extend" =>
+      <RegisterExtendPanel
+        name={state.name}
+        isWalletConnected
+        onBack={() => setState(prev => {...prev, panel: "input"})}
+        onSuccess={onSuccess}
+        action={state.action}
       />
     | "result" =>
       <ResultPanel
-        registeredName={state.registeredName->Option.getOr("")}
+        name={state.name}
+        actionResult={state.result->Option.getUnsafe}
         onRegisterAnother={() => setState(_ => initialState)}
       />
     | _ => <div />

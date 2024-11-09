@@ -1,5 +1,5 @@
 @react.component
-let make = (~registeredName: string, ~onRegisterAnother: unit => unit) => {
+let make = (~name: string, ~onRegisterAnother: unit => unit, ~actionResult: Types.actionResult) => {
   <div className="bg-white rounded-custom shadow-lg overflow-hidden">
     <div className="p-6">
       <div className="flex flex-col items-center text-center">
@@ -7,16 +7,24 @@ let make = (~registeredName: string, ~onRegisterAnother: unit => unit) => {
           <Icons.Success className="w-16 h-16 text-green-500" />
         </div>
         <h2 className="text-2xl font-bold mb-2">
-          {React.string("Registration Successful!")}
+          {switch actionResult.action {
+          | Types.Register => React.string("Registration Successful!")
+          | Types.Extend(_) => React.string("Extension Successful!")
+          }}
         </h2>
-        <p className="text-lg text-gray-700 mb-6">
+        <div className="text-lg text-gray-700 mb-6">
           <Confetti recycle=false />
-          {React.string(`${registeredName}.${Constants.sld}`)}
-        </p>
+          <p>
+            {React.string(`${name}.${Constants.sld}`)}
+          </p>
+          <div>
+            {React.string(`until ${Date.toUTCString(actionResult.newExpiryDate)}`)}
+          </div>
+        </div>
         <button
           onClick={_ => onRegisterAnother()}
           className="py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium">
-          {React.string("Register Another Name")}
+          {React.string("Go Home")}
         </button>
       </div>
     </div>

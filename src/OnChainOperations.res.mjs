@@ -7,6 +7,7 @@ import Sha3Mjs from "./sha3.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Chains from "viem/chains";
+import * as Core__BigInt from "@rescript/core/src/Core__BigInt.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
 var baseRegistrarContract = {
@@ -114,7 +115,7 @@ var controllerContract = {
     },
     {
       type: "function",
-      name: "renew",
+      name: "rentPrice",
       inputs: [
         {
           name: "name",
@@ -125,53 +126,74 @@ var controllerContract = {
           type: "uint256"
         }
       ],
-      outputs: [],
-      stateMutability: "payable"
+      outputs: [{
+          name: "",
+          type: "uint256"
+        }],
+      stateMutability: "view"
     }
   ],
-  abiForWrite: [{
-      inputs: [{
-          components: [
-            {
-              internalType: "string",
-              name: "name",
-              type: "string"
-            },
-            {
-              internalType: "address",
-              name: "owner",
-              type: "address"
-            },
-            {
-              internalType: "uint256",
-              name: "duration",
-              type: "uint256"
-            },
-            {
-              internalType: "address",
-              name: "resolver",
-              type: "address"
-            },
-            {
-              internalType: "bytes[]",
-              name: "data",
-              type: "bytes[]"
-            },
-            {
-              internalType: "bool",
-              name: "reverseRecord",
-              type: "bool"
-            }
-          ],
-          internalType: "struct RegistrarController.RegisterRequest",
-          name: "request",
-          type: "tuple"
-        }],
-      name: "register",
-      outputs: Core__Array.make(0, undefined),
-      stateMutability: "payable",
-      type: "function"
-    }]
+  register: {
+    inputs: [{
+        components: [
+          {
+            internalType: "string",
+            name: "name",
+            type: "string"
+          },
+          {
+            internalType: "address",
+            name: "owner",
+            type: "address"
+          },
+          {
+            internalType: "uint256",
+            name: "duration",
+            type: "uint256"
+          },
+          {
+            internalType: "address",
+            name: "resolver",
+            type: "address"
+          },
+          {
+            internalType: "bytes[]",
+            name: "data",
+            type: "bytes[]"
+          },
+          {
+            internalType: "bool",
+            name: "reverseRecord",
+            type: "bool"
+          }
+        ],
+        internalType: "struct RegistrarController.RegisterRequest",
+        name: "request",
+        type: "tuple"
+      }],
+    name: "register",
+    outputs: Core__Array.make(0, undefined),
+    stateMutability: "payable",
+    type: "function"
+  },
+  renew: {
+    inputs: [
+      {
+        internalType: "string",
+        name: "name",
+        type: "string"
+      },
+      {
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256"
+      }
+    ],
+    name: "renew",
+    outputs: Core__Array.make(0, undefined),
+    stateMutability: "payable",
+    type: "function"
+  }
 };
 
 var client = Viem.createPublicClient({
@@ -213,6 +235,19 @@ async function registerPrice(name, duration) {
                 }));
 }
 
+async function rentPrice(name, duration) {
+  var args = [
+    name,
+    duration
+  ];
+  return await client.readContract({
+              address: controllerContract.address,
+              abi: controllerContract.abi,
+              functionName: "rentPrice",
+              args: args
+            });
+}
+
 function sha3HexAddress(prim) {
   return Sha3Mjs(prim);
 }
@@ -235,12 +270,13 @@ async function name(address) {
 
 async function nameExpires(name) {
   var tokenId = BigInt(Viem.keccak256(name));
-  return await client.readContract({
-              address: baseRegistrarContract.address,
-              abi: baseRegistrarContract.abi,
-              functionName: "nameExpires",
-              args: [tokenId]
-            });
+  var result = await client.readContract({
+        address: baseRegistrarContract.address,
+        abi: baseRegistrarContract.abi,
+        functionName: "nameExpires",
+        args: [tokenId]
+      });
+  return Core__BigInt.toInt(result);
 }
 
 async function owner(name) {
@@ -277,7 +313,7 @@ async function currentAddress(walletClient) {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperations.res",
-            295,
+            326,
             2
           ],
           Error: new Error()
@@ -324,7 +360,7 @@ async function register(walletClient, name, years, owner, onStatusChange) {
   var match = await publicClient.simulateContract({
         account: currentAddress$1,
         address: controllerContract.address,
-        abi: controllerContract.abiForWrite,
+        abi: [controllerContract.register],
         functionName: "register",
         args: [{
             name: name,
@@ -345,6 +381,28 @@ async function register(walletClient, name, years, owner, onStatusChange) {
   return onStatusChange("Confirmed");
 }
 
+async function renew(walletClient, name, years) {
+  var duration = Math.imul(years, 31536000);
+  var currentAddress$1 = await currentAddress(walletClient);
+  var priceInWei = await rentPrice(name, duration);
+  var match = await publicClient.simulateContract({
+        account: currentAddress$1,
+        address: controllerContract.address,
+        abi: [controllerContract.renew],
+        functionName: "renew",
+        args: [
+          name,
+          duration
+        ],
+        value: priceInWei
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -354,6 +412,7 @@ export {
   recordExists ,
   available ,
   registerPrice ,
+  rentPrice ,
   sha3HexAddress ,
   name ,
   nameExpires ,
@@ -363,5 +422,6 @@ export {
   currentAddress ,
   encodeSetAddr ,
   register ,
+  renew ,
 }
 /* controllerContract Not a pure module */

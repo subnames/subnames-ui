@@ -54,9 +54,15 @@ function App$Subname(props) {
       });
   var setWalletConnected = match[1];
   React.useEffect((function () {
-          setWalletConnected(function (param) {
-                return account.isConnected;
-              });
+          if (account.isConnected) {
+            setWalletConnected(function (param) {
+                  return true;
+                });
+          } else {
+            setWalletConnected(function (param) {
+                  return false;
+                });
+          }
         }), [account.isConnected]);
   return React.createElement("div", {
               className: "p-8"

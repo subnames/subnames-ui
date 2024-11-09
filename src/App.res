@@ -103,7 +103,11 @@ module Subname = {
     let (isWalletConnected, setWalletConnected) = React.useState(() => false)
 
     React.useEffect1(() => {
-      setWalletConnected(_ => account.isConnected)
+      if account.isConnected {
+        setWalletConnected(_ => true)
+      } else {
+        setWalletConnected(_ => false)
+      }
       None
     }, [account.isConnected])
 

@@ -4,7 +4,7 @@
 
 type feeState = {
   years: int,
-  feeAmount: string,
+  feeAmount: float,
 }
 
 @react.component
@@ -12,22 +12,32 @@ let make = (
   ~name: string,
   ~isWalletConnected: bool,
   ~onBack: unit => unit,
-  ~onRegisterSuccess: string => unit,
+  ~onSuccess: Types.actionResult => unit,
+  ~action: Types.action,
 ) => {
   let (fee, setFee) = React.useState(_ => {
     years: 1,
-    feeAmount: "0.1",
+    feeAmount: 0.0,
   })
   let (isCalculatingFee, setIsCalculatingFee) = React.useState(_ => false)
-  let (isRegistering, setIsRegistering) = React.useState(() => false)
+  let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
   let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
 
   let calculateFee = async years => {
-    let priceInEth = await Fee.calculate(name, years)
-    setFee(_ => {
-      years,
-      feeAmount: priceInEth,
-    })
+    switch action {
+    | Types.Register =>
+      let priceInEth = await Fee.calculate(name, years)
+      setFee(_ => {
+        years,
+        feeAmount: priceInEth,
+      })
+    | Types.Extend(_) =>
+      let priceInEth = await Fee.calculateRenew(name, years)
+      setFee(_ => {
+        years,
+        feeAmount: priceInEth,
+      })
+    }
   }
 
   let incrementYears = () => {
@@ -61,15 +71,33 @@ let make = (
     None
   })
 
-  let handleRegister = (~years: int) => {
-    setIsRegistering(_ => true)
+  let handleClick = (~years: int) => {
+    setIsWaitingForConfirmation(_ => true)
     let walletClient = OnChainOperations.buildWalletClient()
-    let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status =>
-      setOnChainStatus(_ => status)
-    )->Promise.then(_ => {
-      onRegisterSuccess(name)
-      Promise.resolve()
-    })
+    switch action {
+    | Types.Register =>
+      let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))->Promise.then(_ => {
+        OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
+          let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          onSuccess({
+            action,
+            newExpiryDate,
+          })
+          Promise.resolve()
+        })
+      })
+    | Types.Extend(_) =>
+      let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)->Promise.then(_ => {
+        OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
+          let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          onSuccess({
+            action,
+            newExpiryDate,
+          })
+          Promise.resolve()
+        })
+      })
+    }
   }
 
   let handleConnectWallet = () => {
@@ -96,8 +124,11 @@ let make = (
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-6 mb-8">
         <div className="space-y-2">
-          <div className="text-base sm:text-lg font-medium text-gray-600">
-            {React.string("CLAIM FOR")}
+          <div className="text-base sm:text-lg font-medium text-gray-600 text-center sm:text-left">
+            {switch action {
+            | Types.Register => React.string("CLAIM FOR")
+            | Types.Extend(_) => React.string("EXTEND FOR")
+            }}
           </div>
           <div className="flex items-center justify-center gap-4">
             <button
@@ -122,7 +153,7 @@ let make = (
           </div>
         </div>
         <div className="space-y-2">
-          <div className="text-base sm:text-lg font-medium text-gray-600">
+          <div className="text-base sm:text-lg font-medium text-gray-600 text-center sm:text-right">
             {React.string("AMOUNT")}
           </div>
           <div
@@ -130,7 +161,7 @@ let make = (
             {if isCalculatingFee {
               <Icons.Spinner className="w-8 h-8 text-zinc-600" />
             } else {
-              React.string(`${fee.feeAmount} RING`)
+              React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)
             }}
           </div>
         </div>
@@ -144,17 +175,23 @@ let make = (
           </button>
         } else {
           <button
-            onClick={_ => handleRegister(~years=fee.years)}
-            disabled={isCalculatingFee || isRegistering}
-            className={`w-full py-4 px-6 ${isCalculatingFee || isRegistering
+            onClick={_ => handleClick(~years=fee.years)}
+            disabled={isCalculatingFee || isWaitingForConfirmation}
+            className={`w-full py-4 px-6 ${isCalculatingFee || isWaitingForConfirmation 
                 ? "bg-zinc-400 cursor-not-allowed"
                 : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"} text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md`}>
-            {if isRegistering {
-              React.string("Registering...")
+            {if isWaitingForConfirmation {
+              switch action {
+              | Types.Register => React.string("Registering...")
+              | Types.Extend(_) => React.string("Extending...")
+              }
             } else if isCalculatingFee {
               React.string("Calculating...")
             } else {
-              React.string("Register name")
+              switch action {
+              | Types.Register => React.string("Register")
+              | Types.Extend(_) => React.string("Extend")
+              }
             }}
           </button>
         }}

@@ -89,13 +89,13 @@ let controllerContract = {
     },
     {
       "type": "function",
-      "name": "renew",
+      "name": "rentPrice",
       "inputs": [{"name": "name", "type": "string"}, {"name": "duration", "type": "uint256"}],
-      "outputs": [],
-      "stateMutability": "payable",
+      "outputs": [{"name": "", "type": "uint256"}],
+      "stateMutability": "view",
     },
   ],
-  "abiForWrite": [
+  "register": 
     {
       "inputs": [
         {
@@ -141,7 +141,24 @@ let controllerContract = {
       "stateMutability": "payable",
       "type": "function",
     },
-  ],
+    "renew": {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "name",
+          "type": "string",
+        },
+        {
+          "internalType": "uint256",
+          "name": "duration",
+          "type": "uint256",
+        },
+      ],
+      "name": "renew",
+      "outputs": Array.make(~length=0, ()),
+      "stateMutability": "payable",
+      "type": "function",
+    },
 }
 
 let client = createPublicClient({
@@ -192,6 +209,19 @@ let registerPrice: (string, int) => promise<bigint> = async (name, duration) => 
   BigInt.fromInt(result)
 }
 
+let rentPrice: (string, int) => promise<bigint> = async (name, duration) => {
+  let args: array<argType> = [String(name), Int(duration)]
+  await readContract(
+    client,
+    {
+      "address": controllerContract["address"],
+      "abi": controllerContract["abi"],
+      "functionName": "rentPrice",
+      "args": args,
+    },
+  )
+}
+
 @module("./sha3.mjs")
 external sha3HexAddress: string => string = "default"
 @module("viem") external keccak256: string => string = "keccak256"
@@ -220,7 +250,7 @@ let name: string => promise<string> = async address => {
 
 let nameExpires: string => promise<int> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
-  await readContract(
+  let result = await readContract(
     client,
     {
       "address": baseRegistrarContract["address"],
@@ -229,6 +259,7 @@ let nameExpires: string => promise<int> = async name => {
       "args": [BigInt(tokenId)],
     },
   )
+  BigInt.toInt(result)
 }
 
 let owner: string => promise<string> = async name => {
@@ -341,7 +372,7 @@ let register: (
     {
       "account": currentAddress,
       "address": controllerContract["address"],
-      "abi": controllerContract["abiForWrite"],
+      "abi": [controllerContract["register"]],
       "functionName": "register",
       "args": [
         {
@@ -364,4 +395,24 @@ let register: (
   // Wait for transaction confirmation
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   onStatusChange(Confirmed)
+}
+
+let renew: (walletClient, string, int) => promise<unit> = async (walletClient, name, years) => {
+  let duration = years * 31536000
+  let currentAddress = await currentAddress(walletClient)
+  let priceInWei = await rentPrice(name, duration)
+  let {request} = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": controllerContract["address"],
+      "abi": [controllerContract["renew"]],
+      "functionName": "renew",
+      "args": [String(name), Int(duration)],
+      "value": priceInWei,
+    },
+  )
+  let hash = await writeContract(walletClient, request)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }

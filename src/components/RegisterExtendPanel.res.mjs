@@ -6,14 +6,15 @@ import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 
-function RegisterPanel(props) {
-  var onRegisterSuccess = props.onRegisterSuccess;
+function RegisterExtendPanel(props) {
+  var action = props.action;
+  var onSuccess = props.onSuccess;
   var onBack = props.onBack;
   var name = props.name;
   var match = React.useState(function () {
         return {
                 years: 1,
-                feeAmount: "0.1"
+                feeAmount: 0.0
               };
       });
   var setFee = match[1];
@@ -26,18 +27,27 @@ function RegisterPanel(props) {
   var match$2 = React.useState(function () {
         return false;
       });
-  var setIsRegistering = match$2[1];
-  var isRegistering = match$2[0];
+  var setIsWaitingForConfirmation = match$2[1];
+  var isWaitingForConfirmation = match$2[0];
   var match$3 = React.useState(function () {
         return "Simulating";
       });
   var setOnChainStatus = match$3[1];
   var calculateFee = async function (years) {
-    var priceInEth = await Fee.calculate(name, years);
+    if (typeof action !== "object") {
+      var priceInEth = await Fee.calculate(name, years);
+      return setFee(function (param) {
+                  return {
+                          years: years,
+                          feeAmount: priceInEth
+                        };
+                });
+    }
+    var priceInEth$1 = await Fee.calculateRenew(name, years);
     return setFee(function (param) {
                 return {
                         years: years,
-                        feeAmount: priceInEth
+                        feeAmount: priceInEth$1
                       };
               });
   };
@@ -86,6 +96,66 @@ function RegisterPanel(props) {
     var connectButton = document.querySelector("[data-testid='rk-connect-button']");
     connectButton.click();
   };
+  var tmp;
+  tmp = typeof action !== "object" ? "CLAIM FOR" : "EXTEND FOR";
+  var tmp$1;
+  if (props.isWalletConnected) {
+    var tmp$2;
+    tmp$2 = isWaitingForConfirmation ? (
+        typeof action !== "object" ? "Registering..." : "Extending..."
+      ) : (
+        isCalculatingFee ? "Calculating..." : (
+            typeof action !== "object" ? "Register" : "Extend"
+          )
+      );
+    tmp$1 = React.createElement("button", {
+          className: "w-full py-4 px-6 " + (
+            isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"
+          ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
+          disabled: isCalculatingFee || isWaitingForConfirmation,
+          onClick: (function (param) {
+              var years = fee.years;
+              setIsWaitingForConfirmation(function (param) {
+                    return true;
+                  });
+              var walletClient = OnChainOperations.buildWalletClient();
+              if (typeof action !== "object") {
+                OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
+                          setOnChainStatus(function (param) {
+                                return status;
+                              });
+                        })).then(function () {
+                      return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                  var newExpiryDate = new Date(expiryInt * 1000.0);
+                                  onSuccess({
+                                        action: action,
+                                        newExpiryDate: newExpiryDate
+                                      });
+                                  return Promise.resolve();
+                                });
+                    });
+                return ;
+              }
+              OnChainOperations.renew(walletClient, name, years).then(function () {
+                    return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                var newExpiryDate = new Date(expiryInt * 1000.0);
+                                onSuccess({
+                                      action: action,
+                                      newExpiryDate: newExpiryDate
+                                    });
+                                return Promise.resolve();
+                              });
+                  });
+            })
+        }, tmp$2);
+  } else {
+    tmp$1 = React.createElement("button", {
+          className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
+          onClick: (function (param) {
+              handleConnectWallet();
+            })
+        }, "Connect wallet");
+  }
   return React.createElement("div", {
               className: "bg-white rounded-custom shadow-lg overflow-hidden"
             }, React.createElement("div", {
@@ -109,8 +179,8 @@ function RegisterPanel(props) {
                     }, React.createElement("div", {
                           className: "space-y-2"
                         }, React.createElement("div", {
-                              className: "text-base sm:text-lg font-medium text-gray-600"
-                            }, "CLAIM FOR"), React.createElement("div", {
+                              className: "text-base sm:text-lg font-medium text-gray-600 text-center sm:text-left"
+                            }, tmp), React.createElement("div", {
                               className: "flex items-center justify-center gap-4"
                             }, React.createElement("button", {
                                   className: "w-12 h-12 rounded-full " + (
@@ -139,44 +209,17 @@ function RegisterPanel(props) {
                                     }, "+")))), React.createElement("div", {
                           className: "space-y-2"
                         }, React.createElement("div", {
-                              className: "text-base sm:text-lg font-medium text-gray-600"
+                              className: "text-base sm:text-lg font-medium text-gray-600 text-center sm:text-right"
                             }, "AMOUNT"), React.createElement("div", {
                               className: "text-2xl sm:text-3xl font-bold text-gray-900 h-12 flex items-center justify-center sm:justify-end"
                             }, isCalculatingFee ? React.createElement(Icons.Spinner.make, {
                                     className: "w-8 h-8 text-zinc-600"
-                                  }) : fee.feeAmount + " RING"))), React.createElement("div", {
+                                  }) : fee.feeAmount.toExponential(2) + " RING"))), React.createElement("div", {
                       className: "mt-8"
-                    }, props.isWalletConnected ? React.createElement("button", {
-                            className: "w-full py-4 px-6 " + (
-                              isCalculatingFee || isRegistering ? "bg-zinc-400 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"
-                            ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
-                            disabled: isCalculatingFee || isRegistering,
-                            onClick: (function (param) {
-                                var years = fee.years;
-                                setIsRegistering(function (param) {
-                                      return true;
-                                    });
-                                var walletClient = OnChainOperations.buildWalletClient();
-                                OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
-                                          setOnChainStatus(function (param) {
-                                                return status;
-                                              });
-                                        })).then(function () {
-                                      onRegisterSuccess(name);
-                                      return Promise.resolve();
-                                    });
-                              })
-                          }, isRegistering ? "Registering..." : (
-                              isCalculatingFee ? "Calculating..." : "Register name"
-                            )) : React.createElement("button", {
-                            className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
-                            onClick: (function (param) {
-                                handleConnectWallet();
-                              })
-                          }, "Connect wallet"))));
+                    }, tmp$1)));
 }
 
-var make = RegisterPanel;
+var make = RegisterExtendPanel;
 
 export {
   make ,

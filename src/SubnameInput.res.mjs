@@ -4,16 +4,17 @@ import * as React from "react";
 import * as InputPanel from "./components/InputPanel.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
 import * as ResultPanel from "./components/ResultPanel.res.mjs";
-import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as RegisterPanel from "./components/RegisterPanel.res.mjs";
+import * as RegisterExtendPanel from "./components/RegisterExtendPanel.res.mjs";
 
 var initialState = {
   name: "",
   panel: "input",
-  registeredName: undefined
+  action: "Register",
+  result: undefined
 };
 
 function SubnameInput(props) {
+  var isWalletConnected = props.isWalletConnected;
   var match = NameContext.use();
   var setUpdateName = match.setUpdateName;
   var match$1 = React.useState(function () {
@@ -21,58 +22,85 @@ function SubnameInput(props) {
       });
   var setState = match$1[1];
   var state = match$1[0];
-  var onRegisterSuccess = function (name) {
+  var onSuccess = function (result) {
     setState(function (prev) {
           return {
                   name: prev.name,
                   panel: "result",
-                  registeredName: name
+                  action: prev.action,
+                  result: result
                 };
         });
     setUpdateName(function (param) {
           return true;
         });
   };
+  var onNext = function (name, action) {
+    setState(function (prev) {
+          var tmp;
+          tmp = typeof action !== "object" ? "register" : "extend";
+          return {
+                  name: name,
+                  panel: tmp,
+                  action: action,
+                  result: prev.result
+                };
+        });
+  };
   var match$2 = state.panel;
   var tmp;
   switch (match$2) {
-    case "input" :
-        tmp = React.createElement(InputPanel.make, {
-              onNext: (function (name) {
-                  setState(function (prev) {
-                        return {
-                                name: name,
-                                panel: "register",
-                                registeredName: prev.registeredName
-                              };
-                      });
-                })
-            });
-        break;
-    case "register" :
-        tmp = React.createElement(RegisterPanel.make, {
+    case "extend" :
+        tmp = React.createElement(RegisterExtendPanel.make, {
               name: state.name,
-              isWalletConnected: props.isWalletConnected,
+              isWalletConnected: isWalletConnected,
               onBack: (function () {
                   setState(function (prev) {
                         return {
                                 name: prev.name,
                                 panel: "input",
-                                registeredName: prev.registeredName
+                                action: prev.action,
+                                result: prev.result
                               };
                       });
                 }),
-              onRegisterSuccess: onRegisterSuccess
+              onSuccess: onSuccess,
+              action: state.action
+            });
+        break;
+    case "input" :
+        tmp = React.createElement(InputPanel.make, {
+              onNext: onNext,
+              isWalletConnected: isWalletConnected
+            });
+        break;
+    case "register" :
+        tmp = React.createElement(RegisterExtendPanel.make, {
+              name: state.name,
+              isWalletConnected: isWalletConnected,
+              onBack: (function () {
+                  setState(function (prev) {
+                        return {
+                                name: prev.name,
+                                panel: "input",
+                                action: prev.action,
+                                result: prev.result
+                              };
+                      });
+                }),
+              onSuccess: onSuccess,
+              action: state.action
             });
         break;
     case "result" :
         tmp = React.createElement(ResultPanel.make, {
-              registeredName: Core__Option.getOr(state.registeredName, ""),
+              name: state.name,
               onRegisterAnother: (function () {
                   setState(function (param) {
                         return initialState;
                       });
-                })
+                }),
+              actionResult: state.result
             });
         break;
     default:
