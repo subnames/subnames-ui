@@ -1,4 +1,4 @@
-# ReScript / Vite Starter Template
+# Subnames UI
 
 - [Installation](../../README.md)
 
