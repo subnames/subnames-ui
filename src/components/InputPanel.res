@@ -60,8 +60,14 @@ let isOwner: (string, bool) => promise<option<bool>> = async (name, isWalletConn
   }
 }
 
-let formatExpiryDate: Date.t => string = date => {
-  date->Date.toUTCString
+@module("date-fns")
+external addDays: (Date.t, int) => Date.t = "addDays"
+
+@module("date-fns")
+external formatDistanceToNow: (Date.t, {"addSuffix": bool}) => string = "formatDistanceToNow"
+
+let distanceToExpiry: Date.t => string = date => {
+  formatDistanceToNow(date, {"addSuffix": true})
 }
 
 
@@ -181,7 +187,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
               {switch (state.isOwnedByUser, state.expiryDate) {
               | (Some(true), Some(date)) =>
                 <p className="text-sm text-gray-500 mt-1">
-                  {React.string(`Expires: ${formatExpiryDate(date)}`)}
+                  {React.string(`It's yours and will expire ${distanceToExpiry(date)}`)}
                 </p>
               | _ => React.null
               }}

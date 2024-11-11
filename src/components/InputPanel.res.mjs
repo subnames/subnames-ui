@@ -4,6 +4,7 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as DateFns from "date-fns";
 import * as Constants from "../Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -75,8 +76,10 @@ async function isOwner(name, isWalletConnected) {
   return owner === currentAccount;
 }
 
-function formatExpiryDate(date) {
-  return date.toUTCString();
+function distanceToExpiry(date) {
+  return DateFns.formatDistanceToNow(date, {
+              addSuffix: true
+            });
 }
 
 function InputPanel(props) {
@@ -258,7 +261,7 @@ function InputPanel(props) {
                       className: "text-gray-700"
                     }, state.value + "." + Constants.sld), match$1 !== undefined && match$1 && match$2 !== undefined ? React.createElement("p", {
                         className: "text-sm text-gray-500 mt-1"
-                      }, "Expires: " + Caml_option.valFromOption(match$2).toUTCString()) : null), tmp$1));
+                      }, "It's yours and will expire " + distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
   } else {
     tmp = null;
   }
@@ -289,7 +292,7 @@ export {
   initialState ,
   isValidSubname ,
   isOwner ,
-  formatExpiryDate ,
+  distanceToExpiry ,
   make ,
 }
 /* Icons Not a pure module */
