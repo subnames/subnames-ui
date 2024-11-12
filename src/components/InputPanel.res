@@ -187,7 +187,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
               {switch (state.isOwnedByUser, state.expiryDate) {
               | (Some(true), Some(date)) =>
                 <p className="text-sm text-gray-500 mt-1">
-                  {React.string(`It's yours and will expire ${distanceToExpiry(date)}`)}
+                  {React.string(`Your name will expire ${distanceToExpiry(date)}`)}
                 </p>
               | _ => React.null
               }}

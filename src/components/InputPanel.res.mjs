@@ -261,7 +261,7 @@ function InputPanel(props) {
                       className: "text-gray-700"
                     }, state.value + "." + Constants.sld), match$1 !== undefined && match$1 && match$2 !== undefined ? React.createElement("p", {
                         className: "text-sm text-gray-500 mt-1"
-                      }, "It's yours and will expire " + distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
+                      }, "Your name will expire " + distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
   } else {
     tmp = null;
   }
