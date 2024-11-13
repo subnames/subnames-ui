@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Constants from "../Constants.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 
 var UseAccount = {};
@@ -36,18 +37,34 @@ function NamesList(props) {
           
         }), [account.address]);
   return React.createElement("div", {
-              className: "p-6"
-            }, React.createElement("h2", {
-                  className: "text-2xl font-bold mb-6"
-                }, "Your Subnames"), match$1[0] ? React.createElement("div", {
-                    className: "text-center py-4"
-                  }, "Loading...") : (
-                match[0].length === 0 ? React.createElement("div", {
-                        className: "text-center py-4 text-gray-500"
-                      }, "You don't have any subnames yet") : React.createElement("div", {
-                        className: "space-y-4"
-                      }, "Under Construction")
-              ));
+              className: "p-8"
+            }, React.createElement("div", {
+                  className: "w-full max-w-xl mx-auto"
+                }, React.createElement("div", {
+                      className: "bg-white rounded-custom shadow-lg overflow-hidden"
+                    }, match$1[0] ? React.createElement("div", {
+                            className: "text-center py-4"
+                          }, "Loading...") : (
+                        match[0].length === 0 ? React.createElement("div", {
+                                className: "text-center py-4 text-gray-500"
+                              }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
+                                    className: "px-6 py-4"
+                                  }, React.createElement("div", {
+                                        className: "flex items-center justify-between"
+                                      }, React.createElement("div", undefined, React.createElement("p", {
+                                                className: "text-gray-700"
+                                              }, "abc." + Constants.sld), React.createElement("p", {
+                                                className: "text-sm text-gray-500 mt-1"
+                                              }, "Your name will expire in 10 days")), React.createElement("div", {
+                                            className: "flex gap-2"
+                                          }, React.createElement("button", {
+                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                type: "button"
+                                              }, "Transfer"), React.createElement("button", {
+                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                type: "button"
+                                              }, "Extend")))))
+                      ))));
 }
 
 var make = NamesList;

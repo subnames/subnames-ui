@@ -10,7 +10,7 @@ module UseAccount = {
 @react.component
 let make = () => {
   let account = UseAccount.use()
-  let fn: () => array<string> = () => []
+  let fn: unit => array<string> = () => []
   let (names, setNames) = React.useState(fn)
   let (loading, setLoading) = React.useState(() => true)
 
@@ -29,18 +29,42 @@ let make = () => {
     None
   }, [account.address])
 
-  <div className="p-6">
-    <h2 className="text-2xl font-bold mb-6"> {React.string("Your Subnames")} </h2>
-    {if loading {
-      <div className="text-center py-4"> {React.string("Loading...")} </div>
-    } else if names->Array.length == 0 {
-      <div className="text-center py-4 text-gray-500">
-        {React.string("You don't have any subnames yet")}
+  <div className="p-8">
+    <div className="w-full max-w-xl mx-auto">
+      <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+        {if loading {
+          <div className="text-center py-4"> {React.string("Loading...")} </div>
+        } else if names->Array.length == 0 {
+          <div className="text-center py-4 text-gray-500">
+            {React.string("You don't have any subnames yet")}
+          </div>
+        } else {
+          <div>
+            <div className="px-6 py-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-gray-700"> {React.string(`abc.${Constants.sld}`)} </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {React.string(`Your name will expire in 10 days`)}
+                  </p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    type_="button"
+                    className="rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+                    {React.string("Transfer")}
+                  </button>
+                  <button
+                    type_="button"
+                    className="rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+                    {React.string("Extend")}
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        }}
       </div>
-    } else {
-      <div className="space-y-4">
-        {React.string("Under Construction")}
-      </div>
-    }}
+    </div>
   </div>
-} 
+}
