@@ -14,6 +14,7 @@ function NamesList(props) {
   };
   var match = React.useState(fn);
   var setNames = match[1];
+  var names = match[0];
   var match$1 = React.useState(function () {
         return true;
       });
@@ -45,25 +46,31 @@ function NamesList(props) {
                     }, match$1[0] ? React.createElement("div", {
                             className: "text-center py-4"
                           }, "Loading...") : (
-                        match[0].length === 0 ? React.createElement("div", {
+                        names.length === 0 ? React.createElement("div", {
                                 className: "text-center py-4 text-gray-500"
-                              }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
-                                    className: "px-6 py-4"
-                                  }, React.createElement("div", {
-                                        className: "flex items-center justify-between"
-                                      }, React.createElement("div", undefined, React.createElement("p", {
-                                                className: "text-gray-700"
-                                              }, "abc." + Constants.sld), React.createElement("p", {
-                                                className: "text-sm text-gray-500 mt-1"
-                                              }, "Your name will expire in 10 days")), React.createElement("div", {
-                                            className: "flex gap-2"
-                                          }, React.createElement("button", {
-                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
-                                                type: "button"
-                                              }, "Transfer"), React.createElement("button", {
-                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
-                                                type: "button"
-                                              }, "Extend")))))
+                              }, "You don't have any subnames yet") : React.createElement("div", {
+                                className: "py-1"
+                              }, names.map(function (name, index) {
+                                    return React.createElement("div", undefined, React.createElement("div", {
+                                                    className: "px-6 py-4"
+                                                  }, React.createElement("div", {
+                                                        className: "flex items-center justify-between"
+                                                      }, React.createElement("div", undefined, React.createElement("p", {
+                                                                className: "text-gray-700"
+                                                              }, name + "." + Constants.sld), React.createElement("p", {
+                                                                className: "text-sm text-gray-500 mt-1"
+                                                              }, "Your name will expire in 10 days")), React.createElement("div", {
+                                                            className: "flex gap-2"
+                                                          }, React.createElement("button", {
+                                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                                type: "button"
+                                                              }, "Transfer"), React.createElement("button", {
+                                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                                type: "button"
+                                                              }, "Extend")))), index < (names.length - 1 | 0) ? React.createElement("div", {
+                                                      className: "border-b border-gray-200 mx-6"
+                                                    }) : null);
+                                  }))
                       ))));
 }
 
