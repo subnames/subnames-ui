@@ -405,9 +405,9 @@ async function renew(walletClient, name, years) {
 
 function getSubnames(address) {
   return Promise.resolve([
-              "a",
-              "b",
-              "c"
+              "not-ready",
+              "under-construction",
+              "not-implemented"
             ]);
 }
 

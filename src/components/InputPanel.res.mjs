@@ -229,16 +229,21 @@ function InputPanel(props) {
           var match$4 = state.isOwnedByUser;
           var exit = 0;
           if (match$4 !== undefined && match$4) {
-            tmp$1 = React.createElement("button", {
-                  className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
-                  type: "button",
-                  onClick: (function (param) {
-                      onNext(state.value, {
-                            TAG: "Extend",
-                            _0: state.expiryDate
-                          });
-                    })
-                }, "Extend");
+            tmp$1 = React.createElement("div", {
+                  className: "flex gap-2"
+                }, React.createElement("button", {
+                      className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                      type: "button"
+                    }, "Transfer"), React.createElement("button", {
+                      className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                      type: "button",
+                      onClick: (function (param) {
+                          onNext(state.value, {
+                                TAG: "Extend",
+                                _0: state.expiryDate
+                              });
+                        })
+                    }, "Extend"));
           } else {
             exit = 1;
           }

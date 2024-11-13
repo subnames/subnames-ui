@@ -62,10 +62,10 @@ function NamesList(props) {
                                                               }, "Your name will expire in 10 days")), React.createElement("div", {
                                                             className: "flex gap-2"
                                                           }, React.createElement("button", {
-                                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                                className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
                                                                 type: "button"
                                                               }, "Transfer"), React.createElement("button", {
-                                                                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+                                                                className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
                                                                 type: "button"
                                                               }, "Extend")))), index < (names.length - 1 | 0) ? React.createElement("div", {
                                                       className: "border-b border-gray-200 mx-6"

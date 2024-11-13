@@ -419,5 +419,5 @@ let renew: (walletClient, string, int) => promise<unit> = async (walletClient, n
 
 let getSubnames: string => promise<array<string>> = address => {
   // TODO: Implement
-  Promise.resolve(["a", "b", "c"])
+  Promise.resolve(["not-ready", "under-construction", "not-implemented"])
 }
