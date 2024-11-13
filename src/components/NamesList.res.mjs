@@ -43,7 +43,11 @@ function NamesList(props) {
                   className: "w-full max-w-xl mx-auto"
                 }, React.createElement("div", {
                       className: "bg-white rounded-custom shadow-lg overflow-hidden"
-                    }, match$1[0] ? React.createElement("div", {
+                    }, React.createElement("div", {
+                          className: "px-6 pt-4 pb-4 border-b border-gray-200"
+                        }, React.createElement("h3", {
+                              className: "font-medium"
+                            }, "Under Construction")), match$1[0] ? React.createElement("div", {
                             className: "text-center py-4"
                           }, "Loading...") : (
                         names.length === 0 ? React.createElement("div", {

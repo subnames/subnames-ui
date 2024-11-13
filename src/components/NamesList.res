@@ -32,6 +32,10 @@ let make = () => {
   <div className="p-8">
     <div className="w-full max-w-xl mx-auto">
       <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+        <div className="px-6 pt-4 pb-4 border-b border-gray-200">
+          <h3 className="font-medium"> {React.string("Under Construction")} </h3>
+        </div>
+
         {if loading {
           <div className="text-center py-4"> {React.string("Loading...")} </div>
         } else if names->Array.length == 0 {
