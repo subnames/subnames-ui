@@ -58,29 +58,6 @@ let config = getDefaultConfig({
   "ssr": false,
 })
 
-module Layout = {
-  @react.component
-  let make = (~children: React.element) => {
-    <div className="min-h-screen bg-gray-50">
-      <header>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            <div className="flex-shrink-0">
-              <h1 className="text-xl font-bold text-gray-900"> {React.string(Constants.sld)} </h1>
-            </div>
-            <div className="flex items-center">
-              <MyConnectButton />
-            </div>
-          </div>
-        </div>
-      </header>
-      <main>
-        <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"> {children} </div>
-      </main>
-    </div>
-  }
-}
-
 module UseAccount = {
   type account = {
     address: option<string>,
@@ -132,24 +109,66 @@ module Subname = {
   }
 }
 
+module Layout = {
+  @react.component
+  let make = () => {
+    let (updateName, setUpdateName) = React.useState(() => true)
+    let url = RescriptReactRouter.useUrl()
+    let account = UseAccount.use()
+
+    <NameContext.Provider value={updateName, setUpdateName}>
+      <div className="min-h-screen bg-gray-50">
+        <header>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              <div className="flex-shrink-0">
+                <button
+                  onClick={_ => RescriptReactRouter.push("/")}
+                  className="text-xl font-bold text-gray-900">
+                  {React.string(Constants.sld)}
+                </button>
+              </div>
+              <div className="flex items-center gap-4">
+                {if account.isConnected {
+                  <button
+                    onClick={_ => RescriptReactRouter.push("/names")}
+                    className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
+                    {React.string("Your Names")}
+                  </button>
+                } else {
+                  React.null
+                }}
+                <MyConnectButton />
+              </div>
+            </div>
+          </div>
+        </header>
+        <main>
+          <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+            {switch url.path {
+            | list{"names"} => <NamesList />
+            | list{} => <Subname />
+            | _ => <div> {React.string("Page Not Found")} </div>
+            }}
+          </div>
+        </main>
+      </div>
+    </NameContext.Provider>
+  }
+}
+
 @react.component
 let make = () => {
-  let (updateName, setUpdateName) = React.useState(() => true)
-
-  <NameContext.Provider value={updateName, setUpdateName}>
-    <WagmiProvider config={config}>
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider
-          theme={lightTheme({
-            accentColor: "rgb(39, 39, 42)",
-            accentColorForeground: "white",
-            borderRadius: "large",
-          })}>
-          <Layout>
-            <Subname />
-          </Layout>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </WagmiProvider>
-  </NameContext.Provider>
+  <WagmiProvider config={config}>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider
+        theme={lightTheme({
+          accentColor: "rgb(39, 39, 42)",
+          accentColorForeground: "white",
+          borderRadius: "large",
+        })}>
+        <Layout />
+      </RainbowKitProvider>
+    </QueryClientProvider>
+  </WagmiProvider>
 }

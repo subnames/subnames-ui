@@ -403,6 +403,14 @@ async function renew(walletClient, name, years) {
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
+function getSubnames(address) {
+  return Promise.resolve([
+              "a",
+              "b",
+              "c"
+            ]);
+}
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -423,5 +431,6 @@ export {
   encodeSetAddr ,
   register ,
   renew ,
+  getSubnames ,
 }
 /* controllerContract Not a pure module */

@@ -3,11 +3,13 @@
 import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Constants from "./Constants.res.mjs";
+import * as NamesList from "./components/NamesList.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
 import * as OnChainOperations from "./OnChainOperations.res.mjs";
+import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
@@ -24,24 +26,6 @@ var config = Rainbowkit.getDefaultConfig({
       transports: transports,
       ssr: false
     });
-
-function App$Layout(props) {
-  return React.createElement("div", {
-              className: "min-h-screen bg-gray-50"
-            }, React.createElement("header", undefined, React.createElement("div", {
-                      className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-                    }, React.createElement("div", {
-                          className: "flex justify-between items-center h-16"
-                        }, React.createElement("div", {
-                              className: "flex-shrink-0"
-                            }, React.createElement("h1", {
-                                  className: "text-xl font-bold text-gray-900"
-                                }, Constants.sld)), React.createElement("div", {
-                              className: "flex items-center"
-                            }, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
-                      className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
-                    }, props.children)));
-}
 
 var walletClient = OnChainOperations.buildWalletClient();
 
@@ -80,28 +64,59 @@ function App$Subname(props) {
                       }, "Install MetaMask")));
 }
 
-function App(props) {
+function App$Layout(props) {
   var match = React.useState(function () {
         return true;
       });
+  var url = RescriptReactRouter.useUrl(undefined, undefined);
+  var account = Wagmi.useAccount();
+  var match$1 = url.path;
+  var tmp;
+  tmp = match$1 ? (
+      match$1.hd === "names" && !match$1.tl ? React.createElement(NamesList.make, {}) : React.createElement("div", undefined, "Page Not Found")
+    ) : React.createElement(App$Subname, {});
   return React.createElement(NameContext.Provider.make, {
               value: {
                 updateName: match[0],
                 setUpdateName: match[1]
               },
-              children: React.createElement(Wagmi.WagmiProvider, {
-                    config: config,
-                    children: React.createElement(ReactQuery.QueryClientProvider, {
-                          client: queryClient,
-                          children: React.createElement(Rainbowkit.RainbowKitProvider, {
-                                children: React.createElement(App$Layout, {
-                                      children: React.createElement(App$Subname, {})
-                                    }),
-                                theme: Rainbowkit.lightTheme({
-                                      accentColor: "rgb(39, 39, 42)",
-                                      accentColorForeground: "white",
-                                      borderRadius: "large"
-                                    })
+              children: React.createElement("div", {
+                    className: "min-h-screen bg-gray-50"
+                  }, React.createElement("header", undefined, React.createElement("div", {
+                            className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
+                          }, React.createElement("div", {
+                                className: "flex justify-between items-center h-16"
+                              }, React.createElement("div", {
+                                    className: "flex-shrink-0"
+                                  }, React.createElement("button", {
+                                        className: "text-xl font-bold text-gray-900",
+                                        onClick: (function (param) {
+                                            RescriptReactRouter.push("/");
+                                          })
+                                      }, Constants.sld)), React.createElement("div", {
+                                    className: "flex items-center gap-4"
+                                  }, account.isConnected ? React.createElement("button", {
+                                          className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
+                                          onClick: (function (param) {
+                                              RescriptReactRouter.push("/names");
+                                            })
+                                        }, "Your Names") : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                            className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
+                          }, tmp)))
+            });
+}
+
+function App(props) {
+  return React.createElement(Wagmi.WagmiProvider, {
+              config: config,
+              children: React.createElement(ReactQuery.QueryClientProvider, {
+                    client: queryClient,
+                    children: React.createElement(Rainbowkit.RainbowKitProvider, {
+                          children: React.createElement(App$Layout, {}),
+                          theme: Rainbowkit.lightTheme({
+                                accentColor: "rgb(39, 39, 42)",
+                                accentColorForeground: "white",
+                                borderRadius: "large"
                               })
                         })
                   })
