@@ -32,8 +32,13 @@ let make = () => {
   <div className="p-8">
     <div className="w-full max-w-xl mx-auto">
       <div className="bg-white rounded-custom shadow-lg overflow-hidden">
-        <div className="px-6 pt-4 pb-4 border-b border-gray-200">
-          <h3 className="font-medium"> {React.string("Under Construction")} </h3>
+        <div className="px-6 pt-4 pb-4 border-b border-gray-200 relative">
+          <div className="text-lg"> {React.string("Under Construction")} </div>
+          <button
+            onClick={_ => RescriptReactRouter.push("/")}
+            className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2">
+            <Icons.Close />
+          </button>
         </div>
 
         {if loading {
