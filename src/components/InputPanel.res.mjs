@@ -288,7 +288,9 @@ function InputPanel(props) {
                             className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
                             type: "button",
                             onClick: handleClear
-                          }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement(Icons.Search.make, {}) : null)), tmp);
+                          }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement("div", {
+                            className: "p-1 rounded-full transition-colors"
+                          }, React.createElement(Icons.Search.make, {})) : null)), tmp);
 }
 
 var make = InputPanel;

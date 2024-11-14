@@ -167,7 +167,9 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
           React.null
         }}
         {if state.value == "" {
-          <Icons.Search />
+          <div className="p-1 rounded-full transition-colors">
+            <Icons.Search />
+          </div>
         } else {
           React.null
         }}
