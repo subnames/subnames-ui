@@ -41,7 +41,11 @@ let make = () => {
           </button>
         </div>
 
-        {if loading {
+        {if !account.isConnected {
+          <div className="text-center py-4 text-gray-500">
+            {React.string("Please connect your wallet to see your names")}
+          </div>
+        } else if loading {
           <div className="text-center py-4"> {React.string("Loading...")} </div>
         } else if names->Array.length == 0 {
           <div className="text-center py-4 text-gray-500">
