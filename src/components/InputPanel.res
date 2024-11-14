@@ -60,17 +60,6 @@ let isOwner: (string, bool) => promise<option<bool>> = async (name, isWalletConn
   }
 }
 
-@module("date-fns")
-external addDays: (Date.t, int) => Date.t = "addDays"
-
-@module("date-fns")
-external formatDistanceToNow: (Date.t, {"addSuffix": bool}) => string = "formatDistanceToNow"
-
-let distanceToExpiry: Date.t => string = date => {
-  formatDistanceToNow(date, {"addSuffix": true})
-}
-
-
 @react.component
 let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) => {
   let (state, setState) = React.useState(_ => initialState)
@@ -83,13 +72,12 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
         // If name is not available, check ownership and expiry
         let isOwner = await isOwner(value, isWalletConnected)
         let expiryInt = await OnChainOperations.nameExpires(value)
-        let expiry = Int.toFloat(expiryInt) *. 1000.0
         setState(prev => {
           ...prev,
           isChecking: false,
           isAvailable: Some(false),
           isOwnedByUser: isOwner,
-          expiryDate: Some(Date.fromTime(expiry)),
+          expiryDate: Some(timestampToDate(expiryInt)),
         })
       } else {
         setState(prev => {
@@ -185,10 +173,10 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-700"> {React.string(`${state.value}.${Constants.sld}`)} </p>
+              <p className="text-gray-800"> {React.string(`${state.value}.${Constants.sld}`)} </p>
               {switch (state.isOwnedByUser, state.expiryDate) {
               | (Some(true), Some(date)) =>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-xs text-gray-400 mt-1">
                   {React.string(`Your name will expire ${distanceToExpiry(date)}`)}
                 </p>
               | _ => React.null

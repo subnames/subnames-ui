@@ -1,3 +1,5 @@
+open Utils
+
 module UseAccount = {
   type account = {
     address: option<string>,
@@ -7,33 +9,88 @@ module UseAccount = {
   external use: unit => account = "useAccount"
 }
 
+// Define the types for our GraphQL response
+type owner = {id: string}
+type subname = {
+  label: string,
+  name: string,
+  expires: string,
+  owner: owner,
+}
+type queryResponse = {subnames: array<subname>}
+
 @react.component
 let make = () => {
   let account = UseAccount.use()
-  let fn: unit => array<string> = () => []
-  let (names, setNames) = React.useState(fn)
+  let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
 
   React.useEffect1(() => {
-    switch account.address {
-    | Some(addr) => {
-        setLoading(_ => true)
-        let _ = OnChainOperations.getSubnames(addr)->Promise.then(subnames => {
-          setNames(_ => subnames)
-          setLoading(_ => false)
-          Promise.resolve()
-        })
+    if account.isConnected {
+      let fetchNames = async () => {
+        let query = `
+          query {
+            subnames(limit: 20) {
+              label
+              name
+              expires
+              owner {
+                id
+              }
+            }
+          }
+        `
+
+        let result = await GraphQLClient.makeRequest(
+          ~endpoint=Constants.indexerUrl,
+          ~query,
+          (),
+        )
+
+        switch result {
+        | {data: Some(data), errors: None} => {
+            // Assuming data can be decoded to queryResponse type
+            let subnames = data
+              ->Dict.get("subnames")
+              ->Option.getExn
+              ->Js.Json.decodeArray
+              ->Option.getExn
+              ->Array.map(json => {
+                let obj = json->Js.Json.decodeObject->Option.getExn
+                {
+                  label: obj->Dict.get("label")->Option.getExn->Js.Json.decodeString->Option.getExn,
+                  name: obj->Dict.get("name")->Option.getExn->Js.Json.decodeString->Option.getExn,
+                  expires: obj->Dict.get("expires")->Option.getExn->Js.Json.decodeString->Option.getExn,
+                  owner: {
+                    id: obj
+                      ->Dict.get("owner")
+                      ->Option.getExn
+                      ->Js.Json.decodeObject
+                      ->Option.getExn
+                      ->Dict.get("id")
+                      ->Option.getExn
+                      ->Js.Json.decodeString
+                      ->Option.getExn,
+                  },
+                }
+              })
+            setNames(_ => subnames)
+          }
+        | {errors: Some(errors)} => Console.log2("Errors:", errors)
+        | _ => Console.log("Unknown response")
+        }
+        setLoading(_ => false)
       }
-    | None => ()
+      fetchNames()->ignore
     }
     None
-  }, [account.address])
+  }, [account.isConnected])
 
   <div className="p-8">
     <div className="w-full max-w-xl mx-auto">
       <div className="bg-white rounded-custom shadow-lg overflow-hidden">
         <div className="px-6 pt-4 pb-4 border-b border-gray-200 relative">
-          <div className="text-lg"> {React.string("Your Names(Under Construction)")} </div>
+          <div className="text-lg"> {React.string("Your Subnames")} </div>
           <button
             onClick={_ => RescriptReactRouter.push("/")}
             className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2">
@@ -54,14 +111,16 @@ let make = () => {
         } else {
           <div className="py-1">
             {names
-            ->Array.mapWithIndex((name, index) => {
-              <div>
+            ->Array.mapWithIndex((subname, index) => {
+              <div key={subname.name}>
                 <div className="px-6 py-4">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-gray-700"> {React.string(`${name}.${Constants.sld}`)} </p>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {React.string(`Your name will expire in 10 days`)}
+                      <p className="text-gray-800">
+                        {React.string(`${subname.name}.${Constants.sld}`)}
+                      </p>
+                      <p className="text-xs text-gray-400 mt-1">
+                        {React.string(`Expires ${distanceToExpiry(timestampStringToDate(subname.expires))}`)}
                       </p>
                     </div>
                     <div className="flex gap-2">

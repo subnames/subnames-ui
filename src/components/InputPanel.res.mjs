@@ -4,7 +4,6 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
-import * as DateFns from "date-fns";
 import * as Constants from "../Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -76,12 +75,6 @@ async function isOwner(name, isWalletConnected) {
   return owner === currentAccount;
 }
 
-function distanceToExpiry(date) {
-  return DateFns.formatDistanceToNow(date, {
-              addSuffix: true
-            });
-}
-
 function InputPanel(props) {
   var isWalletConnected = props.isWalletConnected;
   var onNext = props.onNext;
@@ -119,7 +112,6 @@ function InputPanel(props) {
       }
       var isOwner$1 = await isOwner(value, isWalletConnected);
       var expiryInt = await OnChainOperations.nameExpires(value);
-      var expiry = expiryInt * 1000.0;
       return setState(function (prev) {
                   return {
                           value: prev.value,
@@ -128,7 +120,7 @@ function InputPanel(props) {
                           isChecking: false,
                           isAvailable: false,
                           isOwnedByUser: isOwner$1,
-                          expiryDate: Caml_option.some(new Date(expiry))
+                          expiryDate: Caml_option.some(Utils.timestampToDate(expiryInt))
                         };
                 });
     }
@@ -263,10 +255,10 @@ function InputPanel(props) {
         }, React.createElement("div", {
               className: "flex items-center justify-between"
             }, React.createElement("div", undefined, React.createElement("p", {
-                      className: "text-gray-700"
+                      className: "text-gray-800"
                     }, state.value + "." + Constants.sld), match$1 !== undefined && match$1 && match$2 !== undefined ? React.createElement("p", {
-                        className: "text-sm text-gray-500 mt-1"
-                      }, "Your name will expire " + distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
+                        className: "text-xs text-gray-400 mt-1"
+                      }, "Your name will expire " + Utils.distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
   } else {
     tmp = null;
   }
@@ -299,7 +291,6 @@ export {
   initialState ,
   isValidSubname ,
   isOwner ,
-  distanceToExpiry ,
   make ,
 }
 /* Icons Not a pure module */

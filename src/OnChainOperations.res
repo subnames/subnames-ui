@@ -416,8 +416,3 @@ let renew: (walletClient, string, int) => promise<unit> = async (walletClient, n
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
-
-let getSubnames: string => promise<array<string>> = address => {
-  // TODO: Implement
-  Promise.resolve(["not-ready", "under-construction", "not-implemented"])
-}

@@ -16,3 +16,23 @@ let useDebounce = (callback, delay) => {
     timeoutRef.current = Some(timeout)
   }
 }
+
+@module("date-fns")
+external addDays: (Date.t, int) => Date.t = "addDays"
+
+@module("date-fns")
+external formatDistanceToNow: (Date.t, {"addSuffix": bool}) => string = "formatDistanceToNow"
+
+let distanceToExpiry: Date.t => string = date => {
+  formatDistanceToNow(date, {"addSuffix": true})
+}
+
+let timestampToDate: int => Date.t = timestamp => {
+  let floatTimestamp = Int.toFloat(timestamp)
+  Date.fromTime(floatTimestamp *. 1000.0)
+}
+
+let timestampStringToDate: string => Date.t = timestamp => {
+  let intTimestamp = Int.fromString(timestamp)->Option.getExn
+  timestampToDate(intTimestamp)
+}
