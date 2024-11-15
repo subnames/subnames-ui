@@ -13,7 +13,7 @@ var baseRegistrarContractAddress = "0xDD95A735134e18c2CC22e4e569B1Af4eE68bd787";
 
 var rpcUrl = "https://koi-rpc.darwinia.network";
 
-var indexerUrl = "http://213.199.47.229:4350/graphql";
+var indexerUrl = "https://g2d.site/graphql";
 
 export {
   sld ,
