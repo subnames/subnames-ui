@@ -30,7 +30,7 @@ let make = () => {
       let fetchNames = async () => {
         let query = `
           query {
-            subnames(limit: 20) {
+            subnames(limit: 20, where: {owner: {id_eq: "${account.address->Option.getExn->String.toLowerCase}"}}) {
               label
               name
               expires

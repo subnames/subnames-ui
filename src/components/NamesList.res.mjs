@@ -26,7 +26,8 @@ function NamesList(props) {
   React.useEffect((function () {
           if (account.isConnected) {
             var fetchNames = async function () {
-              var result = await GraphQLClient.makeRequest(Constants.indexerUrl, "\n          query {\n            subnames(limit: 20) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ", undefined, undefined);
+              var query = "\n          query {\n            subnames(limit: 20, where: {owner: {id_eq: \"" + Core__Option.getExn(account.address, undefined).toLowerCase() + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
+              var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
               var exit = 0;
               if (data !== undefined && result.errors === undefined) {
