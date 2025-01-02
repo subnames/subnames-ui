@@ -4,11 +4,16 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Js_json from "rescript/lib/es6/js_json.js";
 import * as Constants from "../Constants.res.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as GraphQLClient from "../GraphQLClient.res.mjs";
+import * as ReverseRegistrar from "../ReverseRegistrar.res.mjs";
+import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
+import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 var UseAccount = {};
 
@@ -23,6 +28,52 @@ function NamesList(props) {
         return true;
       });
   var setLoading = match$1[1];
+  var match$2 = React.useState(function () {
+        return false;
+      });
+  var setSettingPrimary = match$2[1];
+  var match$3 = React.useState(function () {
+        
+      });
+  var setError = match$3[1];
+  var setPrimaryName = async function (name) {
+    setSettingPrimary(function (param) {
+          return true;
+        });
+    setError(function (param) {
+          
+        });
+    try {
+      var walletClient = OnChainOperationsCommon.buildWalletClient();
+      if (walletClient !== undefined) {
+        await ReverseRegistrar.setName(Caml_option.valFromOption(walletClient), name);
+        return setSettingPrimary(function (param) {
+                    return false;
+                  });
+      } else {
+        setError(function (param) {
+              return "Wallet connection failed";
+            });
+        return setSettingPrimary(function (param) {
+                    return false;
+                  });
+      }
+    }
+    catch (raw_error){
+      var error = Caml_js_exceptions.internalToOCamlException(raw_error);
+      if (error.RE_EXN_ID === Js_exn.$$Error) {
+        console.error(error._1);
+        return setSettingPrimary(function (param) {
+                    return false;
+                  });
+      } else {
+        console.error("An unknown error occurred");
+        return setSettingPrimary(function (param) {
+                    return false;
+                  });
+      }
+    }
+  };
   React.useEffect((function () {
           if (account.isConnected) {
             var fetchNames = async function () {
@@ -101,6 +152,12 @@ function NamesList(props) {
                                                                   }, "Expires " + Utils.distanceToExpiry(Utils.timestampStringToDate(subname.expires)))), React.createElement("div", {
                                                                 className: "flex gap-2"
                                                               }, React.createElement("button", {
+                                                                    className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                                                                    type: "button",
+                                                                    onClick: (function (param) {
+                                                                        setPrimaryName(subname.name);
+                                                                      })
+                                                                  }, "Set primary"), React.createElement("button", {
                                                                     className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
                                                                     type: "button"
                                                                   }, "Transfer"), React.createElement("button", {

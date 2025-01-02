@@ -1,4 +1,7 @@
 open Utils
+open ReverseRegistrar
+open OnChainOperationsCommon
+open OnChainOperations
 
 module UseAccount = {
   type account = {
@@ -24,6 +27,34 @@ let make = () => {
   let account = UseAccount.use()
   let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
+  let (settingPrimary, setSettingPrimary) = React.useState(() => false)
+  let (error, setError) = React.useState(() => None)
+
+  let setPrimaryName = async name => {
+    setSettingPrimary(_ => true)
+    setError(_ => None)
+    try {
+      switch buildWalletClient() {
+      | Some(walletClient) => {
+          await setName(walletClient, name)
+          setSettingPrimary(_ => false)
+        }
+      | None => {
+          setError(_ => Some("Wallet connection failed"))
+          setSettingPrimary(_ => false)
+        }
+      }
+    } catch {
+    | Js.Exn.Error(error) => {
+        Console.error(error)
+        setSettingPrimary(_ => false)
+      }
+    | error => {
+        Console.error("An unknown error occurred")
+        setSettingPrimary(_ => false)
+      }
+    }
+  }
 
   React.useEffect1(() => {
     if account.isConnected {
@@ -124,6 +155,14 @@ let make = () => {
                       </p>
                     </div>
                     <div className="flex gap-2">
+                      <button
+                        type_="button"
+                        onClick={_ => {
+                          setPrimaryName(subname.name)->ignore
+                        }}
+                        className="rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
+                        {React.string("Set primary")}
+                      </button>
                       <button
                         type_="button"
                         className="rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
