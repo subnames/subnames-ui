@@ -1,3 +1,4 @@
+open OnChainOperationsCommon
 type chain = {
   id: int,
   name: string,
@@ -68,7 +69,7 @@ module UseAccount = {
 }
 
 module Subname = {
-  let walletClient = OnChainOperations.buildWalletClient()
+  let walletClient = buildWalletClient()
   let hasWallet = switch walletClient {
   | Some(_) => true
   | None => false

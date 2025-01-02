@@ -4,6 +4,7 @@ import * as React from "react";
 import * as InputPanel from "./components/InputPanel.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
 import * as ResultPanel from "./components/ResultPanel.res.mjs";
+import * as TransferPanel from "./components/TransferPanel.res.mjs";
 import * as RegisterExtendPanel from "./components/RegisterExtendPanel.res.mjs";
 
 var initialState = {
@@ -38,7 +39,29 @@ function SubnameInput(props) {
   var onNext = function (name, action) {
     setState(function (prev) {
           var tmp;
-          tmp = typeof action !== "object" ? "register" : "extend";
+          if (typeof action !== "object") {
+            switch (action) {
+              case "Register" :
+                  tmp = "register";
+                  break;
+              case "Transfer" :
+                  tmp = "transfer";
+                  break;
+              case "Reclaim" :
+                  throw {
+                        RE_EXN_ID: "Match_failure",
+                        _1: [
+                          "SubnameInput.res",
+                          33,
+                          13
+                        ],
+                        Error: new Error()
+                      };
+              
+            }
+          } else {
+            tmp = "extend";
+          }
           return {
                   name: name,
                   panel: tmp,
@@ -101,6 +124,23 @@ function SubnameInput(props) {
                       });
                 }),
               actionResult: state.result
+            });
+        break;
+    case "transfer" :
+        tmp = React.createElement(TransferPanel.make, {
+              name: state.name,
+              isWalletConnected: isWalletConnected,
+              onBack: (function () {
+                  setState(function (prev) {
+                        return {
+                                name: prev.name,
+                                panel: "input",
+                                action: prev.action,
+                                result: prev.result
+                              };
+                      });
+                }),
+              onSuccess: onSuccess
             });
         break;
     default:

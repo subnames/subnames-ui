@@ -11,6 +11,8 @@ var resolverContractAddress = "0x537F40580bB46Ad299F522D1cAC2B7cb71bE7892";
 
 var baseRegistrarContractAddress = "0xDD95A735134e18c2CC22e4e569B1Af4eE68bd787";
 
+var reverseRegistrarContractAddress = "0x315F0C8877881c880d0675E84d915D23E0538502";
+
 var rpcUrl = "https://koi-rpc.darwinia.network";
 
 var indexerUrl = "https://g2d.site/graphql";
@@ -21,6 +23,7 @@ export {
   controllerContractAddress ,
   resolverContractAddress ,
   baseRegistrarContractAddress ,
+  reverseRegistrarContractAddress ,
   rpcUrl ,
   indexerUrl ,
 }

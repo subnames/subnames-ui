@@ -8,10 +8,10 @@ import * as NameContext from "./NameContext.res.mjs";
 import * as SubnameInput from "./SubnameInput.res.mjs";
 import * as Chains from "wagmi/chains";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
-import * as OnChainOperations from "./OnChainOperations.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
+import * as OnChainOperationsCommon from "./OnChainOperationsCommon.res.mjs";
 
 var queryClient = new ReactQuery.QueryClient();
 
@@ -27,7 +27,7 @@ var config = Rainbowkit.getDefaultConfig({
       ssr: false
     });
 
-var walletClient = OnChainOperations.buildWalletClient();
+var walletClient = OnChainOperationsCommon.buildWalletClient();
 
 var hasWallet = walletClient !== undefined;
 

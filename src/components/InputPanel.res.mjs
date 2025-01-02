@@ -9,6 +9,7 @@ import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
+import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 var initialState = {
   value: "",
@@ -66,12 +67,12 @@ async function isOwner(name, isWalletConnected) {
   if (!isWalletConnected) {
     return ;
   }
-  var walletClient = OnChainOperations.buildWalletClient();
+  var walletClient = OnChainOperationsCommon.buildWalletClient();
   if (walletClient === undefined) {
     return ;
   }
   var owner = await OnChainOperations.owner(name);
-  var currentAccount = await OnChainOperations.currentAddress(Caml_option.valFromOption(walletClient));
+  var currentAccount = await OnChainOperationsCommon.currentAddress(Caml_option.valFromOption(walletClient));
   return owner === currentAccount;
 }
 
@@ -225,7 +226,10 @@ function InputPanel(props) {
                   className: "flex gap-2"
                 }, React.createElement("button", {
                       className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
-                      type: "button"
+                      type: "button",
+                      onClick: (function (param) {
+                          onNext(state.value, "Transfer");
+                        })
                     }, "Transfer"), React.createElement("button", {
                       className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
                       type: "button",

@@ -1,16 +1,4 @@
-type publicClient
-type address = string
-type abi
-
-@module("viem") external createPublicClient: 'a => publicClient = "createPublicClient"
-@module("viem") external http: string => 'transport = "http"
-@module("viem/chains") external koi: 'chain = "koi"
-
-@unboxed type argType = String(string) | Int(int) | BigInt(bigint)
-@send
-external readContract: (publicClient, 'readContractParams) => promise<'result> = "readContract"
-
-@module("viem/ens") external namehash: string => string = "namehash"
+open OnChainOperationsCommon
 
 let baseRegistrarContract = {
   "address": Constants.baseRegistrarContractAddress,
@@ -21,6 +9,27 @@ let baseRegistrarContract = {
       "inputs": [{"name": "id", "type": "uint256"}],
       "outputs": [{"name": "expiry", "type": "uint256"}],
       "stateMutability": "view",
+    },
+    {
+      "type": "function",
+      "name": "safeTransferFrom",
+      "inputs": [
+        {"name": "from", "type": "address"},
+        {"name": "to", "type": "address"},
+        {"name": "tokenId", "type": "uint256"},
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable",
+    },
+    {
+      "type": "function",
+      "name": "reclaim",
+      "inputs": [
+        {"name": "id", "type": "uint256"},
+        {"name": "owner", "type": "address"},
+      ],
+      "outputs": [],
+      "stateMutability": "nonpayable",
     },
   ],
 }
@@ -161,17 +170,12 @@ let controllerContract = {
     },
 }
 
-let client = createPublicClient({
-  "chain": koi,
-  "transport": http(Constants.rpcUrl),
-})
-
 let recordExists: string => promise<bool> = async name => {
   let domain = `${name}.${Constants.sld}`
   let node = namehash(domain)
   Console.log(`domain: "${domain}", node: "${node}"`)
   await readContract(
-    client,
+    publicClient,
     {
       "address": registryContract["address"],
       "abi": registryContract["abi"],
@@ -183,7 +187,7 @@ let recordExists: string => promise<bool> = async name => {
 
 let available: string => promise<bool> = async name => {
   await readContract(
-    client,
+    publicClient,
     {
       "address": controllerContract["address"],
       "abi": controllerContract["abi"],
@@ -198,7 +202,7 @@ let available: string => promise<bool> = async name => {
 let registerPrice: (string, int) => promise<bigint> = async (name, duration) => {
   let args: array<argType> = [String(name), Int(duration)]
   let result = await readContract(
-    client,
+    publicClient,
     {
       "address": controllerContract["address"],
       "abi": controllerContract["abi"],
@@ -212,7 +216,7 @@ let registerPrice: (string, int) => promise<bigint> = async (name, duration) => 
 let rentPrice: (string, int) => promise<bigint> = async (name, duration) => {
   let args: array<argType> = [String(name), Int(duration)]
   await readContract(
-    client,
+    publicClient,
     {
       "address": controllerContract["address"],
       "abi": controllerContract["abi"],
@@ -221,11 +225,6 @@ let rentPrice: (string, int) => promise<bigint> = async (name, duration) => {
     },
   )
 }
-
-@module("./sha3.mjs")
-external sha3HexAddress: string => string = "default"
-@module("viem") external keccak256: string => string = "keccak256"
-@module("viem") external encodePacked: (array<string>, array<string>) => string = "encodePacked"
 
 let name: string => promise<string> = async address => {
   let node = keccak256(
@@ -238,7 +237,7 @@ let name: string => promise<string> = async address => {
     ),
   )
   await readContract(
-    client,
+    publicClient,
     {
       "address": resolverContract["address"],
       "abi": resolverContract["abi"],
@@ -251,7 +250,7 @@ let name: string => promise<string> = async address => {
 let nameExpires: string => promise<int> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
   let result = await readContract(
-    client,
+    publicClient,
     {
       "address": baseRegistrarContract["address"],
       "abi": baseRegistrarContract["abi"],
@@ -266,7 +265,7 @@ let owner: string => promise<string> = async name => {
   let domain = `${name}.${Constants.sld}`
   let node = namehash(domain)
   await readContract(
-    client,
+    publicClient,
     {
       "address": registryContract["address"],
       "abi": registryContract["abi"],
@@ -279,32 +278,16 @@ let owner: string => promise<string> = async name => {
 ////////////////////////////////////////
 // Wallet client
 ////////////////////////////////////////
-type walletClient
-@module("viem") external createWalletClient: 'a => walletClient = "createWalletClient"
-@module("viem") external custom: 'a => 'b = "custom"
-@val @scope("window") external ethereum: option<Dom.window> = "ethereum"
-@send external requestAddresses: walletClient => promise<array<string>> = "requestAddresses"
-@send external getAddresses: walletClient => promise<array<string>> = "getAddresses"
-type request
-type requestResult = {request: request}
-@send
-external simulateContract: (publicClient, 'simulateContractParams) => promise<requestResult> =
-  "simulateContract"
-@send external writeContract: (walletClient, request) => promise<'result> = "writeContract"
-@module("viem") external encodeFunctionData: 'a => string = "encodeFunctionData"
 
-let publicClient = createPublicClient({
-  "chain": koi,
-  "transport": http(Constants.rpcUrl),
-})
 
-type transaction = {
-  blockNumber: bigint,
-  status: string,
-}
-@send
-external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
-  "waitForTransactionReceipt"
+
+
+
+
+
+
+
+
 
 // Console.log("ethereum")
 // Console.log(ethereum)
@@ -314,23 +297,10 @@ external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> =
 // //   "transport": custom(ethereum),
 // // })
 
-let buildWalletClient = () => {
-  switch ethereum {
-  | Some(ethereum) => Some(createWalletClient({"chain": koi, "transport": custom(ethereum)}))
-  | None => None
-  }
-}
 
-let currentAddress = async walletClient => {
-  let result = await requestAddresses(walletClient)
-  assert(result->Array.length >= 1)
-  result->Array.get(0)->Option.getUnsafe
-}
-
-open Constants
 
 let encodeSetAddr: (string, string) => string = (name, owner) => {
-  let node = namehash(`${name}.${sld}`)
+  let node = namehash(`${name}.${Constants.sld}`)
   let abi = [
     {
       "type": "function",
@@ -379,7 +349,7 @@ let register: (
           "name": name,
           "owner": resolvedAddress,
           "duration": duration,
-          "resolver": resolverContractAddress,
+          "resolver": Constants.resolverContractAddress,
           "data": [setAddrData],
           "reverseRecord": true,
         },
@@ -411,6 +381,45 @@ let renew: (walletClient, string, int) => promise<unit> = async (walletClient, n
       "args": [String(name), Int(duration)],
       "value": priceInWei,
     },
+  )
+  let hash = await writeContract(walletClient, request)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let transferSubname = async (walletClient, name, to) => {
+  let tokenId = BigInt.fromString(keccak256(name))
+  let currentAddress = await currentAddress(walletClient)
+
+  let {request} = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": baseRegistrarContract["address"],
+      "abi": baseRegistrarContract["abi"],
+      "functionName": "safeTransferFrom",
+      "args": [String(currentAddress), String(to), BigInt(tokenId)],
+    },
+  )
+  
+  let hash = await writeContract(walletClient, request)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let reclaimSubname = async (walletClient, name) => {
+  let tokenId = BigInt.fromString(keccak256(name))
+  let currentAddress = await currentAddress(walletClient)
+  
+  let {request} = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": baseRegistrarContract["address"],
+      "abi": baseRegistrarContract["abi"],
+      "functionName": "reclaim",
+      "args": [BigInt(tokenId), String(currentAddress)],
+    }
   )
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})

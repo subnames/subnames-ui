@@ -3,16 +3,15 @@
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
-import Sha3Mjs from "./sha3.mjs";
-import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
-import * as Chains from "viem/chains";
 import * as Core__BigInt from "@rescript/core/src/Core__BigInt.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as OnChainOperationsCommon from "./OnChainOperationsCommon.res.mjs";
 
 var baseRegistrarContract = {
   address: Constants.baseRegistrarContractAddress,
-  abi: [{
+  abi: [
+    {
       type: "function",
       name: "nameExpires",
       inputs: [{
@@ -24,7 +23,44 @@ var baseRegistrarContract = {
           type: "uint256"
         }],
       stateMutability: "view"
-    }]
+    },
+    {
+      type: "function",
+      name: "safeTransferFrom",
+      inputs: [
+        {
+          name: "from",
+          type: "address"
+        },
+        {
+          name: "to",
+          type: "address"
+        },
+        {
+          name: "tokenId",
+          type: "uint256"
+        }
+      ],
+      outputs: [],
+      stateMutability: "nonpayable"
+    },
+    {
+      type: "function",
+      name: "reclaim",
+      inputs: [
+        {
+          name: "id",
+          type: "uint256"
+        },
+        {
+          name: "owner",
+          type: "address"
+        }
+      ],
+      outputs: [],
+      stateMutability: "nonpayable"
+    }
+  ]
 };
 
 var resolverContract = {
@@ -196,16 +232,11 @@ var controllerContract = {
   }
 };
 
-var client = Viem.createPublicClient({
-      chain: Chains.koi,
-      transport: Viem.http(Constants.rpcUrl)
-    });
-
 async function recordExists(name) {
   var domain = name + "." + Constants.sld;
   var node = Ens.namehash(domain);
   console.log("domain: \"" + domain + "\", node: \"" + node + "\"");
-  return await client.readContract({
+  return await OnChainOperationsCommon.publicClient.readContract({
               address: registryContract.address,
               abi: registryContract.abi,
               functionName: "recordExists",
@@ -214,7 +245,7 @@ async function recordExists(name) {
 }
 
 async function available(name) {
-  return await client.readContract({
+  return await OnChainOperationsCommon.publicClient.readContract({
               address: controllerContract.address,
               abi: controllerContract.abi,
               functionName: "available",
@@ -227,7 +258,7 @@ async function registerPrice(name, duration) {
     name,
     duration
   ];
-  return BigInt(await client.readContract({
+  return BigInt(await OnChainOperationsCommon.publicClient.readContract({
                   address: controllerContract.address,
                   abi: controllerContract.abi,
                   functionName: "registerPrice",
@@ -240,16 +271,12 @@ async function rentPrice(name, duration) {
     name,
     duration
   ];
-  return await client.readContract({
+  return await OnChainOperationsCommon.publicClient.readContract({
               address: controllerContract.address,
               abi: controllerContract.abi,
               functionName: "rentPrice",
               args: args
             });
-}
-
-function sha3HexAddress(prim) {
-  return Sha3Mjs(prim);
 }
 
 async function name(address) {
@@ -258,9 +285,9 @@ async function name(address) {
             "bytes32"
           ], [
             "0x32347c1de91cbc71535aee17456bbe8987cc116a2782950e2697c6fc411ba53f",
-            Sha3Mjs(address)
+            OnChainOperationsCommon.sha3HexAddress(address)
           ]));
-  return await client.readContract({
+  return await OnChainOperationsCommon.publicClient.readContract({
               address: resolverContract.address,
               abi: resolverContract.abi,
               functionName: "name",
@@ -270,7 +297,7 @@ async function name(address) {
 
 async function nameExpires(name) {
   var tokenId = BigInt(Viem.keccak256(name));
-  var result = await client.readContract({
+  var result = await OnChainOperationsCommon.publicClient.readContract({
         address: baseRegistrarContract.address,
         abi: baseRegistrarContract.abi,
         functionName: "nameExpires",
@@ -282,44 +309,12 @@ async function nameExpires(name) {
 async function owner(name) {
   var domain = name + "." + Constants.sld;
   var node = Ens.namehash(domain);
-  return await client.readContract({
+  return await OnChainOperationsCommon.publicClient.readContract({
               address: registryContract.address,
               abi: registryContract.abi,
               functionName: "owner",
               args: [node]
             });
-}
-
-var publicClient = Viem.createPublicClient({
-      chain: Chains.koi,
-      transport: Viem.http(Constants.rpcUrl)
-    });
-
-function buildWalletClient() {
-  var ethereum = window.ethereum;
-  if (ethereum !== undefined) {
-    return Caml_option.some(Viem.createWalletClient({
-                    chain: Chains.koi,
-                    transport: Viem.custom(Caml_option.valFromOption(ethereum))
-                  }));
-  }
-  
-}
-
-async function currentAddress(walletClient) {
-  var result = await walletClient.requestAddresses();
-  if (result.length < 1) {
-    throw {
-          RE_EXN_ID: "Assert_failure",
-          _1: [
-            "OnChainOperations.res",
-            326,
-            2
-          ],
-          Error: new Error()
-        };
-  }
-  return result[0];
 }
 
 function encodeSetAddr(name, owner) {
@@ -353,12 +348,12 @@ function encodeSetAddr(name, owner) {
 async function register(walletClient, name, years, owner, onStatusChange) {
   onStatusChange("Simulating");
   var duration = Math.imul(years, 31536000);
-  var currentAddress$1 = await currentAddress(walletClient);
-  var resolvedAddress = Core__Option.getOr(owner, currentAddress$1);
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var resolvedAddress = Core__Option.getOr(owner, currentAddress);
   var setAddrData = encodeSetAddr(name, resolvedAddress);
   var priceInWei = await registerPrice(name, duration);
-  var match = await publicClient.simulateContract({
-        account: currentAddress$1,
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
         address: controllerContract.address,
         abi: [controllerContract.register],
         functionName: "register",
@@ -375,7 +370,7 @@ async function register(walletClient, name, years, owner, onStatusChange) {
   onStatusChange("WaitingForSignature");
   var hash = await walletClient.writeContract(match.request);
   onStatusChange("Broadcasting");
-  await publicClient.waitForTransactionReceipt({
+  await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
         hash: hash
       });
   return onStatusChange("Confirmed");
@@ -383,10 +378,10 @@ async function register(walletClient, name, years, owner, onStatusChange) {
 
 async function renew(walletClient, name, years) {
   var duration = Math.imul(years, 31536000);
-  var currentAddress$1 = await currentAddress(walletClient);
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
   var priceInWei = await rentPrice(name, duration);
-  var match = await publicClient.simulateContract({
-        account: currentAddress$1,
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
         address: controllerContract.address,
         abi: [controllerContract.renew],
         functionName: "renew",
@@ -397,7 +392,48 @@ async function renew(walletClient, name, years) {
         value: priceInWei
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await publicClient.waitForTransactionReceipt({
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+async function transferSubname(walletClient, name, to) {
+  var tokenId = BigInt(Viem.keccak256(name));
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
+        address: baseRegistrarContract.address,
+        abi: baseRegistrarContract.abi,
+        functionName: "safeTransferFrom",
+        args: [
+          currentAddress,
+          to,
+          tokenId
+        ]
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+async function reclaimSubname(walletClient, name) {
+  var tokenId = BigInt(Viem.keccak256(name));
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
+        address: baseRegistrarContract.address,
+        abi: baseRegistrarContract.abi,
+        functionName: "reclaim",
+        args: [
+          tokenId,
+          currentAddress
+        ]
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
         hash: hash
       });
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
@@ -408,20 +444,17 @@ export {
   resolverContract ,
   registryContract ,
   controllerContract ,
-  client ,
   recordExists ,
   available ,
   registerPrice ,
   rentPrice ,
-  sha3HexAddress ,
   name ,
   nameExpires ,
   owner ,
-  publicClient ,
-  buildWalletClient ,
-  currentAddress ,
   encodeSetAddr ,
   register ,
   renew ,
+  transferSubname ,
+  reclaimSubname ,
 }
 /* controllerContract Not a pure module */

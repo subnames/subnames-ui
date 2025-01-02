@@ -1,4 +1,4 @@
-open OnChainOperations
+open OnChainOperationsCommon
 open Utils
 
 type state = {
@@ -51,7 +51,7 @@ let isOwner: (string, bool) => promise<option<bool>> = async (name, isWalletConn
   | true =>
     switch buildWalletClient() {
     | Some(walletClient) =>
-      let owner = await owner(name)
+      let owner = await OnChainOperations.owner(name)
       let currentAccount = await currentAddress(walletClient)
       Some(owner == currentAccount)
     | None => None
@@ -198,6 +198,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
                 | Some(true) =>
                   <div className="flex gap-2">
                     <button
+                      onClick={_ => onNext(state.value, Types.Transfer)}
                       type_="button"
                       className="rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
                       {React.string("Transfer")}

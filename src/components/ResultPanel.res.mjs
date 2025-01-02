@@ -10,7 +10,27 @@ function ResultPanel(props) {
   var onRegisterAnother = props.onRegisterAnother;
   var match = actionResult.action;
   var tmp;
-  tmp = typeof match !== "object" ? "Registration Successful!" : "Extension Successful!";
+  if (typeof match !== "object") {
+    switch (match) {
+      case "Register" :
+          tmp = "Registration Successful!";
+          break;
+      case "Transfer" :
+      case "Reclaim" :
+          throw {
+                RE_EXN_ID: "Match_failure",
+                _1: [
+                  "ResultPanel.res",
+                  10,
+                  11
+                ],
+                Error: new Error()
+              };
+      
+    }
+  } else {
+    tmp = "Extension Successful!";
+  }
   return React.createElement("div", {
               className: "bg-white rounded-custom shadow-lg overflow-hidden"
             }, React.createElement("div", {

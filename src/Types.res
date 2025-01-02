@@ -1,10 +1,12 @@
 type action =
   | Register
   | Extend(Date.t)
+  | Transfer
+  | Reclaim
 
 type actionResult = {
   action: action,
-  newExpiryDate: Date.t,
+  newExpiryDate: option<Date.t>,
 }
 
 type state = {

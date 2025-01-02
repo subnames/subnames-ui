@@ -73,7 +73,7 @@ let make = (
 
   let handleClick = (~years: int) => {
     setIsWaitingForConfirmation(_ => true)
-    let walletClient = OnChainOperations.buildWalletClient()
+    let walletClient = OnChainOperationsCommon.buildWalletClient()
     switch action {
     | Types.Register =>
       let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))->Promise.then(_ => {
@@ -81,7 +81,7 @@ let make = (
           let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
           onSuccess({
             action,
-            newExpiryDate,
+            newExpiryDate: Some(newExpiryDate),
           })
           Promise.resolve()
         })
@@ -92,7 +92,7 @@ let make = (
           let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
           onSuccess({
             action,
-            newExpiryDate,
+            newExpiryDate: Some(newExpiryDate),
           })
           Promise.resolve()
         })

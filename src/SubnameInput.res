@@ -32,6 +32,7 @@ let make = (~isWalletConnected: bool) => {
       name,
       panel: switch action {
       | Types.Register => "register"
+      | Types.Transfer => "transfer"
       | Types.Extend(_) => "extend"
       },
       action,
@@ -57,6 +58,13 @@ let make = (~isWalletConnected: bool) => {
         onBack={() => setState(prev => {...prev, panel: "input"})}
         onSuccess={onSuccess}
         action={state.action}
+      />
+    | "transfer" =>
+      <TransferPanel
+        name={state.name}
+        isWalletConnected
+        onBack={() => setState(prev => {...prev, panel: "input"})}
+        onSuccess={onSuccess} 
       />
     | "result" =>
       <ResultPanel
