@@ -7,11 +7,25 @@ var reverseRegistrarContract = {
   address: Constants.reverseRegistrarContractAddress,
   abi: [{
       type: "function",
-      name: "setName",
-      inputs: [{
+      name: "setNameForAddr",
+      inputs: [
+        {
+          name: "addr",
+          type: "address"
+        },
+        {
+          name: "owner",
+          type: "address"
+        },
+        {
+          name: "resolver",
+          type: "address"
+        },
+        {
           name: "name",
           type: "string"
-        }],
+        }
+      ],
       outputs: [{
           name: "",
           type: "bytes32"
@@ -20,14 +34,20 @@ var reverseRegistrarContract = {
     }]
 };
 
-async function setName(walletClient, name) {
+async function setNameForAddr(walletClient, name) {
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  console.log("Setting reverse name for " + currentAddress + " to '" + name + "'");
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
         account: currentAddress,
         address: reverseRegistrarContract.address,
         abi: reverseRegistrarContract.abi,
-        functionName: "setName",
-        args: [name]
+        functionName: "setNameForAddr",
+        args: [
+          currentAddress,
+          currentAddress,
+          Constants.resolverContractAddress,
+          name
+        ]
       });
   var hash = await walletClient.writeContract(match.request);
   var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
@@ -38,6 +58,6 @@ async function setName(walletClient, name) {
 
 export {
   reverseRegistrarContract ,
-  setName ,
+  setNameForAddr ,
 }
 /* OnChainOperationsCommon Not a pure module */

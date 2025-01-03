@@ -14,7 +14,7 @@ let initialState: state = {
 
 @react.component
 let make = (~isWalletConnected: bool) => {
-  let {updateName, setUpdateName} = NameContext.use()
+  let {_, setUpdateName} = NameContext.use()
   let (state, setState) = React.useState(_ => initialState)
 
   let onSuccess = (result: Types.actionResult) => {

@@ -43,6 +43,8 @@ let make = () => {
           let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
             if resolvedName == "" {
               setName(_ => acc.displayName)
+            } else if (String.endsWith(resolvedName, Constants.sld)) {
+              setName(_ => String.split(resolvedName, ".")->Array.get(0)->Option.getOr("Unknown"))
             } else {
               setName(_ => resolvedName)
             }
@@ -59,8 +61,11 @@ let make = () => {
           switch account {
           | Some(acc) =>
             let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
+              Console.log(`resolvedName: ${resolvedName}`)
               if resolvedName == "" {
                 setName(_ => acc.displayName)
+              } else if (String.endsWith(resolvedName, Constants.sld)) {
+                setName(_ => String.split(resolvedName, ".")->Array.get(0)->Option.getOr("Unknown"))
               } else {
                 setName(_ => resolvedName)
               }
