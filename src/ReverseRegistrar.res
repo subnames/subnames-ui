@@ -3,26 +3,37 @@ open OnChainOperationsCommon
 let reverseRegistrarContract = {
   "address": Constants.reverseRegistrarContractAddress,
   "abi": [
-    {
+    { // function setNameForAddr(address addr, address owner, address resolver, string memory name) external returns (bytes32);
       "type": "function",
-      "name": "setName",
-      "inputs": [{"name": "name", "type": "string"}],
+      "name": "setNameForAddr",
+      "inputs": [
+        {"name": "addr", "type": "address"},
+        {"name": "owner", "type": "address"},
+        {"name": "resolver", "type": "address"},
+        {"name": "name", "type": "string"}
+      ],
       "outputs": [{"name": "", "type": "bytes32"}],
       "stateMutability": "nonpayable",
     },
   ],
 }
 
-let setName = async (walletClient, name) => {
+let setNameForAddr = async (walletClient, name) => {
   let currentAddress = await currentAddress(walletClient)
+  Console.log(`Setting reverse name for ${currentAddress} to '${name}'`)
   let {request} = await simulateContract(
     publicClient,
     {
       "account": currentAddress,
       "address": reverseRegistrarContract["address"],
       "abi": reverseRegistrarContract["abi"],
-      "functionName": "setName",
-      "args": [String(name)],
+      "functionName": "setNameForAddr",
+      "args": [
+        String(currentAddress),
+        String(currentAddress),
+        String(Constants.resolverContractAddress),
+        String(name)
+      ],
     },
   )
   let hash = await writeContract(walletClient, request)

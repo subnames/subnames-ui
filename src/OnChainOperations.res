@@ -275,30 +275,6 @@ let owner: string => promise<string> = async name => {
   )
 }
 
-////////////////////////////////////////
-// Wallet client
-////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-// Console.log("ethereum")
-// Console.log(ethereum)
-
-// // let walletClient = createWalletClient({
-// //   "chain": koi,
-// //   "transport": custom(ethereum),
-// // })
-
-
-
 let encodeSetAddr: (string, string) => string = (name, owner) => {
   let node = namehash(`${name}.${Constants.sld}`)
   let abi = [
@@ -331,6 +307,7 @@ let register: (
   option<string>,
   transactionStatus => unit,
 ) => promise<unit> = async (walletClient, name, years, owner, onStatusChange) => {
+  Console.log(`Registering ${name}`)
   onStatusChange(Simulating)
   let duration = years * 31536000
   let currentAddress = await currentAddress(walletClient)

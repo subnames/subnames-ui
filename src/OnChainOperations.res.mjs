@@ -346,6 +346,7 @@ function encodeSetAddr(name, owner) {
 }
 
 async function register(walletClient, name, years, owner, onStatusChange) {
+  console.log("Registering " + name);
   onStatusChange("Simulating");
   var duration = Math.imul(years, 31536000);
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
