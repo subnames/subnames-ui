@@ -31,7 +31,7 @@ let make = (
         years,
         feeAmount: priceInEth,
       })
-    | Types.Extend(_) =>
+    | Types.Extend =>
       let priceInEth = await Fee.calculateRenew(name, years)
       setFee(_ => {
         years,
@@ -86,7 +86,7 @@ let make = (
           Promise.resolve()
         })
       })
-    | Types.Extend(_) =>
+    | Types.Extend =>
       let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)->Promise.then(_ => {
         OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
           let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
@@ -127,7 +127,7 @@ let make = (
           <div className="text-base sm:text-lg font-medium text-gray-600 text-center sm:text-left">
             {switch action {
             | Types.Register => React.string("CLAIM FOR")
-            | Types.Extend(_) => React.string("EXTEND FOR")
+            | Types.Extend => React.string("EXTEND FOR")
             }}
           </div>
           <div className="flex items-center justify-center gap-4">
@@ -183,14 +183,14 @@ let make = (
             {if isWaitingForConfirmation {
               switch action {
               | Types.Register => React.string("Registering...")
-              | Types.Extend(_) => React.string("Extending...")
+              | Types.Extend => React.string("Extending...")
               }
             } else if isCalculatingFee {
               React.string("Calculating...")
             } else {
               switch action {
               | Types.Register => React.string("Register")
-              | Types.Extend(_) => React.string("Extend")
+              | Types.Extend => React.string("Extend")
               }
             }}
           </button>

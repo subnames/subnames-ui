@@ -15,6 +15,7 @@ import * as GraphQLClient from "../GraphQLClient.res.mjs";
 import * as ReverseRegistrar from "../ReverseRegistrar.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
+import * as RegisterExtendPanel from "./RegisterExtendPanel.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
@@ -55,6 +56,11 @@ function NamesList(props) {
         return 0;
       });
   var setRefetchTrigger = match$6[1];
+  var match$7 = React.useState(function () {
+        
+      });
+  var setShowExtendPanel = match$7[1];
+  var showExtendPanel = match$7[0];
   var updatePrimaryName = async function (name) {
     setSettingPrimaryName(function (param) {
           return true;
@@ -86,6 +92,14 @@ function NamesList(props) {
     return setSettingPrimaryName(function (param) {
                 return false;
               });
+  };
+  var handleExtendSuccess = function (result) {
+    setRefetchTrigger(function (prev) {
+          return prev + 1 | 0;
+        });
+    setShowExtendPanel(function (param) {
+          
+        });
   };
   React.useEffect((function () {
           if (account.isConnected) {
@@ -152,111 +166,124 @@ function NamesList(props) {
                   className: "p-8"
                 }, React.createElement("div", {
                       className: "w-full max-w-xl mx-auto"
-                    }, React.createElement("div", {
-                          className: "bg-white rounded-custom shadow-lg overflow-hidden"
-                        }, React.createElement("div", {
-                              className: "px-6 pt-4 pb-4 border-b border-gray-200 relative"
-                            }, React.createElement("div", {
-                                  className: "text-lg"
-                                }, "Your Subnames"), React.createElement("div", {
-                                  className: "text-sm text-gray-500"
-                                }, "New name may take a while to appear"), React.createElement("button", {
-                                  className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2",
-                                  onClick: (function (param) {
-                                      RescriptReactRouter.push("/");
-                                    })
-                                }, React.createElement(Icons.Close.make, {}))), account.isConnected ? (
-                            match$2[0] ? React.createElement("div", {
-                                    className: "text-center py-4"
-                                  }, "Loading...") : (
-                                names.length === 0 ? React.createElement("div", {
-                                        className: "text-center py-4 text-gray-500"
-                                      }, "You don't have any subnames yet") : React.createElement("div", {
-                                        className: "py-1"
-                                      }, names.map(function (subname, index) {
-                                            var tmp;
-                                            if (Caml_obj.equal(activeDropdown, subname.name)) {
-                                              var tmp$1;
-                                              var exit = 0;
-                                              if (primaryName !== undefined && primaryName === subname.name) {
-                                                tmp$1 = null;
+                    }, showExtendPanel !== undefined ? React.createElement(RegisterExtendPanel.make, {
+                            name: showExtendPanel,
+                            isWalletConnected: account.isConnected,
+                            onBack: (function () {
+                                setShowExtendPanel(function (param) {
+                                      
+                                    });
+                              }),
+                            onSuccess: handleExtendSuccess,
+                            action: "Extend"
+                          }) : React.createElement("div", {
+                            className: "bg-white rounded-custom shadow-lg overflow-hidden"
+                          }, React.createElement("div", {
+                                className: "px-6 pt-4 pb-4 border-b border-gray-200 relative"
+                              }, React.createElement("div", {
+                                    className: "text-lg"
+                                  }, "Your Subnames"), React.createElement("div", {
+                                    className: "text-sm text-gray-500"
+                                  }, "New name may take a while to appear"), React.createElement("button", {
+                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2",
+                                    onClick: (function (param) {
+                                        RescriptReactRouter.push("/");
+                                      })
+                                  }, React.createElement(Icons.Close.make, {}))), account.isConnected ? (
+                              match$2[0] ? React.createElement("div", {
+                                      className: "text-center py-4"
+                                    }, "Loading...") : (
+                                  names.length === 0 ? React.createElement("div", {
+                                          className: "text-center py-4 text-gray-500"
+                                        }, "You don't have any subnames yet") : React.createElement("div", {
+                                          className: "py-1"
+                                        }, names.map(function (subname, index) {
+                                              var tmp;
+                                              if (Caml_obj.equal(activeDropdown, subname.name)) {
+                                                var tmp$1;
+                                                var exit = 0;
+                                                if (primaryName !== undefined && primaryName === subname.name) {
+                                                  tmp$1 = null;
+                                                } else {
+                                                  exit = 1;
+                                                }
+                                                if (exit === 1) {
+                                                  tmp$1 = React.createElement("button", {
+                                                        className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                        type: "button",
+                                                        onClick: (function (param) {
+                                                            updatePrimaryName(subname.name);
+                                                            setActiveDropdown(function (param) {
+                                                                  
+                                                                });
+                                                          })
+                                                      }, "Set primary");
+                                                }
+                                                tmp = React.createElement("div", {
+                                                      className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                                    }, React.createElement("div", {
+                                                          className: "py-1"
+                                                        }, tmp$1, React.createElement("button", {
+                                                              className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                              type: "button",
+                                                              onClick: (function (param) {
+                                                                  setActiveDropdown(function (param) {
+                                                                        
+                                                                      });
+                                                                })
+                                                            }, "Transfer"), React.createElement("button", {
+                                                              className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                              type: "button",
+                                                              onClick: (function (param) {
+                                                                  setShowExtendPanel(function (param) {
+                                                                        return subname.name;
+                                                                      });
+                                                                  setActiveDropdown(function (param) {
+                                                                        
+                                                                      });
+                                                                })
+                                                            }, "Extend")));
                                               } else {
-                                                exit = 1;
+                                                tmp = null;
                                               }
-                                              if (exit === 1) {
-                                                tmp$1 = React.createElement("button", {
-                                                      className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
-                                                      type: "button",
-                                                      onClick: (function (param) {
-                                                          updatePrimaryName(subname.name);
-                                                          setActiveDropdown(function (param) {
-                                                                
-                                                              });
-                                                        })
-                                                    }, "Set primary");
-                                              }
-                                              tmp = React.createElement("div", {
-                                                    className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
-                                                  }, React.createElement("div", {
-                                                        className: "py-1"
-                                                      }, tmp$1, React.createElement("button", {
-                                                            className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
-                                                            type: "button",
-                                                            onClick: (function (param) {
-                                                                setActiveDropdown(function (param) {
-                                                                      
-                                                                    });
-                                                              })
-                                                          }, "Transfer"), React.createElement("button", {
-                                                            className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
-                                                            type: "button",
-                                                            onClick: (function (param) {
-                                                                setActiveDropdown(function (param) {
-                                                                      
-                                                                    });
-                                                              })
-                                                          }, "Extend")));
-                                            } else {
-                                              tmp = null;
-                                            }
-                                            return React.createElement("div", {
-                                                        key: subname.name
-                                                      }, React.createElement("div", {
-                                                            className: "px-6 py-4"
-                                                          }, React.createElement("div", {
-                                                                className: "flex items-center justify-between"
-                                                              }, React.createElement("div", undefined, React.createElement("div", {
-                                                                        className: "flex items-center gap-2"
-                                                                      }, React.createElement("p", {
-                                                                            className: "text-gray-800"
-                                                                          }, React.createElement(React.Fragment, {}, React.createElement("span", {
-                                                                                    className: "font-bold"
-                                                                                  }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName === subname.name ? React.createElement("span", {
-                                                                              className: "px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium"
-                                                                            }, "Primary") : null), React.createElement("p", {
-                                                                        className: "text-xs text-gray-400 mt-1"
-                                                                      }, "Expires " + Utils.distanceToExpiry(Utils.timestampStringToDate(subname.expires)))), React.createElement("div", {
-                                                                    className: "relative"
-                                                                  }, React.createElement("button", {
-                                                                        className: "rounded-lg bg-white border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
-                                                                        type: "button",
-                                                                        onClick: (function (param) {
-                                                                            setActiveDropdown(function (current) {
-                                                                                  if (Caml_obj.equal(current, subname.name)) {
-                                                                                    return ;
-                                                                                  } else {
-                                                                                    return subname.name;
-                                                                                  }
-                                                                                });
-                                                                          })
-                                                                      }, "..."), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
-                                                              className: "border-b border-gray-200 mx-6"
-                                                            }) : null);
-                                          }))
-                              )
-                          ) : React.createElement("div", {
-                                className: "text-center py-4 text-gray-500"
-                              }, "Please connect your wallet to see your names")))), match$4[0] ? React.createElement("div", {
+                                              return React.createElement("div", {
+                                                          key: subname.name
+                                                        }, React.createElement("div", {
+                                                              className: "px-6 py-4"
+                                                            }, React.createElement("div", {
+                                                                  className: "flex items-center justify-between"
+                                                                }, React.createElement("div", undefined, React.createElement("div", {
+                                                                          className: "flex items-center gap-2"
+                                                                        }, React.createElement("p", {
+                                                                              className: "text-gray-800"
+                                                                            }, React.createElement(React.Fragment, {}, React.createElement("span", {
+                                                                                      className: "font-bold"
+                                                                                    }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName === subname.name ? React.createElement("span", {
+                                                                                className: "px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium"
+                                                                              }, "Primary") : null), React.createElement("p", {
+                                                                          className: "text-xs text-gray-400 mt-1"
+                                                                        }, "Expires " + Utils.distanceToExpiry(Utils.timestampStringToDate(subname.expires)))), React.createElement("div", {
+                                                                      className: "relative"
+                                                                    }, React.createElement("button", {
+                                                                          className: "rounded-lg bg-white border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                                                                          type: "button",
+                                                                          onClick: (function (param) {
+                                                                              setActiveDropdown(function (current) {
+                                                                                    if (Caml_obj.equal(current, subname.name)) {
+                                                                                      return ;
+                                                                                    } else {
+                                                                                      return subname.name;
+                                                                                    }
+                                                                                  });
+                                                                            })
+                                                                        }, "..."), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
+                                                                className: "border-b border-gray-200 mx-6"
+                                                              }) : null);
+                                            }))
+                                )
+                            ) : React.createElement("div", {
+                                  className: "text-center py-4 text-gray-500"
+                                }, "Please connect your wallet to see your names")))), match$4[0] ? React.createElement("div", {
                     className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
                   }, React.createElement("div", {
                         className: "bg-white p-6 rounded-lg shadow-xl"

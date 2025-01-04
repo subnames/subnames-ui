@@ -234,10 +234,7 @@ function InputPanel(props) {
                       className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
                       type: "button",
                       onClick: (function (param) {
-                          onNext(state.value, {
-                                TAG: "Extend",
-                                _0: state.expiryDate
-                              });
+                          onNext(state.value, "Extend");
                         })
                     }, "Extend"));
           } else {

@@ -33,7 +33,7 @@ let make = (~isWalletConnected: bool) => {
       panel: switch action {
       | Types.Register => "register"
       | Types.Transfer => "transfer"
-      | Types.Extend(_) => "extend"
+      | Types.Extend => "extend"
       },
       action,
     })

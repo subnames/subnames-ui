@@ -9,7 +9,7 @@ let make = (~name: string, ~onRegisterAnother: unit => unit, ~actionResult: Type
         <h2 className="text-2xl font-bold mb-2">
           {switch actionResult.action {
           | Types.Register => React.string("Registration Successful!")
-          | Types.Extend(_) => React.string("Extension Successful!")
+          | Types.Extend => React.string("Extension Successful!")
           }}
         </h2>
         <div className="text-lg text-gray-700 mb-6">

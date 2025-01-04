@@ -1,6 +1,6 @@
 type action =
   | Register
-  | Extend(Date.t)
+  | Extend
   | Transfer
   | Reclaim
 

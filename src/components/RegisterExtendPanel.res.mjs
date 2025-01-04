@@ -36,37 +36,35 @@ function RegisterExtendPanel(props) {
       });
   var setOnChainStatus = match$3[1];
   var calculateFee = async function (years) {
-    if (typeof action !== "object") {
-      switch (action) {
-        case "Register" :
-            var priceInEth = await Fee.calculate(name, years);
-            return setFee(function (param) {
-                        return {
-                                years: years,
-                                feeAmount: priceInEth
-                              };
-                      });
-        case "Transfer" :
-        case "Reclaim" :
-            throw {
-                  RE_EXN_ID: "Match_failure",
-                  _1: [
-                    "RegisterExtendPanel.res",
-                    27,
-                    4
-                  ],
-                  Error: new Error()
-                };
-        
-      }
-    } else {
-      var priceInEth$1 = await Fee.calculateRenew(name, years);
-      return setFee(function (param) {
-                  return {
-                          years: years,
-                          feeAmount: priceInEth$1
-                        };
-                });
+    switch (action) {
+      case "Register" :
+          var priceInEth = await Fee.calculate(name, years);
+          return setFee(function (param) {
+                      return {
+                              years: years,
+                              feeAmount: priceInEth
+                            };
+                    });
+      case "Extend" :
+          var priceInEth$1 = await Fee.calculateRenew(name, years);
+          return setFee(function (param) {
+                      return {
+                              years: years,
+                              feeAmount: priceInEth$1
+                            };
+                    });
+      case "Transfer" :
+      case "Reclaim" :
+          throw {
+                RE_EXN_ID: "Match_failure",
+                _1: [
+                  "RegisterExtendPanel.res",
+                  27,
+                  4
+                ],
+                Error: new Error()
+              };
+      
     }
   };
   var incrementYears = function () {
@@ -115,58 +113,59 @@ function RegisterExtendPanel(props) {
     connectButton.click();
   };
   var tmp;
-  if (typeof action !== "object") {
-    switch (action) {
-      case "Register" :
-          tmp = "CLAIM FOR";
-          break;
-      case "Transfer" :
-      case "Reclaim" :
-          throw {
-                RE_EXN_ID: "Match_failure",
-                _1: [
-                  "RegisterExtendPanel.res",
-                  128,
-                  13
-                ],
-                Error: new Error()
-              };
-      
-    }
-  } else {
-    tmp = "EXTEND FOR";
+  switch (action) {
+    case "Register" :
+        tmp = "CLAIM FOR";
+        break;
+    case "Extend" :
+        tmp = "EXTEND FOR";
+        break;
+    case "Transfer" :
+    case "Reclaim" :
+        throw {
+              RE_EXN_ID: "Match_failure",
+              _1: [
+                "RegisterExtendPanel.res",
+                128,
+                13
+              ],
+              Error: new Error()
+            };
+    
   }
   var tmp$1;
   if (props.isWalletConnected) {
     var tmp$2;
     if (isWaitingForConfirmation) {
-      if (typeof action !== "object") {
-        switch (action) {
-          case "Register" :
-              tmp$2 = "Registering...";
-              break;
-          case "Transfer" :
-          case "Reclaim" :
-              throw {
-                    RE_EXN_ID: "Match_failure",
-                    _1: [
-                      "RegisterExtendPanel.res",
-                      184,
-                      14
-                    ],
-                    Error: new Error()
-                  };
-          
-        }
-      } else {
-        tmp$2 = "Extending...";
+      switch (action) {
+        case "Register" :
+            tmp$2 = "Registering...";
+            break;
+        case "Extend" :
+            tmp$2 = "Extending...";
+            break;
+        case "Transfer" :
+        case "Reclaim" :
+            throw {
+                  RE_EXN_ID: "Match_failure",
+                  _1: [
+                    "RegisterExtendPanel.res",
+                    184,
+                    14
+                  ],
+                  Error: new Error()
+                };
+        
       }
     } else if (isCalculatingFee) {
       tmp$2 = "Calculating...";
-    } else if (typeof action !== "object") {
+    } else {
       switch (action) {
         case "Register" :
             tmp$2 = "Register";
+            break;
+        case "Extend" :
+            tmp$2 = "Extend";
             break;
         case "Transfer" :
         case "Reclaim" :
@@ -181,8 +180,6 @@ function RegisterExtendPanel(props) {
                 };
         
       }
-    } else {
-      tmp$2 = "Extend";
     }
     tmp$1 = React.createElement("button", {
           className: "w-full py-4 px-6 " + (
@@ -195,49 +192,47 @@ function RegisterExtendPanel(props) {
                     return true;
                   });
               var walletClient = OnChainOperationsCommon.buildWalletClient();
-              if (typeof action !== "object") {
-                switch (action) {
-                  case "Register" :
-                      OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
-                                setOnChainStatus(function (param) {
-                                      return status;
+              switch (action) {
+                case "Register" :
+                    OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
+                              setOnChainStatus(function (param) {
+                                    return status;
+                                  });
+                            })).then(function () {
+                          return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                      var newExpiryDate = new Date(expiryInt * 1000.0);
+                                      onSuccess({
+                                            action: action,
+                                            newExpiryDate: Caml_option.some(newExpiryDate)
+                                          });
+                                      return Promise.resolve();
                                     });
-                              })).then(function () {
-                            return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                        var newExpiryDate = new Date(expiryInt * 1000.0);
-                                        onSuccess({
-                                              action: action,
-                                              newExpiryDate: Caml_option.some(newExpiryDate)
-                                            });
-                                        return Promise.resolve();
-                                      });
-                          });
-                      return ;
-                  case "Transfer" :
-                  case "Reclaim" :
-                      throw {
-                            RE_EXN_ID: "Match_failure",
-                            _1: [
-                              "RegisterExtendPanel.res",
-                              77,
-                              4
-                            ],
-                            Error: new Error()
-                          };
-                  
-                }
-              } else {
-                OnChainOperations.renew(walletClient, name, years).then(function () {
-                      return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                  var newExpiryDate = new Date(expiryInt * 1000.0);
-                                  onSuccess({
-                                        action: action,
-                                        newExpiryDate: Caml_option.some(newExpiryDate)
-                                      });
-                                  return Promise.resolve();
-                                });
-                    });
-                return ;
+                        });
+                    return ;
+                case "Extend" :
+                    OnChainOperations.renew(walletClient, name, years).then(function () {
+                          return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                      var newExpiryDate = new Date(expiryInt * 1000.0);
+                                      onSuccess({
+                                            action: action,
+                                            newExpiryDate: Caml_option.some(newExpiryDate)
+                                          });
+                                      return Promise.resolve();
+                                    });
+                        });
+                    return ;
+                case "Transfer" :
+                case "Reclaim" :
+                    throw {
+                          RE_EXN_ID: "Match_failure",
+                          _1: [
+                            "RegisterExtendPanel.res",
+                            77,
+                            4
+                          ],
+                          Error: new Error()
+                        };
+                
               }
             })
         }, tmp$2);

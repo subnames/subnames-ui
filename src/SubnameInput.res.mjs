@@ -39,28 +39,27 @@ function SubnameInput(props) {
   var onNext = function (name, action) {
     setState(function (prev) {
           var tmp;
-          if (typeof action !== "object") {
-            switch (action) {
-              case "Register" :
-                  tmp = "register";
-                  break;
-              case "Transfer" :
-                  tmp = "transfer";
-                  break;
-              case "Reclaim" :
-                  throw {
-                        RE_EXN_ID: "Match_failure",
-                        _1: [
-                          "SubnameInput.res",
-                          33,
-                          13
-                        ],
-                        Error: new Error()
-                      };
-              
-            }
-          } else {
-            tmp = "extend";
+          switch (action) {
+            case "Register" :
+                tmp = "register";
+                break;
+            case "Extend" :
+                tmp = "extend";
+                break;
+            case "Transfer" :
+                tmp = "transfer";
+                break;
+            case "Reclaim" :
+                throw {
+                      RE_EXN_ID: "Match_failure",
+                      _1: [
+                        "SubnameInput.res",
+                        33,
+                        13
+                      ],
+                      Error: new Error()
+                    };
+            
           }
           return {
                   name: name,
