@@ -6,19 +6,27 @@ type state = {
   isValid: bool,
   errorMessage: option<string>,
   isChecking: bool,
-  isAvailable: option<bool>,
-  isOwnedByUser: option<bool>,
+  isAvailable: bool,
+  owner: option<string>,
   expiryDate: option<Date.t>,
+  isOwnedByUser: option<bool>
 }
 
 let initialState = {
   value: "",
+
+  // validation
   isValid: false,
   errorMessage: None,
+
+  // availability check
   isChecking: false,
-  isAvailable: None,
-  isOwnedByUser: None,
+  isAvailable: false,
+
+  // ownership check if name is not available(registered)
+  owner: None,
   expiryDate: None,
+  isOwnedByUser: None,
 }
 
 // Validation rules for ENS subnames
@@ -46,17 +54,15 @@ let isValidSubname = (name: string): (bool, option<string>) => {
   }
 }
 
-let isOwner: (string, bool) => promise<option<bool>> = async (name, isWalletConnected) => {
-  switch isWalletConnected {
-  | true =>
-    switch buildWalletClient() {
-    | Some(walletClient) =>
-      let owner = await OnChainOperations.owner(name)
-      let currentAccount = await currentAddress(walletClient)
-      Some(owner == currentAccount)
-    | None => None
+
+let isOwnedByUser = async (owner: string) => {
+  switch buildWalletClient() {
+    | Some(walletClient) => {
+      let user = await currentAddress(walletClient)
+      user == owner
     }
-  | false => None
+    | None => 
+      false
   }
 }
 
@@ -65,27 +71,27 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
   let (state, setState) = React.useState(_ => initialState)
 
   let checkNameAvailability = async value => {
-    setState(prev => {...prev, isChecking: true, isAvailable: None, isOwnedByUser: None, expiryDate: None})
+    setState(prev => {...prev, isChecking: true, isAvailable: false, owner: None, expiryDate: None})
     try {
       let available = await OnChainOperations.available(value)
-      if !available {
-        // If name is not available, check ownership and expiry
-        let isOwner = await isOwner(value, isWalletConnected)
-        let expiryInt = await OnChainOperations.nameExpires(value)
+      if available {
         setState(prev => {
           ...prev,
           isChecking: false,
-          isAvailable: Some(false),
-          isOwnedByUser: isOwner,
-          expiryDate: Some(timestampToDate(expiryInt)),
+          isAvailable: true
         })
       } else {
+         // If name is not available, check ownership and expiry
+        let owner = await OnChainOperations.owner(value)
+        let expiryInt = await OnChainOperations.nameExpires(value)
+        let isOwnedByUser = isWalletConnected ? Some(await isOwnedByUser(owner)) : None
         setState(prev => {
           ...prev,
           isChecking: false,
-          isAvailable: Some(true),
-          isOwnedByUser: None,
-          expiryDate: None,
+          isAvailable: false,
+          owner: Some(owner),
+          expiryDate: Some(timestampToDate(expiryInt)),
+          isOwnedByUser: isOwnedByUser
         })
       }
     } catch {
@@ -94,12 +100,11 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
       setState(prev => {
         ...prev,
         isChecking: false,
-        errorMessage: Some("Failed to check availability"),
-        isOwnedByUser: None,
-        expiryDate: None,
+        errorMessage: Some("Failed to check availability")
       })
     }
   }
+
 
   React.useEffect2(() => {
     if state.value != "" && state.isValid {
@@ -174,11 +179,22 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
           <div className="flex items-center justify-between">
             <div>
               <p className="text-gray-800"> {React.string(`${state.value}.${Constants.sld}`)} </p>
-              {switch (state.isOwnedByUser, state.expiryDate) {
-              | (Some(true), Some(date)) =>
+              {switch (state.owner, state.expiryDate, state.isOwnedByUser) {
+              | (Some(_owner), Some(date), Some(true)) =>
                 <p className="text-xs text-gray-400 mt-1">
                   {React.string(`Your name will expire ${distanceToExpiry(date)}`)}
                 </p>
+              | (Some(owner), Some(_date), None | Some(false)) => {
+                <p className="text-xs text-gray-400 mt-1">
+                  {React.string(
+                    String.concatMany(
+                      String.slice(owner, ~start=0, ~end=6), 
+                      ["..", String.sliceToEnd(owner, ~start=38)]
+                    )
+                  )
+                  }
+                </p>
+                }
               | _ => React.null
               }}
             </div>
@@ -186,14 +202,14 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
               <Icons.Spinner className="w-5 h-5 text-zinc-600" />
             } else {
               switch state.isAvailable {
-              | Some(true) =>
+              | true =>
                 <button
                   onClick={_ => onNext(state.value, Types.Register)}
                   type_="button"
                   className="rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
                   {React.string("Register")}
                 </button>
-              | Some(false) =>
+              | false =>
                 switch state.isOwnedByUser {
                 | Some(true) =>
                   <div className="flex gap-2">
@@ -213,7 +229,6 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
                 | Some(false) | None =>
                   <span className="text-red-500 text-sm"> {React.string("Not available")} </span>
                 }
-              | None => React.null
               }
             }}
           </div>

@@ -46,6 +46,6 @@ let buildWalletClient = () => {
 let currentAddress = async walletClient => {
   let result = await requestAddresses(walletClient)
   assert(result->Array.length >= 1)
+
   result->Array.get(0)->Option.getUnsafe
 }
-

@@ -16,9 +16,10 @@ var initialState = {
   isValid: false,
   errorMessage: undefined,
   isChecking: false,
-  isAvailable: undefined,
-  isOwnedByUser: undefined,
-  expiryDate: undefined
+  isAvailable: false,
+  owner: undefined,
+  expiryDate: undefined,
+  isOwnedByUser: undefined
 };
 
 function isValidSubname(name) {
@@ -63,17 +64,13 @@ function isValidSubname(name) {
   }
 }
 
-async function isOwner(name, isWalletConnected) {
-  if (!isWalletConnected) {
-    return ;
-  }
+async function isOwnedByUser(owner) {
   var walletClient = OnChainOperationsCommon.buildWalletClient();
   if (walletClient === undefined) {
-    return ;
+    return false;
   }
-  var owner = await OnChainOperations.owner(name);
-  var currentAccount = await OnChainOperationsCommon.currentAddress(Caml_option.valFromOption(walletClient));
-  return owner === currentAccount;
+  var user = await OnChainOperationsCommon.currentAddress(Caml_option.valFromOption(walletClient));
+  return user === owner;
 }
 
 function InputPanel(props) {
@@ -91,9 +88,10 @@ function InputPanel(props) {
                   isValid: prev.isValid,
                   errorMessage: prev.errorMessage,
                   isChecking: true,
-                  isAvailable: undefined,
-                  isOwnedByUser: undefined,
-                  expiryDate: undefined
+                  isAvailable: false,
+                  owner: undefined,
+                  expiryDate: undefined,
+                  isOwnedByUser: prev.isOwnedByUser
                 };
         });
     try {
@@ -106,13 +104,15 @@ function InputPanel(props) {
                             errorMessage: prev.errorMessage,
                             isChecking: false,
                             isAvailable: true,
-                            isOwnedByUser: undefined,
-                            expiryDate: undefined
+                            owner: prev.owner,
+                            expiryDate: prev.expiryDate,
+                            isOwnedByUser: prev.isOwnedByUser
                           };
                   });
       }
-      var isOwner$1 = await isOwner(value, isWalletConnected);
+      var owner = await OnChainOperations.owner(value);
       var expiryInt = await OnChainOperations.nameExpires(value);
+      var isOwnedByUser$1 = isWalletConnected ? await isOwnedByUser(owner) : undefined;
       return setState(function (prev) {
                   return {
                           value: prev.value,
@@ -120,8 +120,9 @@ function InputPanel(props) {
                           errorMessage: prev.errorMessage,
                           isChecking: false,
                           isAvailable: false,
-                          isOwnedByUser: isOwner$1,
-                          expiryDate: Caml_option.some(Utils.timestampToDate(expiryInt))
+                          owner: owner,
+                          expiryDate: Caml_option.some(Utils.timestampToDate(expiryInt)),
+                          isOwnedByUser: isOwnedByUser$1
                         };
                 });
     }
@@ -135,8 +136,9 @@ function InputPanel(props) {
                           errorMessage: "Failed to check availability",
                           isChecking: false,
                           isAvailable: prev.isAvailable,
-                          isOwnedByUser: undefined,
-                          expiryDate: undefined
+                          owner: prev.owner,
+                          expiryDate: prev.expiryDate,
+                          isOwnedByUser: prev.isOwnedByUser
                         };
                 });
     }
@@ -161,8 +163,9 @@ function InputPanel(props) {
                         errorMessage: errorMessage,
                         isChecking: prev.isChecking,
                         isAvailable: prev.isAvailable,
-                        isOwnedByUser: prev.isOwnedByUser,
-                        expiryDate: prev.expiryDate
+                        owner: prev.owner,
+                        expiryDate: prev.expiryDate,
+                        isOwnedByUser: prev.isOwnedByUser
                       };
               });
           if (isValid && value !== "") {
@@ -180,8 +183,9 @@ function InputPanel(props) {
                   errorMessage: prev.errorMessage,
                   isChecking: prev.isChecking,
                   isAvailable: prev.isAvailable,
-                  isOwnedByUser: prev.isOwnedByUser,
-                  expiryDate: prev.expiryDate
+                  owner: prev.owner,
+                  expiryDate: prev.expiryDate,
+                  isOwnedByUser: prev.isOwnedByUser
                 };
         });
     runValidation(newValue);
@@ -200,56 +204,69 @@ function InputPanel(props) {
               className: "text-gray-600 text-md"
             }, error));
   } else if (state.isValid && state.value !== "") {
-    var match$1 = state.isOwnedByUser;
+    var match$1 = state.owner;
     var match$2 = state.expiryDate;
+    var match$3 = state.isOwnedByUser;
     var tmp$1;
+    if (match$1 !== undefined && match$2 !== undefined) {
+      var exit = 0;
+      if (match$3 !== undefined && match$3) {
+        tmp$1 = React.createElement("p", {
+              className: "text-xs text-gray-400 mt-1"
+            }, "Your name will expire " + Utils.distanceToExpiry(Caml_option.valFromOption(match$2)));
+      } else {
+        exit = 1;
+      }
+      if (exit === 1) {
+        tmp$1 = React.createElement("p", {
+              className: "text-xs text-gray-400 mt-1"
+            }, match$1.slice(0, 6).concat("..", match$1.slice(38)));
+      }
+      
+    } else {
+      tmp$1 = null;
+    }
+    var tmp$2;
     if (state.isChecking) {
-      tmp$1 = React.createElement(Icons.Spinner.make, {
+      tmp$2 = React.createElement(Icons.Spinner.make, {
             className: "w-5 h-5 text-zinc-600"
           });
+    } else if (state.isAvailable) {
+      tmp$2 = React.createElement("button", {
+            className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+            type: "button",
+            onClick: (function (param) {
+                onNext(state.value, "Register");
+              })
+          }, "Register");
     } else {
-      var match$3 = state.isAvailable;
-      if (match$3 !== undefined) {
-        if (match$3) {
-          tmp$1 = React.createElement("button", {
-                className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
-                type: "button",
-                onClick: (function (param) {
-                    onNext(state.value, "Register");
-                  })
-              }, "Register");
-        } else {
-          var match$4 = state.isOwnedByUser;
-          var exit = 0;
-          if (match$4 !== undefined && match$4) {
-            tmp$1 = React.createElement("div", {
-                  className: "flex gap-2"
-                }, React.createElement("button", {
-                      className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
-                      type: "button",
-                      onClick: (function (param) {
-                          onNext(state.value, "Transfer");
-                        })
-                    }, "Transfer"), React.createElement("button", {
-                      className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
-                      type: "button",
-                      onClick: (function (param) {
-                          onNext(state.value, "Extend");
-                        })
-                    }, "Extend"));
-          } else {
-            exit = 1;
-          }
-          if (exit === 1) {
-            tmp$1 = React.createElement("span", {
-                  className: "text-red-500 text-sm"
-                }, "Not available");
-          }
-          
-        }
+      var match$4 = state.isOwnedByUser;
+      var exit$1 = 0;
+      if (match$4 !== undefined && match$4) {
+        tmp$2 = React.createElement("div", {
+              className: "flex gap-2"
+            }, React.createElement("button", {
+                  className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                  type: "button",
+                  onClick: (function (param) {
+                      onNext(state.value, "Transfer");
+                    })
+                }, "Transfer"), React.createElement("button", {
+                  className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                  type: "button",
+                  onClick: (function (param) {
+                      onNext(state.value, "Extend");
+                    })
+                }, "Extend"));
       } else {
-        tmp$1 = null;
+        exit$1 = 1;
       }
+      if (exit$1 === 1) {
+        tmp$2 = React.createElement("span", {
+              className: "text-red-500 text-sm"
+            }, "Not available");
+      }
+      
     }
     tmp = React.createElement("div", {
           className: "px-6 py-4"
@@ -257,9 +274,7 @@ function InputPanel(props) {
               className: "flex items-center justify-between"
             }, React.createElement("div", undefined, React.createElement("p", {
                       className: "text-gray-800"
-                    }, state.value + "." + Constants.sld), match$1 !== undefined && match$1 && match$2 !== undefined ? React.createElement("p", {
-                        className: "text-xs text-gray-400 mt-1"
-                      }, "Your name will expire " + Utils.distanceToExpiry(Caml_option.valFromOption(match$2))) : null), tmp$1));
+                    }, state.value + "." + Constants.sld), tmp$1), tmp$2));
   } else {
     tmp = null;
   }
@@ -291,7 +306,7 @@ var make = InputPanel;
 export {
   initialState ,
   isValidSubname ,
-  isOwner ,
+  isOwnedByUser ,
   make ,
 }
 /* Icons Not a pure module */
