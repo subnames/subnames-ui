@@ -4,7 +4,6 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
-import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Js_json from "rescript/lib/es6/js_json.js";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "../Constants.res.mjs";
@@ -14,7 +13,6 @@ import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as GraphQLClient from "../GraphQLClient.res.mjs";
 import * as ReverseRegistrar from "../ReverseRegistrar.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
-import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as RegisterExtendPanel from "./RegisterExtendPanel.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -61,39 +59,41 @@ function NamesList(props) {
       });
   var setShowExtendPanel = match$7[1];
   var showExtendPanel = match$7[0];
+  var dropdownRef = React.useRef(null);
+  React.useEffect((function () {
+          var handleClickOutside = function ($$event) {
+            Core__Option.map(Caml_option.nullable_to_opt(dropdownRef.current), (function (dropdownEl) {
+                    var targetEl = $$event.target;
+                    if (!dropdownEl.contains(targetEl)) {
+                      return setActiveDropdown(function (param) {
+                                  
+                                });
+                    }
+                    
+                  }));
+          };
+          document.addEventListener("mousedown", handleClickOutside);
+          return (function () {
+                    document.removeEventListener("mousedown", handleClickOutside);
+                  });
+        }), [activeDropdown]);
   var updatePrimaryName = async function (name) {
     setSettingPrimaryName(function (param) {
           return true;
         });
-    var walletClient = OnChainOperationsCommon.buildWalletClient();
-    if (walletClient !== undefined) {
-      try {
-        await ReverseRegistrar.setNameForAddr(Caml_option.valFromOption(walletClient), name);
-        setUpdateName(function (param) {
-              return true;
-            });
-        setRefetchTrigger(function (prev) {
-              return prev + 1 | 0;
-            });
-      }
-      catch (raw_err){
-        var err = Caml_js_exceptions.internalToOCamlException(raw_err);
-        if (err.RE_EXN_ID === Js_exn.$$Error) {
-          console.error("Error setting primary name:", err._1);
-        } else {
-          console.error("Unknown error setting primary name");
-        }
-      }
-      return setSettingPrimaryName(function (param) {
-                  return false;
-                });
-    }
-    console.log("Wallet connection failed");
+    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
+    await ReverseRegistrar.setNameForAddr(walletClient, name);
+    setUpdateName(function (param) {
+          return true;
+        });
+    setRefetchTrigger(function (prev) {
+          return prev + 1 | 0;
+        });
     return setSettingPrimaryName(function (param) {
                 return false;
               });
   };
-  var handleExtendSuccess = function (result) {
+  var handleExtendSuccess = function (param) {
     setRefetchTrigger(function (prev) {
           return prev + 1 | 0;
         });
@@ -103,18 +103,13 @@ function NamesList(props) {
   };
   React.useEffect((function () {
           if (account.isConnected) {
-            var fetchPrimaryName = async function () {
-              var address = account.address;
-              if (address === undefined) {
-                return ;
-              }
-              var primaryName = await getPrimaryName(address);
-              console.log("Primary name set to: ${primaryName}");
-              return setPrimaryName(function (param) {
-                          return primaryName;
-                        });
-            };
-            fetchPrimaryName();
+            Core__Option.map(account.address, (async function (address) {
+                    var primaryName = await getPrimaryName(address);
+                    console.log("Primary name set to:", primaryName);
+                    return setPrimaryName(function (param) {
+                                return primaryName;
+                              });
+                  }));
           }
           
         }), [
@@ -124,7 +119,10 @@ function NamesList(props) {
   React.useEffect((function () {
           if (account.isConnected) {
             var fetchNames = async function () {
-              var query = "\n          query {\n            subnames(limit: 20, where: {owner: {id_eq: \"" + Core__Option.getExn(account.address, undefined).toLowerCase() + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
+              var address = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
+                          return prim.toLowerCase();
+                        })), "No address found");
+              var query = "\n          query {\n            subnames(limit: 20, where: {owner: {id_eq: \"" + address + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
               var exit = 0;
@@ -220,6 +218,7 @@ function NamesList(props) {
                                                       }, "Set primary");
                                                 }
                                                 tmp = React.createElement("div", {
+                                                      ref: Caml_option.some(dropdownRef),
                                                       className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
                                                     }, React.createElement("div", {
                                                           className: "py-1"

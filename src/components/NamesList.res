@@ -2,6 +2,17 @@ open Utils
 open ReverseRegistrar
 open OnChainOperationsCommon
 
+type document
+type event = ReactEvent.Mouse.t
+@val external doc: document = "document"
+@send external getElementById: (document, string) => Dom.element = "getElementById"
+@send external addEventListener: (document, string, event => unit) => unit = "addEventListener"
+@send
+external removeEventListener: (document, string, event => unit) => unit = "removeEventListener"
+
+@get external target: ReactEvent.Mouse.t => Dom.element = "target"
+@send external contains: (Dom.element, Dom.element) => bool = "contains"
+
 module UseAccount = {
   type account = {
     address: option<string>,
@@ -28,7 +39,7 @@ let getPrimaryName = async address => {
 @react.component
 let make = () => {
   let account = UseAccount.use()
-  let {_, setUpdateName} = NameContext.use()
+  let {setUpdateName} = NameContext.use()
   let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
@@ -36,30 +47,39 @@ let make = () => {
   let (primaryName, setPrimaryName) = React.useState(() => None)
   let (refetchTrigger, setRefetchTrigger) = React.useState(() => 0)
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
+  let dropdownRef = React.useRef(Nullable.null)
+
+  // Add effect for handling clicks outside dropdown
+  React.useEffect1(() => {
+    let handleClickOutside = event => {
+      dropdownRef.current
+      ->Nullable.toOption
+      ->Option.map(dropdownEl => {
+        let targetEl = event->target
+        if !(dropdownEl->contains(targetEl)) {
+          setActiveDropdown(_ => None)
+        }
+      })
+      ->ignore
+    }
+
+    doc->addEventListener("mousedown", handleClickOutside)
+    Some(() => doc->removeEventListener("mousedown", handleClickOutside))
+  }, [activeDropdown])
 
   let updatePrimaryName = async name => {
     setSettingPrimaryName(_ => true)
-    switch buildWalletClient() {
-    | Some(walletClient) => {
-        try {
-          await setNameForAddr(walletClient, name)
-          setUpdateName(_ => true)
-          // Trigger effect re-run to fetch updated primary name
-          setRefetchTrigger(prev => prev + 1)
-        } catch {
-        | Js.Exn.Error(err) => Console.error2("Error setting primary name:", err)
-        | _ => Console.error("Unknown error setting primary name")
-        }
-        setSettingPrimaryName(_ => false)
-      }
-    | None => {
-        Console.log("Wallet connection failed")
-        setSettingPrimaryName(_ => false)
-      }
-    }
+
+    let walletClient = buildWalletClient()->Option.getExn(~message="Wallet connection failed")
+
+    await setNameForAddr(walletClient, name)
+    setUpdateName(_ => true)
+    setRefetchTrigger(prev => prev + 1)
+
+    setSettingPrimaryName(_ => false)
   }
 
-  let handleExtendSuccess = (result: Types.actionResult) => {
+  let handleExtendSuccess = (_: Types.actionResult) => {
     // Refresh the names list
     setRefetchTrigger(prev => prev + 1)
     setShowExtendPanel(_ => None)
@@ -68,17 +88,13 @@ let make = () => {
   // Add effect to fetch primary name
   React.useEffect2(() => {
     if account.isConnected {
-      let fetchPrimaryName = async () => {
-        switch account.address {
-        | Some(address) => {
-            let primaryName = await getPrimaryName(address)
-            Console.log("Primary name set to: ${primaryName}")
-            setPrimaryName(_ => Some(primaryName))
-          }
-        | None => ()
-        }
-      }
-      fetchPrimaryName()->ignore
+      account.address
+      ->Option.map(async address => {
+        let primaryName = await getPrimaryName(address)
+        Console.log2("Primary name set to:", primaryName)
+        setPrimaryName(_ => Some(primaryName))
+      })
+      ->ignore
     }
     None
   }, (account.isConnected, refetchTrigger))
@@ -86,9 +102,13 @@ let make = () => {
   React.useEffect1(() => {
     if account.isConnected {
       let fetchNames = async () => {
+        let address =
+          account.address
+          ->Option.map(String.toLowerCase)
+          ->Option.getExn(~message="No address found")
         let query = `
           query {
-            subnames(limit: 20, where: {owner: {id_eq: "${account.address->Option.getExn->String.toLowerCase}"}}) {
+            subnames(limit: 20, where: {owner: {id_eq: "${address}"}}) {
               label
               name
               expires
@@ -99,16 +119,13 @@ let make = () => {
           }
         `
 
-        let result = await GraphQLClient.makeRequest(
-          ~endpoint=Constants.indexerUrl,
-          ~query,
-          (),
-        )
+        let result = await GraphQLClient.makeRequest(~endpoint=Constants.indexerUrl, ~query, ())
 
         switch result {
         | {data: Some(data), errors: None} => {
             // Assuming data can be decoded to queryResponse type
-            let subnames = data
+            let subnames =
+              data
               ->Dict.get("subnames")
               ->Option.getExn
               ->Js.Json.decodeArray
@@ -118,17 +135,21 @@ let make = () => {
                 {
                   label: obj->Dict.get("label")->Option.getExn->Js.Json.decodeString->Option.getExn,
                   name: obj->Dict.get("name")->Option.getExn->Js.Json.decodeString->Option.getExn,
-                  expires: obj->Dict.get("expires")->Option.getExn->Js.Json.decodeString->Option.getExn,
+                  expires: obj
+                  ->Dict.get("expires")
+                  ->Option.getExn
+                  ->Js.Json.decodeString
+                  ->Option.getExn,
                   owner: {
                     id: obj
-                      ->Dict.get("owner")
-                      ->Option.getExn
-                      ->Js.Json.decodeObject
-                      ->Option.getExn
-                      ->Dict.get("id")
-                      ->Option.getExn
-                      ->Js.Json.decodeString
-                      ->Option.getExn,
+                    ->Dict.get("owner")
+                    ->Option.getExn
+                    ->Js.Json.decodeObject
+                    ->Option.getExn
+                    ->Dict.get("id")
+                    ->Option.getExn
+                    ->Js.Json.decodeString
+                    ->Option.getExn,
                   },
                 }
               })
@@ -169,7 +190,6 @@ let make = () => {
                 <Icons.Close />
               </button>
             </div>
-
             {if !account.isConnected {
               <div className="text-center py-4 text-gray-500">
                 {React.string("Please connect your wallet to see your names")}
@@ -190,10 +210,10 @@ let make = () => {
                         <div>
                           <div className="flex items-center gap-2">
                             <p className="text-gray-800">
-                              <>
+                              {<>
                                 <span className="font-bold"> {React.string(subname.name)} </span>
                                 {React.string(`.${Constants.sld}`)}
-                              </>
+                              </>}
                             </p>
                             {switch primaryName {
                             | Some(name) if name == subname.name =>
@@ -205,7 +225,9 @@ let make = () => {
                             }}
                           </div>
                           <p className="text-xs text-gray-400 mt-1">
-                            {React.string(`Expires ${distanceToExpiry(timestampStringToDate(subname.expires))}`)}
+                            {React.string(
+                              `Expires ${distanceToExpiry(timestampStringToDate(subname.expires))}`,
+                            )}
                           </p>
                         </div>
                         <div className="relative">
@@ -225,6 +247,7 @@ let make = () => {
                           </button>
                           {if activeDropdown == Some(subname.name) {
                             <div
+                              ref={ReactDOM.Ref.domRef(dropdownRef)}
                               className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div className="py-1">
                                 {switch primaryName {
@@ -278,11 +301,12 @@ let make = () => {
       </div>
     </div>
     {if settingPrimaryName {
-      <div
-        className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white p-6 rounded-lg shadow-xl">
           <div className="flex items-center gap-3">
-            <div className="animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent" />
+            <div
+              className="animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
+            />
             <p className="text-gray-900"> {React.string("Setting primary name...")} </p>
           </div>
         </div>
