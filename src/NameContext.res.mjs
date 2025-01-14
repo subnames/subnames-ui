@@ -3,8 +3,12 @@
 import * as React from "react";
 
 var context = React.createContext({
-      updateName: true,
-      setUpdateName: (function (param) {
+      forceRefresh: false,
+      setForceRefresh: (function (param) {
+          
+        }),
+      primaryName: undefined,
+      setPrimaryName: (function (param) {
           
         })
     });

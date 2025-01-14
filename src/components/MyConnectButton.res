@@ -28,55 +28,56 @@ module ConnectButton = {
   }
 }
 
+let updatePrimaryName = (account, setPrimaryName) => {
+  account->Option.map(async acc => {
+    let resolvedName = await OnChainOperations.name(acc.address)
+
+    if resolvedName == "" {
+      setPrimaryName(_ => None)
+    } else {
+      let fixedName = if String.endsWith(resolvedName, Constants.sld) {
+        String.split(resolvedName, ".")->Array.get(0)->Option.getExn
+      } else {
+        resolvedName
+      }
+      let expiresInt = await OnChainOperations.nameExpires(fixedName)
+      let primaryName: NameContext.primaryName = {name: fixedName, expires: expiresInt}
+      setPrimaryName(_ => Some(primaryName))
+    }
+  })
+}
+
+let displayName = (account, primaryName: option<NameContext.primaryName>) => {
+  switch primaryName {
+  | Some({name, _}) => name
+  | None => Option.getUnsafe(account).displayName
+  }
+}
+
 @react.component
 let make = () => {
   <ConnectButton.Custom>
     {props => {
-      let (name, setName) = React.useState(() => "Loading...")
+      let {forceRefresh, setForceRefresh, primaryName, setPrimaryName} = NameContext.use()
 
-      let {updateName, setUpdateName} = NameContext.use()
       let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
 
+      // updatePrimaryName if account changes
       React.useEffect1(() => {
-        switch account {
-        | Some(acc) =>
-          let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
-            if resolvedName == "" {
-              setName(_ => acc.displayName)
-            } else if (String.endsWith(resolvedName, Constants.sld)) {
-              setName(_ => String.split(resolvedName, ".")->Array.get(0)->Option.getOr("Unknown"))
-            } else {
-              setName(_ => resolvedName)
-            }
-            Promise.resolve()
-          })
-        | None => ()
-        }
+        updatePrimaryName(account, setPrimaryName)->ignore
         None
       }, [account])
+
+      // updatePrimaryName if forceRefresh changes
       React.useEffect1(() => {
-        Console.log(`updateName: ${updateName ? "true" : "false"}`)
-        if updateName {
-          Console.log(`account: ${Option.isSome(account) ? Option.getUnsafe(account).address : "None"}`)
-          switch account {
-          | Some(acc) =>
-            let _ = OnChainOperations.name(acc.address)->Promise.then(resolvedName => {
-              Console.log(`resolvedName: ${resolvedName}`)
-              if resolvedName == "" {
-                setName(_ => acc.displayName)
-              } else if (String.endsWith(resolvedName, Constants.sld)) {
-                setName(_ => String.split(resolvedName, ".")->Array.get(0)->Option.getOr("Unknown"))
-              } else {
-                setName(_ => resolvedName)
-              }
-              setUpdateName(_ => false)
-              Promise.resolve()
-            })
-          | None => ()
-          }
+        if forceRefresh {
+          Console.log(
+            `account: ${Option.isSome(account) ? Option.getUnsafe(account).address : "None"}`,
+          )
+          updatePrimaryName(account, setPrimaryName)->ignore
         }
-        None
-      }, [updateName])
+        Some(() => setForceRefresh(_ => false))
+      }, [forceRefresh])
 
       let ready = mounted
       let connected = ready && Option.isSome(account) && Option.isSome(chain)
@@ -102,7 +103,7 @@ let make = () => {
             } else {
               <div className="flex gap-3">
                 <button onClick={openAccountModal} className=buttonClasses>
-                  {React.string(name)}
+                  {React.string(displayName(account, primaryName))}
                   {Option.isSome(Option.getUnsafe(account).displayBalance)
                     ? React.string(
                         ` (${Option.getUnsafe(Option.getUnsafe(account).displayBalance)})`,

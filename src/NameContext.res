@@ -1,15 +1,24 @@
+type primaryName = {
+  name: string,
+  expires: int,
+}
+
 type context = {
-  updateName: bool,
-  setUpdateName: (bool => bool) => unit,
+  forceRefresh: bool,
+  setForceRefresh: (bool => bool) => unit,
+  primaryName: option<primaryName>,
+  setPrimaryName: (option<primaryName> => option<primaryName>) => unit,
 }
 
 let context = React.createContext({
-  updateName: true, 
-  setUpdateName: _ => (),
+  forceRefresh: false,
+  setForceRefresh: _ => (),
+  primaryName: None,
+  setPrimaryName: _ => (),
 })
 
 module Provider = {
   let make = React.Context.provider(context)
 }
 
-let use = () => React.useContext(context) 
+let use = () => React.useContext(context)
