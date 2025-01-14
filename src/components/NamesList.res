@@ -85,6 +85,46 @@ let make = () => {
     setShowExtendPanel(_ => None)
   }
 
+  let buildSubname = subnameObj => {
+    subnameObj
+    ->JSON.Decode.object
+    ->Option.map(obj => {
+      let label =
+        obj
+        ->Dict.get("label")
+        ->Option.flatMap(JSON.Decode.string)
+        ->Option.getExn(~message="Failed to decode label")
+      let name =
+        obj
+        ->Dict.get("name")
+        ->Option.flatMap(JSON.Decode.string)
+        ->Option.getExn(~message="Failed to decode name")
+      let expires =
+        obj
+        ->Dict.get("expires")
+        ->Option.flatMap(JSON.Decode.string)
+        ->Option.getExn(~message="Failed to decode expires")
+      let owner: owner =
+        obj
+        ->Dict.get("owner")
+        ->Option.flatMap(JSON.Decode.object)
+        ->Option.flatMap(ownerObj => {
+          ownerObj
+          ->Dict.get("id")
+          ->Option.flatMap(JSON.Decode.string)
+          ->Option.map(id => {{id: id}})
+        })
+        ->Option.getExn(~message="Failed to decode owner")
+
+      {label, name, expires, owner}
+    })
+    ->Option.getExn
+  }
+
+  let buildSubnames = subnameObjs => {
+    subnameObjs->Array.map(buildSubname)
+  }
+
   // Add effect to fetch primary name
   React.useEffect2(() => {
     if account.isConnected {
@@ -106,6 +146,7 @@ let make = () => {
           account.address
           ->Option.map(String.toLowerCase)
           ->Option.getExn(~message="No address found")
+
         let query = `
           query {
             subnames(limit: 20, where: {owner: {id_eq: "${address}"}}) {
@@ -124,35 +165,12 @@ let make = () => {
         switch result {
         | {data: Some(data), errors: None} => {
             // Assuming data can be decoded to queryResponse type
-            let subnames =
+            let subnames: array<subname> =
               data
               ->Dict.get("subnames")
-              ->Option.getExn
-              ->Js.Json.decodeArray
-              ->Option.getExn
-              ->Array.map(json => {
-                let obj = json->Js.Json.decodeObject->Option.getExn
-                {
-                  label: obj->Dict.get("label")->Option.getExn->Js.Json.decodeString->Option.getExn,
-                  name: obj->Dict.get("name")->Option.getExn->Js.Json.decodeString->Option.getExn,
-                  expires: obj
-                  ->Dict.get("expires")
-                  ->Option.getExn
-                  ->Js.Json.decodeString
-                  ->Option.getExn,
-                  owner: {
-                    id: obj
-                    ->Dict.get("owner")
-                    ->Option.getExn
-                    ->Js.Json.decodeObject
-                    ->Option.getExn
-                    ->Dict.get("id")
-                    ->Option.getExn
-                    ->Js.Json.decodeString
-                    ->Option.getExn,
-                  },
-                }
-              })
+              ->Option.flatMap(JSON.Decode.array)
+              ->Option.map(buildSubnames)
+              ->Option.getExn(~message="Failed to get subnames")
             setNames(_ => subnames)
           }
         | {errors: Some(errors)} => Console.log2("Errors:", errors)

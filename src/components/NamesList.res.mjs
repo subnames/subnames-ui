@@ -4,9 +4,9 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
-import * as Js_json from "rescript/lib/es6/js_json.js";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "../Constants.res.mjs";
+import * as Core__JSON from "@rescript/core/src/Core__JSON.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -101,6 +101,29 @@ function NamesList(props) {
           
         });
   };
+  var buildSubname = function (subnameObj) {
+    return Core__Option.getExn(Core__Option.map(Core__JSON.Decode.object(subnameObj), (function (obj) {
+                      var label = Core__Option.getExn(Core__Option.flatMap(obj["label"], Core__JSON.Decode.string), "Failed to decode label");
+                      var name = Core__Option.getExn(Core__Option.flatMap(obj["name"], Core__JSON.Decode.string), "Failed to decode name");
+                      var expires = Core__Option.getExn(Core__Option.flatMap(obj["expires"], Core__JSON.Decode.string), "Failed to decode expires");
+                      var owner = Core__Option.getExn(Core__Option.flatMap(Core__Option.flatMap(obj["owner"], Core__JSON.Decode.object), (function (ownerObj) {
+                                  return Core__Option.map(Core__Option.flatMap(ownerObj["id"], Core__JSON.Decode.string), (function (id) {
+                                                return {
+                                                        id: id
+                                                      };
+                                              }));
+                                })), "Failed to decode owner");
+                      return {
+                              label: label,
+                              name: name,
+                              expires: expires,
+                              owner: owner
+                            };
+                    })), undefined);
+  };
+  var buildSubnames = function (subnameObjs) {
+    return subnameObjs.map(buildSubname);
+  };
   React.useEffect((function () {
           if (account.isConnected) {
             Core__Option.map(account.address, (async function (address) {
@@ -127,17 +150,7 @@ function NamesList(props) {
               var data = result.data;
               var exit = 0;
               if (data !== undefined && result.errors === undefined) {
-                var subnames = Core__Option.getExn(Js_json.decodeArray(Core__Option.getExn(data["subnames"], undefined)), undefined).map(function (json) {
-                      var obj = Core__Option.getExn(Js_json.decodeObject(json), undefined);
-                      return {
-                              label: Core__Option.getExn(Js_json.decodeString(Core__Option.getExn(obj["label"], undefined)), undefined),
-                              name: Core__Option.getExn(Js_json.decodeString(Core__Option.getExn(obj["name"], undefined)), undefined),
-                              expires: Core__Option.getExn(Js_json.decodeString(Core__Option.getExn(obj["expires"], undefined)), undefined),
-                              owner: {
-                                id: Core__Option.getExn(Js_json.decodeString(Core__Option.getExn(Core__Option.getExn(Js_json.decodeObject(Core__Option.getExn(obj["owner"], undefined)), undefined)["id"], undefined)), undefined)
-                              }
-                            };
-                    });
+                var subnames = Core__Option.getExn(Core__Option.map(Core__Option.flatMap(data["subnames"], Core__JSON.Decode.array), buildSubnames), "Failed to get subnames");
                 setNames(function (param) {
                       return subnames;
                     });
