@@ -32,20 +32,14 @@ type subname = {
 }
 type queryResponse = {subnames: array<subname>}
 
-let getPrimaryName = async address => {
-  await OnChainOperations.name(address)
-}
-
 @react.component
 let make = () => {
   let account = UseAccount.use()
-  let {setForceRefresh} = NameContext.use()
+  let {setForceRefresh, primaryName} = NameContext.use()
   let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
   let (settingPrimaryName, setSettingPrimaryName) = React.useState(() => false)
-  let (primaryName, setPrimaryName) = React.useState(() => None)
-  let (refetchTrigger, setRefetchTrigger) = React.useState(() => 0)
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
   let dropdownRef = React.useRef(Nullable.null)
 
@@ -67,7 +61,7 @@ let make = () => {
     Some(() => doc->removeEventListener("mousedown", handleClickOutside))
   }, [activeDropdown])
 
-  let updatePrimaryName = async name => {
+  let setPrimary = async name => {
     setSettingPrimaryName(_ => true)
 
     try {
@@ -75,7 +69,6 @@ let make = () => {
 
       await setNameForAddr(walletClient, name)
       setForceRefresh(_ => true)
-      setRefetchTrigger(prev => prev + 1)
     } catch {
     | Exn.Error(obj) =>
       switch Exn.message(obj) {
@@ -91,7 +84,7 @@ let make = () => {
 
   let handleExtendSuccess = (_: Types.actionResult) => {
     // Refresh the names list
-    setRefetchTrigger(prev => prev + 1)
+    setForceRefresh(_ => true)
     setShowExtendPanel(_ => None)
   }
 
@@ -110,24 +103,17 @@ let make = () => {
   }
 
   let buildSubnames = subnameObjs => {
+    let current = primaryName->Option.getExn
+    let currentSubname = {
+      label: current.name,
+      name: currentPrimaryName,
+      expires: "",
+      owner: {id: account.address},
+    }
     subnameObjs->Array.map(buildSubname)
   }
 
-  // Add effect to fetch primary name
   React.useEffect2(() => {
-    if account.isConnected {
-      account.address
-      ->Option.map(async address => {
-        let primaryName = await getPrimaryName(address)
-        Console.log2("Primary name set to:", primaryName)
-        setPrimaryName(_ => Some(primaryName))
-      })
-      ->ignore
-    }
-    None
-  }, (account.isConnected, refetchTrigger))
-
-  React.useEffect1(() => {
     if account.isConnected {
       let fetchNames = async () => {
         let address =
@@ -163,7 +149,7 @@ let make = () => {
       fetchNames()->ignore
     }
     None
-  }, [account.isConnected])
+  }, (account.isConnected, primaryName))
 
   <>
     <div className="p-8">
@@ -216,7 +202,7 @@ let make = () => {
                               </>}
                             </p>
                             {switch primaryName {
-                            | Some(name) if name == subname.name =>
+                            | Some({name}) if name == subname.name =>
                               <span
                                 className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
                                 {React.string("Primary")}
@@ -251,12 +237,12 @@ let make = () => {
                               className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                               <div className="py-1">
                                 {switch primaryName {
-                                | Some(name) if name == subname.name => React.null
+                                | Some({name}) if name == subname.name => React.null
                                 | _ =>
                                   <button
                                     type_="button"
                                     onClick={_ => {
-                                      updatePrimaryName(subname.name)->ignore
+                                      setPrimary(subname.name)->ignore
                                       setActiveDropdown(_ => None)
                                     }}
                                     className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">
