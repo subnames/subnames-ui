@@ -70,11 +70,21 @@ let make = () => {
   let updatePrimaryName = async name => {
     setSettingPrimaryName(_ => true)
 
-    let walletClient = buildWalletClient()->Option.getExn(~message="Wallet connection failed")
+    try {
+      let walletClient = buildWalletClient()->Option.getExn(~message="Wallet connection failed")
 
-    await setNameForAddr(walletClient, name)
-    setUpdateName(_ => true)
-    setRefetchTrigger(prev => prev + 1)
+      await setNameForAddr(walletClient, name)
+      setUpdateName(_ => true)
+      setRefetchTrigger(prev => prev + 1)
+    } catch {
+    | Exn.Error(obj) =>
+      switch Exn.message(obj) {
+      | Some(message) if message->Js.String2.includes("User rejected the request") =>
+        Console.log("User rejected the transaction")
+      | Some(message) => Console.log(message)
+      | None => ()
+      }
+    }
 
     setSettingPrimaryName(_ => false)
   }

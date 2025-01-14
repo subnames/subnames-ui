@@ -4,6 +4,7 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "../Constants.res.mjs";
 import * as Core__JSON from "@rescript/core/src/Core__JSON.res.mjs";
@@ -13,6 +14,7 @@ import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as GraphQLClient from "../GraphQLClient.res.mjs";
 import * as ReverseRegistrar from "../ReverseRegistrar.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as RegisterExtendPanel from "./RegisterExtendPanel.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -81,14 +83,32 @@ function NamesList(props) {
     setSettingPrimaryName(function (param) {
           return true;
         });
-    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
-    await ReverseRegistrar.setNameForAddr(walletClient, name);
-    setUpdateName(function (param) {
-          return true;
-        });
-    setRefetchTrigger(function (prev) {
-          return prev + 1 | 0;
-        });
+    try {
+      var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
+      await ReverseRegistrar.setNameForAddr(walletClient, name);
+      setUpdateName(function (param) {
+            return true;
+          });
+      setRefetchTrigger(function (prev) {
+            return prev + 1 | 0;
+          });
+    }
+    catch (raw_obj){
+      var obj = Caml_js_exceptions.internalToOCamlException(raw_obj);
+      if (obj.RE_EXN_ID === Js_exn.$$Error) {
+        var message = obj._1.message;
+        if (message !== undefined) {
+          if (message.includes("User rejected the request")) {
+            console.log("User rejected the transaction");
+          } else {
+            console.log(message);
+          }
+        }
+        
+      } else {
+        throw obj;
+      }
+    }
     return setSettingPrimaryName(function (param) {
                 return false;
               });
