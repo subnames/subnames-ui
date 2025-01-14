@@ -113,11 +113,12 @@ module Subname = {
 module Layout = {
   @react.component
   let make = () => {
-    let (updateName, setUpdateName) = React.useState(() => true)
+    let (forceRefresh, setForceRefresh) = React.useState(() => false)
+    let (primaryName, setPrimaryName) = React.useState(() => None)
     let url = RescriptReactRouter.useUrl()
     let account = UseAccount.use()
 
-    <NameContext.Provider value={updateName, setUpdateName}>
+    <NameContext.Provider value={forceRefresh, setForceRefresh, primaryName, setPrimaryName}>
       <div className="min-h-screen bg-gray-50">
         <header>
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

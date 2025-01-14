@@ -66,19 +66,24 @@ function App$Subname(props) {
 
 function App$Layout(props) {
   var match = React.useState(function () {
-        return true;
+        return false;
+      });
+  var match$1 = React.useState(function () {
+        
       });
   var url = RescriptReactRouter.useUrl(undefined, undefined);
   var account = Wagmi.useAccount();
-  var match$1 = url.path;
+  var match$2 = url.path;
   var tmp;
-  tmp = match$1 ? (
-      match$1.hd === "names" && !match$1.tl ? React.createElement(NamesList.make, {}) : React.createElement("div", undefined, "Page Not Found")
+  tmp = match$2 ? (
+      match$2.hd === "names" && !match$2.tl ? React.createElement(NamesList.make, {}) : React.createElement("div", undefined, "Page Not Found")
     ) : React.createElement(App$Subname, {});
   return React.createElement(NameContext.Provider.make, {
               value: {
-                updateName: match[0],
-                setUpdateName: match[1]
+                forceRefresh: match[0],
+                setForceRefresh: match[1],
+                primaryName: match$1[0],
+                setPrimaryName: match$1[1]
               },
               children: React.createElement("div", {
                     className: "min-h-screen bg-gray-50"

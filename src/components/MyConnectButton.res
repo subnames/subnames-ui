@@ -50,7 +50,7 @@ let updatePrimaryName = (account, setPrimaryName) => {
 let displayName = (account, primaryName: option<NameContext.primaryName>) => {
   switch primaryName {
   | Some({name, _}) => name
-  | None => Option.getUnsafe(account).displayName
+  | None => Option.getExn(account).displayName
   }
 }
 
@@ -68,7 +68,7 @@ let make = () => {
         None
       }, [account])
 
-      // updatePrimaryName if forceRefresh changes
+      // updatePrimaryName if forceRefresh
       React.useEffect1(() => {
         if forceRefresh {
           Console.log(

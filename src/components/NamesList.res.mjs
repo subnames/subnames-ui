@@ -28,7 +28,7 @@ async function getPrimaryName(address) {
 function NamesList(props) {
   var account = Wagmi.useAccount();
   var match = NameContext.use();
-  var setUpdateName = match.setUpdateName;
+  var setForceRefresh = match.setForceRefresh;
   var match$1 = React.useState(function () {
         return [];
       });
@@ -86,7 +86,7 @@ function NamesList(props) {
     try {
       var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
       await ReverseRegistrar.setNameForAddr(walletClient, name);
-      setUpdateName(function (param) {
+      setForceRefresh(function (param) {
             return true;
           });
       setRefetchTrigger(function (prev) {

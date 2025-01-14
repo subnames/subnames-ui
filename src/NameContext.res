@@ -3,6 +3,8 @@ type primaryName = {
   expires: int,
 }
 
+// Why here the set functions signature is (.. => ..) => unit?
+// Because their values are from useState.
 type context = {
   forceRefresh: bool,
   setForceRefresh: (bool => bool) => unit,

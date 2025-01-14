@@ -39,7 +39,7 @@ let getPrimaryName = async address => {
 @react.component
 let make = () => {
   let account = UseAccount.use()
-  let {setUpdateName} = NameContext.use()
+  let {setForceRefresh} = NameContext.use()
   let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
@@ -74,7 +74,7 @@ let make = () => {
       let walletClient = buildWalletClient()->Option.getExn(~message="Wallet connection failed")
 
       await setNameForAddr(walletClient, name)
-      setUpdateName(_ => true)
+      setForceRefresh(_ => true)
       setRefetchTrigger(prev => prev + 1)
     } catch {
     | Exn.Error(obj) =>

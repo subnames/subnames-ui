@@ -16,8 +16,8 @@ var initialState = {
 
 function SubnameInput(props) {
   var isWalletConnected = props.isWalletConnected;
-  var match = NameContext.use();
-  var setUpdateName = match.setUpdateName;
+  var match = React.useContext(NameContext.context);
+  var setForceRefresh = match.setForceRefresh;
   var match$1 = React.useState(function () {
         return initialState;
       });
@@ -32,7 +32,7 @@ function SubnameInput(props) {
                   result: result
                 };
         });
-    setUpdateName(function (param) {
+    setForceRefresh(function (param) {
           return true;
         });
   };

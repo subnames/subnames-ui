@@ -14,7 +14,7 @@ let initialState: state = {
 
 @react.component
 let make = (~isWalletConnected: bool) => {
-  let {_, setUpdateName} = NameContext.use()
+  let {setForceRefresh} = React.useContext(NameContext.context)
   let (state, setState) = React.useState(_ => initialState)
 
   let onSuccess = (result: Types.actionResult) => {
@@ -23,7 +23,7 @@ let make = (~isWalletConnected: bool) => {
       panel: "result",
       result: Some(result),
     })
-    setUpdateName(_ => true)
+    setForceRefresh(_ => true)
   }
 
   let onNext = (name: string, action: Types.action) => {
@@ -41,8 +41,7 @@ let make = (~isWalletConnected: bool) => {
 
   <div className="w-full max-w-xl mx-auto">
     {switch state.panel {
-    | "input" =>
-      <InputPanel onNext={onNext} isWalletConnected />
+    | "input" => <InputPanel onNext={onNext} isWalletConnected />
     | "register" =>
       <RegisterExtendPanel
         name={state.name}
@@ -64,7 +63,7 @@ let make = (~isWalletConnected: bool) => {
         name={state.name}
         isWalletConnected
         onBack={() => setState(prev => {...prev, panel: "input"})}
-        onSuccess={onSuccess} 
+        onSuccess={onSuccess}
       />
     | "result" =>
       <ResultPanel
