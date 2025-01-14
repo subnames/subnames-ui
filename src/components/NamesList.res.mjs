@@ -103,16 +103,14 @@ function NamesList(props) {
   };
   var buildSubname = function (subnameObj) {
     return Core__Option.getExn(Core__Option.map(Core__JSON.Decode.object(subnameObj), (function (obj) {
-                      var label = Core__Option.getExn(Core__Option.flatMap(obj["label"], Core__JSON.Decode.string), "Failed to decode label");
-                      var name = Core__Option.getExn(Core__Option.flatMap(obj["name"], Core__JSON.Decode.string), "Failed to decode name");
-                      var expires = Core__Option.getExn(Core__Option.flatMap(obj["expires"], Core__JSON.Decode.string), "Failed to decode expires");
-                      var owner = Core__Option.getExn(Core__Option.flatMap(Core__Option.flatMap(obj["owner"], Core__JSON.Decode.object), (function (ownerObj) {
-                                  return Core__Option.map(Core__Option.flatMap(ownerObj["id"], Core__JSON.Decode.string), (function (id) {
-                                                return {
-                                                        id: id
-                                                      };
-                                              }));
-                                })), "Failed to decode owner");
+                      var label = Utils.getString(obj, "label");
+                      var name = Utils.getString(obj, "name");
+                      var expires = Utils.getString(obj, "expires");
+                      var owner = Utils.getObject(obj, "owner", (function (ownerObj) {
+                              return {
+                                      id: Utils.getString(ownerObj, "id")
+                                    };
+                            }));
                       return {
                               label: label,
                               name: name,
@@ -150,7 +148,7 @@ function NamesList(props) {
               var data = result.data;
               var exit = 0;
               if (data !== undefined && result.errors === undefined) {
-                var subnames = Core__Option.getExn(Core__Option.map(Core__Option.flatMap(data["subnames"], Core__JSON.Decode.array), buildSubnames), "Failed to get subnames");
+                var subnames = Utils.getArray(data, "subnames", buildSubnames);
                 setNames(function (param) {
                       return subnames;
                     });

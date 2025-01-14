@@ -36,3 +36,26 @@ let timestampStringToDate: string => Date.t = timestamp => {
   let intTimestamp = Int.fromString(timestamp)->Option.getExn
   timestampToDate(intTimestamp)
 }
+
+let getString = (jsonObj, fieldName) => {
+  jsonObj
+  ->Dict.get(fieldName)
+  ->Option.flatMap(JSON.Decode.string)
+  ->Option.getExn(~message="Failed to decode ${fieldName}")
+}
+
+let getObject = (jsonObj, fieldName, f) => {
+  jsonObj
+  ->Dict.get(fieldName)
+  ->Option.flatMap(JSON.Decode.object)
+  ->Option.map(f)
+  ->Option.getExn(~message="Failed to decode ${fieldName}")
+}
+
+let getArray = (jsonObj, fieldName, f) => {
+  jsonObj
+  ->Dict.get(fieldName)
+  ->Option.flatMap(JSON.Decode.array)
+  ->Option.map(f)
+  ->Option.getExn(~message="Failed to decode ${fieldName}")
+}

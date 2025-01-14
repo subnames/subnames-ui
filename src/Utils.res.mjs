@@ -3,6 +3,7 @@
 import * as React from "react";
 import * as DateFns from "date-fns";
 import * as Core__Int from "@rescript/core/src/Core__Int.res.mjs";
+import * as Core__JSON from "@rescript/core/src/Core__JSON.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
@@ -35,10 +36,25 @@ function timestampStringToDate(timestamp) {
   return timestampToDate(intTimestamp);
 }
 
+function getString(jsonObj, fieldName) {
+  return Core__Option.getExn(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.string), "Failed to decode ${fieldName}");
+}
+
+function getObject(jsonObj, fieldName, f) {
+  return Core__Option.getExn(Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.object), f), "Failed to decode ${fieldName}");
+}
+
+function getArray(jsonObj, fieldName, f) {
+  return Core__Option.getExn(Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.array), f), "Failed to decode ${fieldName}");
+}
+
 export {
   useDebounce ,
   distanceToExpiry ,
   timestampToDate ,
   timestampStringToDate ,
+  getString ,
+  getObject ,
+  getArray ,
 }
 /* react Not a pure module */
