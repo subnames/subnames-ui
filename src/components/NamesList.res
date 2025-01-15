@@ -27,7 +27,7 @@ type owner = {id: string}
 type subname = {
   label: string,
   name: string,
-  expires: string,
+  expires: int,
   owner: owner,
 }
 type queryResponse = {subnames: array<subname>}
@@ -94,7 +94,7 @@ let make = () => {
     ->Option.map(obj => {
       let label = getString(obj, "label")
       let name = getString(obj, "name")
-      let expires = getString(obj, "expires")
+      let expires = getString(obj, "expires")->Int.fromString->Option.getExn
       let owner: owner = getObject(obj, "owner", ownerObj => {id: getString(ownerObj, "id")})
 
       {label, name, expires, owner}
@@ -106,11 +106,16 @@ let make = () => {
     let current = primaryName->Option.getExn
     let currentSubname = {
       label: current.name,
-      name: currentPrimaryName,
-      expires: "",
-      owner: {id: account.address},
+      name: current.name,
+      expires: current.expires,
+      owner: {id: account.address->Option.getExn},
     }
-    subnameObjs->Array.map(buildSubname)
+    let result = subnameObjs->Array.map(buildSubname)
+    if result->Array.findIndex(subname => subname.name == current.name) == -1 {
+      result->Array.push(currentSubname)
+    }
+    result->Array.sort((a, b) => float(a.expires - b.expires))
+    result
   }
 
   React.useEffect2(() => {
@@ -212,7 +217,7 @@ let make = () => {
                           </div>
                           <p className="text-xs text-gray-400 mt-1">
                             {React.string(
-                              `Expires ${distanceToExpiry(timestampStringToDate(subname.expires))}`,
+                              `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
                             )}
                           </p>
                         </div>
