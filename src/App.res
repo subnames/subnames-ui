@@ -147,11 +147,14 @@ module Layout = {
         </header>
         <main>
           <div className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
-            {switch url.path {
-            | list{"names"} => <NamesList />
-            | list{} => <Subname />
+            {
+            switch url->Router.fromUrl {
+            | Router.Home => <Subname />
+            | Router.Names => <NamesList />
+            | Router.Profile => <Profile />
             | _ => <div> {React.string("Page Not Found")} </div>
-            }}
+            }
+            }
           </div>
         </main>
       </div>

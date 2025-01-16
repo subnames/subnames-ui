@@ -2,6 +2,8 @@
 
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Router from "./Router.res.mjs";
+import * as Profile from "./pages/Profile.res.mjs";
 import * as Constants from "./Constants.res.mjs";
 import * as NamesList from "./components/NamesList.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
@@ -73,11 +75,23 @@ function App$Layout(props) {
       });
   var url = RescriptReactRouter.useUrl(undefined, undefined);
   var account = Wagmi.useAccount();
-  var match$2 = url.path;
+  var match$2 = Router.fromUrl(url);
   var tmp;
-  tmp = match$2 ? (
-      match$2.hd === "names" && !match$2.tl ? React.createElement(NamesList.make, {}) : React.createElement("div", undefined, "Page Not Found")
-    ) : React.createElement(App$Subname, {});
+  switch (match$2) {
+    case "Home" :
+        tmp = React.createElement(App$Subname, {});
+        break;
+    case "Names" :
+        tmp = React.createElement(NamesList.make, {});
+        break;
+    case "Profile" :
+        tmp = React.createElement(Profile.make, {});
+        break;
+    case "NotFound" :
+        tmp = React.createElement("div", undefined, "Page Not Found");
+        break;
+    
+  }
   return React.createElement(NameContext.Provider.make, {
               value: {
                 forceRefresh: match[0],
