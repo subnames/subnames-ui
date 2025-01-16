@@ -24,10 +24,7 @@ let baseRegistrarContract = {
     {
       "type": "function",
       "name": "reclaim",
-      "inputs": [
-        {"name": "id", "type": "uint256"},
-        {"name": "owner", "type": "address"},
-      ],
+      "inputs": [{"name": "id", "type": "uint256"}, {"name": "owner", "type": "address"}],
       "outputs": [],
       "stateMutability": "nonpayable",
     },
@@ -54,6 +51,30 @@ let resolverContract = {
         },
       ],
       "stateMutability": "view",
+      "type": "function",
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "nodehash",
+          "type": "bytes32",
+        },
+        {
+          "internalType": "bytes[]",
+          "name": "data",
+          "type": "bytes[]",
+        },
+      ],
+      "name": "multicallWithNodeCheck",
+      "outputs": [
+        {
+          "internalType": "bytes[]",
+          "name": "results",
+          "type": "bytes[]",
+        },
+      ],
+      "stateMutability": "nonpayable",
       "type": "function",
     },
   ],
@@ -104,70 +125,69 @@ let controllerContract = {
       "stateMutability": "view",
     },
   ],
-  "register": 
-    {
-      "inputs": [
-        {
-          "components": [
-            {
-              "internalType": "string",
-              "name": "name",
-              "type": "string",
-            },
-            {
-              "internalType": "address",
-              "name": "owner",
-              "type": "address",
-            },
-            {
-              "internalType": "uint256",
-              "name": "duration",
-              "type": "uint256",
-            },
-            {
-              "internalType": "address",
-              "name": "resolver",
-              "type": "address",
-            },
-            {
-              "internalType": "bytes[]",
-              "name": "data",
-              "type": "bytes[]",
-            },
-            {
-              "internalType": "bool",
-              "name": "reverseRecord",
-              "type": "bool",
-            },
-          ],
-          "internalType": "struct RegistrarController.RegisterRequest",
-          "name": "request",
-          "type": "tuple",
-        },
-      ],
-      "name": "register",
-      "outputs": Array.make(~length=0, ()),
-      "stateMutability": "payable",
-      "type": "function",
-    },
-    "renew": {
-      "inputs": [
-        {
-          "internalType": "string",
-          "name": "name",
-          "type": "string",
-        },
-        {
-          "internalType": "uint256",
-          "name": "duration",
-          "type": "uint256",
-        },
-      ],
-      "name": "renew",
-      "outputs": Array.make(~length=0, ()),
-      "stateMutability": "payable",
-      "type": "function",
-    },
+  "register": {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "string",
+            "name": "name",
+            "type": "string",
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address",
+          },
+          {
+            "internalType": "uint256",
+            "name": "duration",
+            "type": "uint256",
+          },
+          {
+            "internalType": "address",
+            "name": "resolver",
+            "type": "address",
+          },
+          {
+            "internalType": "bytes[]",
+            "name": "data",
+            "type": "bytes[]",
+          },
+          {
+            "internalType": "bool",
+            "name": "reverseRecord",
+            "type": "bool",
+          },
+        ],
+        "internalType": "struct RegistrarController.RegisterRequest",
+        "name": "request",
+        "type": "tuple",
+      },
+    ],
+    "name": "register",
+    "outputs": Array.make(~length=0, ()),
+    "stateMutability": "payable",
+    "type": "function",
+  },
+  "renew": {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string",
+      },
+      {
+        "internalType": "uint256",
+        "name": "duration",
+        "type": "uint256",
+      },
+    ],
+    "name": "renew",
+    "outputs": Array.make(~length=0, ()),
+    "stateMutability": "payable",
+    "type": "function",
+  },
 }
 
 let recordExists: string => promise<bool> = async name => {
@@ -245,6 +265,29 @@ let name: string => promise<string> = async address => {
       "args": [String(node)],
     },
   )
+}
+
+let multicallWithNodeCheck = async (walletClient, name, calls) => {
+  let node = namehash(`${name}.${Constants.sld}`)
+  let currentAddress = await currentAddress(walletClient)
+
+  // Convert string calls to bytes array
+  let data = calls->Array.map(call => `0x${call}`)->Array.join("")
+
+  let {request} = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": resolverContract["address"],
+      "abi": resolverContract["abi"],
+      "functionName": "multicallWithNodeCheck",
+      "args": [String(node), String(data)],
+    },
+  )
+
+  let hash = await writeContract(walletClient, request)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
 
 let nameExpires: string => promise<int> = async name => {
@@ -378,7 +421,7 @@ let transferSubname = async (walletClient, name, to) => {
       "args": [String(currentAddress), String(to), BigInt(tokenId)],
     },
   )
-  
+
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
@@ -387,7 +430,7 @@ let transferSubname = async (walletClient, name, to) => {
 let reclaimSubname = async (walletClient, name) => {
   let tokenId = BigInt.fromString(keccak256(name))
   let currentAddress = await currentAddress(walletClient)
-  
+
   let {request} = await simulateContract(
     publicClient,
     {
@@ -396,7 +439,7 @@ let reclaimSubname = async (walletClient, name) => {
       "abi": baseRegistrarContract["abi"],
       "functionName": "reclaim",
       "args": [BigInt(tokenId), String(currentAddress)],
-    }
+    },
   )
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})

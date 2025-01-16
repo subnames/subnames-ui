@@ -65,7 +65,8 @@ var baseRegistrarContract = {
 
 var resolverContract = {
   address: Constants.resolverContractAddress,
-  abi: [{
+  abi: [
+    {
       inputs: [{
           internalType: "bytes32",
           name: "node",
@@ -79,7 +80,30 @@ var resolverContract = {
         }],
       stateMutability: "view",
       type: "function"
-    }]
+    },
+    {
+      inputs: [
+        {
+          internalType: "bytes32",
+          name: "nodehash",
+          type: "bytes32"
+        },
+        {
+          internalType: "bytes[]",
+          name: "data",
+          type: "bytes[]"
+        }
+      ],
+      name: "multicallWithNodeCheck",
+      outputs: [{
+          internalType: "bytes[]",
+          name: "results",
+          type: "bytes[]"
+        }],
+      stateMutability: "nonpayable",
+      type: "function"
+    }
+  ]
 };
 
 var registryContract = {
@@ -295,6 +319,29 @@ async function name(address) {
             });
 }
 
+async function multicallWithNodeCheck(walletClient, name, calls) {
+  var node = Ens.namehash(name + "." + Constants.sld);
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var data = calls.map(function (call) {
+          return "0x" + call;
+        }).join("");
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
+        address: resolverContract.address,
+        abi: resolverContract.abi,
+        functionName: "multicallWithNodeCheck",
+        args: [
+          node,
+          data
+        ]
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
 async function nameExpires(name) {
   var tokenId = BigInt(Viem.keccak256(name));
   var result = await OnChainOperationsCommon.publicClient.readContract({
@@ -450,6 +497,7 @@ export {
   registerPrice ,
   rentPrice ,
   name ,
+  multicallWithNodeCheck ,
   nameExpires ,
   owner ,
   encodeSetAddr ,
