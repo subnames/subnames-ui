@@ -207,7 +207,7 @@ function Profile$ViewProfile(props) {
                         }, React.createElement("div", {
                               className: "flex  w-full justify-between items-end"
                             }, React.createElement("div", undefined, React.createElement("div", {
-                                      className: "text-xs text-gray-400 mt-1"
+                                      className: "text-sm text-gray-400 mt-1"
                                     }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("h1", {
                                       className: "text-3xl font-bold text-gray-900"
                                     }, match$2.name + "." + Constants.sld)), React.createElement("div", {

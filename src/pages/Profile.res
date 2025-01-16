@@ -156,7 +156,7 @@ module ViewProfile = {
           <div className="flex items-center justify-between w-full">
             <div className="flex  w-full justify-between items-end">
               <div>
-                <div className="text-xs text-gray-400 mt-1">
+                <div className="text-sm text-gray-400 mt-1">
                   {React.string("Expiry: ")}
                   {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
                 </div>

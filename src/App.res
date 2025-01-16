@@ -132,11 +132,18 @@ module Layout = {
               </div>
               <div className="flex items-center gap-4">
                 {if account.isConnected {
+                  <>
+                  <button
+                    onClick={_ => RescriptReactRouter.push("/profile")}
+                    className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
+                    {React.string("Profile")}
+                  </button>
                   <button
                     onClick={_ => RescriptReactRouter.push("/names")}
                     className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
                     {React.string("Your Names")}
                   </button>
+                  </>
                 } else {
                   React.null
                 }}

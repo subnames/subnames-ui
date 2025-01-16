@@ -114,12 +114,17 @@ function App$Layout(props) {
                                           })
                                       }, Constants.sld)), React.createElement("div", {
                                     className: "flex items-center gap-4"
-                                  }, account.isConnected ? React.createElement("button", {
-                                          className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
-                                          onClick: (function (param) {
-                                              RescriptReactRouter.push("/names");
-                                            })
-                                        }, "Your Names") : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                                  }, account.isConnected ? React.createElement(React.Fragment, {}, React.createElement("button", {
+                                              className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
+                                              onClick: (function (param) {
+                                                  RescriptReactRouter.push("/profile");
+                                                })
+                                            }, "Profile"), React.createElement("button", {
+                                              className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
+                                              onClick: (function (param) {
+                                                  RescriptReactRouter.push("/names");
+                                                })
+                                            }, "Your Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
                             className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                           }, tmp)))
             });
