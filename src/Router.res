@@ -1,4 +1,4 @@
-type route =
+type t = 
   | Home
   | Names
   | Profile
@@ -13,7 +13,7 @@ let fromUrl = (url: RescriptReactRouter.url) => {
   }
 }
 
-let toUrl = (route: route) => {
+let toUrl = (route: t) => {
   switch route {
   | Home => "/"
   | Names => "/names"
