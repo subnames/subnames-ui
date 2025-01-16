@@ -173,7 +173,7 @@ function Profile$ProfileField(props) {
                 }, React.createElement("div", {
                       className: "text-sm font-medium text-gray-500 mb-1"
                     }, props.label), React.createElement("div", {
-                      className: "text-gray-800 font-medium"
+                      className: "text-gray-800"
                     }, value === "" ? React.createElement("span", {
                             className: "text-gray-400 italic"
                           }, "Not provided") : value)));
@@ -199,8 +199,53 @@ function Profile$ViewProfile(props) {
   return React.createElement("div", {
               className: "w-full max-w-xl mx-auto"
             }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg p-8"
+                  className: "bg-white rounded-custom shadow-lg p-8 py-6"
                 }, React.createElement("div", {
+                      className: "flex flex-col mb-4"
+                    }, React.createElement("div", {
+                          className: "flex items-center justify-between w-full"
+                        }, React.createElement("div", {
+                              className: "flex  w-full justify-between items-end"
+                            }, React.createElement("div", undefined, React.createElement("div", {
+                                      className: "text-xs text-gray-400 mt-1"
+                                    }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("h1", {
+                                      className: "text-3xl font-bold text-gray-900"
+                                    }, match$2.name + "." + Constants.sld)), React.createElement("div", {
+                                  className: "relative flex-shrink-0"
+                                }, React.createElement("button", {
+                                      className: "p-2 rounded-lg hover:bg-gray-100 transition-colors ",
+                                      onClick: (function (param) {
+                                          setShowDropdown(function (prev) {
+                                                return !prev;
+                                              });
+                                        })
+                                    }, React.createElement("svg", {
+                                          className: "w-5 h-5",
+                                          fill: "none",
+                                          stroke: "currentColor",
+                                          viewBox: "0 0 24 24"
+                                        }, React.createElement("path", {
+                                              d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
+                                              strokeLinecap: "round",
+                                              strokeLinejoin: "round",
+                                              strokeWidth: "2"
+                                            }))), React.createElement("div", {
+                                      className: "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + (
+                                        match[0] ? "" : "hidden"
+                                      )
+                                    }, React.createElement("div", {
+                                          className: "py-1"
+                                        }, React.createElement("button", {
+                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            }, "Option 1"), React.createElement("button", {
+                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            }, "Option 2"), React.createElement("button", {
+                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                                            }, "Option 3")))))), description !== undefined ? React.createElement("div", {
+                            className: "text-gray-400 leading-relaxed  py-2"
+                          }, description) : React.createElement("div", {
+                            className: "text-gray-400 italic leading-relaxed py-2"
+                          }, "No description")), React.createElement("div", {
                       className: "grid grid-cols-1 md:grid-cols-2 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
@@ -281,50 +326,7 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "Email",
                           value: profile[6]
-                        })), React.createElement("div", {
-                      className: "flex flex-col "
-                    }, description !== undefined ? React.createElement("div", {
-                            className: "text-gray-600 leading-relaxed"
-                          }, description) : null, React.createElement("div", {
-                          className: "flex items-center justify-between w-full"
-                        }, React.createElement("div", {
-                              className: "flex  w-full justify-between items-end"
-                            }, React.createElement("div", undefined, React.createElement("div", {
-                                      className: "text-sm text-gray-400 mt-1"
-                                    }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("h1", {
-                                      className: "text-3xl font-bold text-gray-900"
-                                    }, match$2.name + "." + Constants.sld)), React.createElement("div", {
-                                  className: "relative flex-shrink-0"
-                                }, React.createElement("button", {
-                                      className: "p-2 rounded-lg hover:bg-gray-100 transition-colors ",
-                                      onClick: (function (param) {
-                                          setShowDropdown(function (prev) {
-                                                return !prev;
-                                              });
-                                        })
-                                    }, React.createElement("svg", {
-                                          className: "w-5 h-5",
-                                          fill: "none",
-                                          stroke: "currentColor",
-                                          viewBox: "0 0 24 24"
-                                        }, React.createElement("path", {
-                                              d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
-                                              strokeLinecap: "round",
-                                              strokeLinejoin: "round",
-                                              strokeWidth: "2"
-                                            }))), React.createElement("div", {
-                                      className: "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + (
-                                        match[0] ? "" : "hidden"
-                                      )
-                                    }, React.createElement("div", {
-                                          className: "py-1"
-                                        }, React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 1"), React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 2"), React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 3")))))))));
+                        }))));
 }
 
 var ViewProfile = {

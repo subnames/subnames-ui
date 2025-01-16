@@ -127,7 +127,7 @@ module ProfileField = {
       </div>
       <div className="flex-1">
         <div className="text-sm font-medium text-gray-500 mb-1"> {React.string(label)} </div>
-        <div className="text-gray-800 font-medium">
+        <div className="text-gray-800">
           {value === "" 
             ? <span className="text-gray-400 italic">{ React.string("Not provided") }</span>
             : React.string(value)}
@@ -150,7 +150,58 @@ module ViewProfile = {
     }
 
     <div className="w-full max-w-xl mx-auto">
-      <div className="bg-white rounded-custom shadow-lg p-8">
+      <div className="bg-white rounded-custom shadow-lg p-8 py-6">
+        // header
+        <div className="flex flex-col mb-4">
+          <div className="flex items-center justify-between w-full">
+            <div className="flex  w-full justify-between items-end">
+              <div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {React.string("Expiry: ")}
+                  {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
+                </div>
+                <h1 className="text-3xl font-bold text-gray-900">
+                  {React.string(`${name}.${Constants.sld}`)}
+                </h1>
+              </div>
+              <div className="relative flex-shrink-0">
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors "
+                  onClick={_ => setShowDropdown(prev => !prev)}>
+                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                  </svg>
+                </button>
+                <div className={
+                  "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " 
+                  ++ (showDropdown ? "" : "hidden")
+                }>
+                  <div className="py-1">
+                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      {React.string("Option 1")}
+                    </button>
+                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      {React.string("Option 2")}
+                    </button>
+                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
+                      {React.string("Option 3")}
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          {switch description {
+          | Some(desc) => 
+            <div className="text-gray-400 leading-relaxed  py-2">
+              {React.string(desc)}
+            </div>
+          | None => 
+            <div className="text-gray-400 italic leading-relaxed py-2">
+              {React.string("No description")}
+            </div>
+          }}
+        </div>
         // body
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
           <ProfileField
@@ -220,55 +271,6 @@ module ViewProfile = {
             label="Email"
             value={email}
           />
-        </div>
-        // header
-        <div className="flex flex-col ">
-          {switch description {
-          | Some(desc) => 
-            <div className="text-gray-600 leading-relaxed">
-              {React.string(desc)}
-            </div>
-          | None => 
-            React.null
-          }}
-          <div className="flex items-center justify-between w-full">
-            <div className="flex  w-full justify-between items-end">
-              <div>
-                <div className="text-sm text-gray-400 mt-1">
-                  {React.string("Expiry: ")}
-                  {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {React.string(`${name}.${Constants.sld}`)}
-                </h1>
-              </div>
-              <div className="relative flex-shrink-0">
-                <button 
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors "
-                  onClick={_ => setShowDropdown(prev => !prev)}>
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
-                  </svg>
-                </button>
-                <div className={
-                  "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " 
-                  ++ (showDropdown ? "" : "hidden")
-                }>
-                  <div className="py-1">
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 1")}
-                    </button>
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 2")}
-                    </button>
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 3")}
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
       </div>
     </div>
