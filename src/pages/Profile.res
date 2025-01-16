@@ -119,7 +119,7 @@ module ProfileForm = {
 module ProfileField = {
   @react.component
   let make = (~icon: React.element, ~label: string, ~value: string) => {
-    <div className="flex items-center space-x-3 rounded-lg p-3 border">
+    <div className="flex items-center space-x-3 rounded-lg p-3 bg-gradient-to-r to-white from-slate-100 ">
       <div className="flex items-center justify-center w-10 h-10 rounded-lg">
         {React.cloneElement(icon, {
           "className": "w-5 h-5 text-gray-600"
@@ -140,6 +140,7 @@ module ProfileField = {
 module ViewProfile = {
   @react.component
   let make = (~profile: (option<string>, string, string, string, string, string, string)) => {
+    let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email) = profile
     let {primaryName} = NameContext.use()
 
@@ -149,7 +150,7 @@ module ViewProfile = {
     }
 
     <div className="w-full max-w-xl mx-auto">
-      <div className="bg-white rounded-custom shadow-lg overflow-hidden p-8">
+      <div className="bg-white rounded-custom shadow-lg p-8">
         // body
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
           <ProfileField
@@ -231,7 +232,7 @@ module ViewProfile = {
             React.null
           }}
           <div className="flex items-center justify-between w-full">
-            <div className="flex items-start w-full justify-between items-end">
+            <div className="flex  w-full justify-between items-end">
               <div>
                 <div className="text-sm text-gray-400 mt-1">
                   {React.string("Expiry: ")}
@@ -242,12 +243,17 @@ module ViewProfile = {
                 </h1>
               </div>
               <div className="relative flex-shrink-0">
-                <button className="p-2 rounded-lg hover:bg-gray-100 transition-colors">
+                <button 
+                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors "
+                  onClick={_ => setShowDropdown(prev => !prev)}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
                   </svg>
                 </button>
-                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden">
+                <div className={
+                  "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " 
+                  ++ (showDropdown ? "" : "hidden")
+                }>
                   <div className="py-1">
                     <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       {React.string("Option 1")}

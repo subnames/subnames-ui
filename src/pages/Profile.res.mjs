@@ -163,7 +163,7 @@ var ProfileForm = {
 function Profile$ProfileField(props) {
   var value = props.value;
   return React.createElement("div", {
-              className: "flex items-center space-x-3 rounded-lg p-3 border"
+              className: "flex items-center space-x-3 rounded-lg p-3 bg-gradient-to-r to-white from-slate-100 "
             }, React.createElement("div", {
                   className: "flex items-center justify-center w-10 h-10 rounded-lg"
                 }, React.cloneElement(props.icon, {
@@ -185,17 +185,21 @@ var ProfileField = {
 
 function Profile$ViewProfile(props) {
   var profile = props.profile;
+  var match = React.useState(function () {
+        return false;
+      });
   var description = profile[0];
-  var match = NameContext.use();
-  var primaryName = match.primaryName;
-  var match$1 = primaryName !== undefined ? primaryName : ({
+  var setShowDropdown = match[1];
+  var match$1 = NameContext.use();
+  var primaryName = match$1.primaryName;
+  var match$2 = primaryName !== undefined ? primaryName : ({
         name: "",
         expires: 0
       });
   return React.createElement("div", {
               className: "w-full max-w-xl mx-auto"
             }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg overflow-hidden p-8"
+                  className: "bg-white rounded-custom shadow-lg p-8"
                 }, React.createElement("div", {
                       className: "grid grid-cols-1 md:grid-cols-2 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
@@ -284,15 +288,20 @@ function Profile$ViewProfile(props) {
                           }, description) : null, React.createElement("div", {
                           className: "flex items-center justify-between w-full"
                         }, React.createElement("div", {
-                              className: "flex items-start w-full justify-between items-end"
+                              className: "flex  w-full justify-between items-end"
                             }, React.createElement("div", undefined, React.createElement("div", {
                                       className: "text-sm text-gray-400 mt-1"
-                                    }, "Expiry: ", Utils.timestampToDate(match$1.expires).toLocaleDateString()), React.createElement("h1", {
+                                    }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("h1", {
                                       className: "text-3xl font-bold text-gray-900"
-                                    }, match$1.name + "." + Constants.sld)), React.createElement("div", {
+                                    }, match$2.name + "." + Constants.sld)), React.createElement("div", {
                                   className: "relative flex-shrink-0"
                                 }, React.createElement("button", {
-                                      className: "p-2 rounded-lg hover:bg-gray-100 transition-colors"
+                                      className: "p-2 rounded-lg hover:bg-gray-100 transition-colors ",
+                                      onClick: (function (param) {
+                                          setShowDropdown(function (prev) {
+                                                return !prev;
+                                              });
+                                        })
                                     }, React.createElement("svg", {
                                           className: "w-5 h-5",
                                           fill: "none",
@@ -304,7 +313,9 @@ function Profile$ViewProfile(props) {
                                               strokeLinejoin: "round",
                                               strokeWidth: "2"
                                             }))), React.createElement("div", {
-                                      className: "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 hidden"
+                                      className: "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + (
+                                        match[0] ? "" : "hidden"
+                                      )
                                     }, React.createElement("div", {
                                           className: "py-1"
                                         }, React.createElement("button", {
