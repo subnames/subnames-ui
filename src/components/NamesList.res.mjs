@@ -233,7 +233,7 @@ function NamesList(props) {
                                                 }
                                                 if (exit === 1) {
                                                   tmp$1 = React.createElement("button", {
-                                                        className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                        className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
                                                         type: "button",
                                                         onClick: (function (param) {
                                                             setPrimary(subname.name);
@@ -245,11 +245,11 @@ function NamesList(props) {
                                                 }
                                                 tmp = React.createElement("div", {
                                                       ref: Caml_option.some(dropdownRef),
-                                                      className: "absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none"
+                                                      className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
                                                     }, React.createElement("div", {
                                                           className: "py-1"
                                                         }, tmp$1, React.createElement("button", {
-                                                              className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                              className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
                                                               type: "button",
                                                               onClick: (function (param) {
                                                                   setActiveDropdown(function (param) {
@@ -257,7 +257,7 @@ function NamesList(props) {
                                                                       });
                                                                 })
                                                             }, "Transfer"), React.createElement("button", {
-                                                              className: "block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100",
+                                                              className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
                                                               type: "button",
                                                               onClick: (function (param) {
                                                                   setShowExtendPanel(function (param) {
@@ -290,7 +290,7 @@ function NamesList(props) {
                                                                         }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
                                                                       className: "relative"
                                                                     }, React.createElement("button", {
-                                                                          className: "rounded-lg bg-white border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                                                                          className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
                                                                           type: "button",
                                                                           onClick: (function (param) {
                                                                               setActiveDropdown(function (current) {
@@ -301,7 +301,17 @@ function NamesList(props) {
                                                                                     }
                                                                                   });
                                                                             })
-                                                                        }, "..."), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
+                                                                        }, React.createElement("svg", {
+                                                                              className: "w-5 h-5",
+                                                                              fill: "none",
+                                                                              stroke: "currentColor",
+                                                                              viewBox: "0 0 24 24"
+                                                                            }, React.createElement("path", {
+                                                                                  d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
+                                                                                  strokeLinecap: "round",
+                                                                                  strokeLinejoin: "round",
+                                                                                  strokeWidth: "2"
+                                                                                }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
                                                                 className: "border-b border-gray-200 mx-6"
                                                               }) : null);
                                             }))

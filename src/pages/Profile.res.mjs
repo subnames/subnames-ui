@@ -89,7 +89,7 @@ function Profile$ProfileForm(props) {
     }
   };
   return React.createElement("div", {
-              className: "max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm"
+              className: "w-full max-w-xl mx-auto bg-white rounded-custom shadow-lg p-8"
             }, React.createElement("h1", {
                   className: "text-3xl font-bold mb-8 text-gray-900"
                 }, "Edit Profile"), React.createElement("form", {
@@ -185,13 +185,13 @@ function Profile$ProfileForm(props) {
                           }, error) : null, React.createElement("div", {
                           className: "flex gap-4"
                         }, React.createElement("button", {
-                              className: "flex-1 bg-gray-100 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-200 transition-colors",
+                              className: "flex-1 bg-gray-100 text-gray-700 p-3 rounded-xl font-medium hover:bg-gray-200 transition-colors",
                               type: "button",
                               onClick: (function (param) {
                                   onCancel();
                                 })
                             }, "Cancel"), React.createElement("button", {
-                              className: "flex-1 bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors",
+                              className: "flex-1 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors",
                               disabled: loading,
                               type: "submit"
                             }, loading ? "Saving..." : "Save Profile")))));
@@ -255,7 +255,7 @@ function Profile$ViewProfile(props) {
                                     }, match$2.name + "." + Constants.sld)), React.createElement("div", {
                                   className: "relative flex-shrink-0"
                                 }, React.createElement("button", {
-                                      className: "p-2 rounded-lg hover:bg-gray-100 transition-colors ",
+                                      className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
                                       onClick: (function (param) {
                                           setShowDropdown(function (prev) {
                                                 return !prev;
@@ -272,13 +272,13 @@ function Profile$ViewProfile(props) {
                                               strokeLinejoin: "round",
                                               strokeWidth: "2"
                                             }))), React.createElement("div", {
-                                      className: "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " + (
+                                      className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 " + (
                                         match[0] ? "" : "hidden"
                                       )
                                     }, React.createElement("div", {
                                           className: "py-1"
                                         }, React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+                                              className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
                                               onClick: (function (param) {
                                                   setShowDropdown(function (param) {
                                                         return false;
@@ -287,11 +287,7 @@ function Profile$ViewProfile(props) {
                                                         return true;
                                                       });
                                                 })
-                                            }, "Edit Profile"), React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 1"), React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 2")))))), description !== undefined ? React.createElement("div", {
+                                            }, "Edit Profile")))))), description !== undefined ? React.createElement("div", {
                             className: "text-gray-400 leading-relaxed  py-2"
                           }, description) : React.createElement("div", {
                             className: "text-gray-400 italic leading-relaxed py-2"

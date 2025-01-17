@@ -40,7 +40,7 @@ module ProfileForm = {
       }
     }
 
-    <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm">
+    <div className="w-full max-w-xl mx-auto bg-white rounded-custom shadow-lg p-8">
       <h1 className="text-3xl font-bold mb-8 text-gray-900"> {React.string("Edit Profile")} </h1>
       <form onSubmit={handleSubmit}>
         <div className="space-y-6">
@@ -129,13 +129,13 @@ module ProfileForm = {
             <button
               type_="button"
               onClick={_ => onCancel()}
-              className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+              className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
               {React.string("Cancel")}
             </button>
             <button
               type_="submit"
               disabled={loading}
-              className="flex-1 bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              className="flex-1 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
               {React.string(loading ? "Saving..." : "Save Profile")}
             </button>
           </div>
@@ -200,31 +200,25 @@ module ViewProfile = {
                 </h1>
               </div>
               <div className="relative flex-shrink-0">
-                <button 
-                  className="p-2 rounded-lg hover:bg-gray-100 transition-colors "
+                <button
+                  className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
                   onClick={_ => setShowDropdown(prev => !prev)}>
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
                   </svg>
                 </button>
                 <div className={
-                  "absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 " 
+                  "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 "
                   ++ (showDropdown ? "" : "hidden")
                 }>
                   <div className="py-1">
                     <button
-                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left"
                       onClick={_ => {
                         setShowDropdown(_ => false)
                         setIsEditing(_ => true)
                       }}>
                       {React.string("Edit Profile")}
-                    </button>
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 1")}
-                    </button>
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 2")}
                     </button>
                   </div>
                 </div>

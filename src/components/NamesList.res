@@ -233,13 +233,15 @@ let make = () => {
                                 }
                               )
                             }}
-                            className="rounded-lg bg-white border border-zinc-200 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
-                            {React.string("...")}
+                            className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/>
+                            </svg>
                           </button>
                           {if activeDropdown == Some(subname.name) {
                             <div
                               ref={ReactDOM.Ref.domRef(dropdownRef)}
-                              className="absolute right-0 z-10 mt-2 w-40 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                              className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50">
                               <div className="py-1">
                                 {switch primaryName {
                                 | Some({name}) if name == subname.name => React.null
@@ -250,14 +252,14 @@ let make = () => {
                                       setPrimary(subname.name)->ignore
                                       setActiveDropdown(_ => None)
                                     }}
-                                    className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">
+                                    className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                     {React.string("Set primary")}
                                   </button>
                                 }}
                                 <button
                                   type_="button"
                                   onClick={_ => setActiveDropdown(_ => None)}
-                                  className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">
+                                  className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                   {React.string("Transfer")}
                                 </button>
                                 <button
@@ -266,7 +268,7 @@ let make = () => {
                                     setShowExtendPanel(_ => Some(subname.name))
                                     setActiveDropdown(_ => None)
                                   }}
-                                  className="block w-full px-4 py-2 text-sm text-left text-gray-700 hover:bg-gray-100">
+                                  className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                   {React.string("Extend")}
                                 </button>
                               </div>
