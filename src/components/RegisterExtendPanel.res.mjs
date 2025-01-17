@@ -251,7 +251,7 @@ function RegisterExtendPanel(props) {
                 }, React.createElement("div", {
                       className: "flex justify-between items-center mb-8"
                     }, React.createElement("div", {
-                          className: "flex items-center gap-3"
+                          className: "flex items-center justify-center gap-3"
                         }, React.createElement("button", {
                               className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                               type: "button",
@@ -259,7 +259,7 @@ function RegisterExtendPanel(props) {
                                   onBack();
                                 })
                             }, React.createElement("div", {
-                                  className: "w-5 h-5 text-gray-600"
+                                  className: "w-6 h-6 text-gray-600"
                                 }, React.createElement(Icons.Back.make, {}))), React.createElement("span", {
                               className: "text-lg sm:text-xl font-medium text-gray-700 truncate"
                             }, name + "." + Constants.sld))), React.createElement("div", {

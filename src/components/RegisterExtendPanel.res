@@ -108,12 +108,12 @@ let make = (
   <div className="bg-white rounded-custom shadow-lg overflow-hidden">
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center justify-center gap-3">
           <button
             onClick={_ => onBack()}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             type_="button">
-            <div className="w-5 h-5 text-gray-600">
+            <div className="w-6 h-6 text-gray-600">
               <Icons.Back />
             </div>
           </button>
