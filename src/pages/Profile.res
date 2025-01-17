@@ -3,7 +3,10 @@ open Utils
 
 module ProfileForm = {
   @react.component
-  let make = (~onSubmit: (string, string, string, string, string, string, string) => unit) => {
+  let make = (
+    ~onSubmit: (string, string, string, string, string, string, string) => unit,
+    ~onCancel: unit => unit
+  ) => {
     let (description, setDescription) = React.useState(() => "")
     let (location, setLocation) = React.useState(() => "")
     let (twitter, setTwitter) = React.useState(() => "")
@@ -14,9 +17,27 @@ module ProfileForm = {
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
 
+    let validateEmail = email => {
+      let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+      Js.Re.test_(emailRegex, email)
+    }
+
+    let validateWebsite = website => {
+      let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
+      website === "" || Js.Re.test_(urlRegex, website)
+    }
+
     let handleSubmit = event => {
       ReactEvent.Form.preventDefault(event)
-      onSubmit(description, location, twitter, telegram, github, website, email)
+      
+      switch (validateEmail(email), validateWebsite(website)) {
+      | (false, _) => setError(_ => Some("Please enter a valid email address"))
+      | (_, false) => setError(_ => Some("Please enter a valid website URL"))
+      | _ => {
+          setError(_ => None)
+          onSubmit(description, location, twitter, telegram, github, website, email)
+        }
+      }
     }
 
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm">
@@ -104,12 +125,20 @@ module ProfileForm = {
             </div>
           | None => React.null
           }}
-          <button
-            type_="submit"
-            disabled={loading}
-            className="w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-            {React.string(loading ? "Saving..." : "Save Profile")}
-          </button>
+          <div className="flex gap-4">
+            <button
+              type_="button"
+              onClick={_ => onCancel()}
+              className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-200 transition-colors">
+              {React.string("Cancel")}
+            </button>
+            <button
+              type_="submit"
+              disabled={loading}
+              className="flex-1 bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+              {React.string(loading ? "Saving..." : "Save Profile")}
+            </button>
+          </div>
         </div>
       </form>
     </div>
@@ -139,7 +168,13 @@ module ProfileField = {
 
 module ViewProfile = {
   @react.component
-  let make = (~profile: (option<string>, string, string, string, string, string, string)) => {
+  let make = (
+    ~profile: (option<string>, string, string, string, string, string, string),
+    ~setProfile: ((option<string>, string, string, string, string, string, string)) => unit,
+    ~isEditing: bool,
+    ~setIsEditing: (bool => bool) => unit,
+    ~onCancel: unit => unit
+  ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email) = profile
     let {primaryName} = NameContext.use()
@@ -177,14 +212,19 @@ module ViewProfile = {
                   ++ (showDropdown ? "" : "hidden")
                 }>
                   <div className="py-1">
+                    <button
+                      className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                      onClick={_ => {
+                        setShowDropdown(_ => false)
+                        setIsEditing(_ => true)
+                      }}>
+                      {React.string("Edit Profile")}
+                    </button>
                     <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       {React.string("Option 1")}
                     </button>
                     <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
                       {React.string("Option 2")}
-                    </button>
-                    <button className="block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100">
-                      {React.string("Option 3")}
                     </button>
                   </div>
                 </div>
@@ -282,6 +322,11 @@ let make = () => {
   let (profile, setProfile) = React.useState(() => None)
   let (loading, setLoading) = React.useState(() => false)
   let (error, setError) = React.useState(() => None)
+  let (isEditing, setIsEditing) = React.useState(() => false)
+
+  let handleCancel = () => {
+    setIsEditing(_ => false)
+  }
 
   let handleSubmit = (description, location, twitter, telegram, github, website, email) => {
     setLoading(_ => true)
@@ -318,6 +363,21 @@ let make = () => {
   }
 
   <div className="p-8">
-    <ViewProfile profile={(None, "", "", "", "", "", "")} />
+    {isEditing
+      ? <ProfileForm
+          onSubmit={(description, location, twitter, telegram, github, website, email) => {
+            handleSubmit(description, location, twitter, telegram, github, website, email)
+            setIsEditing(_ => false)
+          }}
+          onCancel={handleCancel}
+        />
+      : <ViewProfile
+          profile={(None, "", "", "", "", "", "")}
+          setProfile={_ => ()}
+          isEditing={isEditing}
+          setIsEditing={setIsEditing}
+          onCancel={handleCancel}
+        />
+    }
   </div>
 }

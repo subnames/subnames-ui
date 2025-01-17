@@ -4,9 +4,12 @@ import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
+import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function Profile$ProfileForm(props) {
+  var onCancel = props.onCancel;
   var onSubmit = props.onSubmit;
   var match = React.useState(function () {
         return "";
@@ -50,10 +53,40 @@ function Profile$ProfileForm(props) {
   var match$8 = React.useState(function () {
         
       });
+  var setError = match$8[1];
   var error = match$8[0];
+  var validateEmail = function (email) {
+    var emailRegex = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    return emailRegex.test(email);
+  };
+  var validateWebsite = function (website) {
+    var urlRegex = new RegExp("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$");
+    if (website === "") {
+      return true;
+    } else {
+      return urlRegex.test(website);
+    }
+  };
   var handleSubmit = function ($$event) {
     $$event.preventDefault();
-    onSubmit(description, $$location, twitter, telegram, github, website, email);
+    var match = validateEmail(email);
+    var match$1 = validateWebsite(website);
+    if (match) {
+      if (match$1) {
+        setError(function (param) {
+              
+            });
+        return onSubmit(description, $$location, twitter, telegram, github, website, email);
+      } else {
+        return setError(function (param) {
+                    return "Please enter a valid website URL";
+                  });
+      }
+    } else {
+      return setError(function (param) {
+                  return "Please enter a valid email address";
+                });
+    }
   };
   return React.createElement("div", {
               className: "max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-sm"
@@ -149,11 +182,19 @@ function Profile$ProfileForm(props) {
                                 })
                             })), error !== undefined ? React.createElement("div", {
                             className: "p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm"
-                          }, error) : null, React.createElement("button", {
-                          className: "w-full bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors",
-                          disabled: loading,
-                          type: "submit"
-                        }, loading ? "Saving..." : "Save Profile"))));
+                          }, error) : null, React.createElement("div", {
+                          className: "flex gap-4"
+                        }, React.createElement("button", {
+                              className: "flex-1 bg-gray-100 text-gray-700 p-3 rounded-lg font-medium hover:bg-gray-200 transition-colors",
+                              type: "button",
+                              onClick: (function (param) {
+                                  onCancel();
+                                })
+                            }, "Cancel"), React.createElement("button", {
+                              className: "flex-1 bg-blue-600 text-white p-3 rounded-lg font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors",
+                              disabled: loading,
+                              type: "submit"
+                            }, loading ? "Saving..." : "Save Profile")))));
 }
 
 var ProfileForm = {
@@ -184,6 +225,7 @@ var ProfileField = {
 };
 
 function Profile$ViewProfile(props) {
+  var setIsEditing = props.setIsEditing;
   var profile = props.profile;
   var match = React.useState(function () {
         return false;
@@ -236,12 +278,20 @@ function Profile$ViewProfile(props) {
                                     }, React.createElement("div", {
                                           className: "py-1"
                                         }, React.createElement("button", {
+                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100",
+                                              onClick: (function (param) {
+                                                  setShowDropdown(function (param) {
+                                                        return false;
+                                                      });
+                                                  setIsEditing(function (param) {
+                                                        return true;
+                                                      });
+                                                })
+                                            }, "Edit Profile"), React.createElement("button", {
                                               className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
                                             }, "Option 1"), React.createElement("button", {
                                               className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 2"), React.createElement("button", {
-                                              className: "block w-full px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                                            }, "Option 3")))))), description !== undefined ? React.createElement("div", {
+                                            }, "Option 2")))))), description !== undefined ? React.createElement("div", {
                             className: "text-gray-400 leading-relaxed  py-2"
                           }, description) : React.createElement("div", {
                             className: "text-gray-400 italic leading-relaxed py-2"
@@ -334,28 +384,92 @@ var ViewProfile = {
 };
 
 function Profile(props) {
-  React.useState(function () {
+  var match = React.useState(function () {
         
       });
-  React.useState(function () {
+  var setProfile = match[1];
+  var match$1 = React.useState(function () {
         return false;
       });
-  React.useState(function () {
+  var setLoading = match$1[1];
+  var match$2 = React.useState(function () {
         
       });
+  var setError = match$2[1];
+  var match$3 = React.useState(function () {
+        return false;
+      });
+  var setIsEditing = match$3[1];
+  var isEditing = match$3[0];
+  var handleCancel = function () {
+    setIsEditing(function (param) {
+          return false;
+        });
+  };
+  var handleSubmit = function (description, $$location, twitter, telegram, github, website, email) {
+    setLoading(function (param) {
+          return true;
+        });
+    setError(function (param) {
+          
+        });
+    var updateProfile = async function () {
+      try {
+        var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
+        await OnChainOperationsCommon.currentAddress(walletClient);
+        console.log("Profile updated successfully!");
+        setProfile(function (param) {
+              return [
+                      description,
+                      $$location,
+                      twitter,
+                      telegram,
+                      github,
+                      website,
+                      email
+                    ];
+            });
+      }
+      catch (raw_error){
+        var error = Caml_js_exceptions.internalToOCamlException(raw_error);
+        setError(function (param) {
+              return "Failed to update profile";
+            });
+        console.log("Error updating profile:", error);
+      }
+      return setLoading(function (param) {
+                  return false;
+                });
+    };
+    updateProfile();
+  };
   return React.createElement("div", {
               className: "p-8"
-            }, React.createElement(Profile$ViewProfile, {
-                  profile: [
-                    undefined,
-                    "",
-                    "",
-                    "",
-                    "",
-                    "",
-                    ""
-                  ]
-                }));
+            }, isEditing ? React.createElement(Profile$ProfileForm, {
+                    onSubmit: (function (description, $$location, twitter, telegram, github, website, email) {
+                        handleSubmit(description, $$location, twitter, telegram, github, website, email);
+                        setIsEditing(function (param) {
+                              return false;
+                            });
+                      }),
+                    onCancel: handleCancel
+                  }) : React.createElement(Profile$ViewProfile, {
+                    profile: [
+                      undefined,
+                      "",
+                      "",
+                      "",
+                      "",
+                      "",
+                      ""
+                    ],
+                    setProfile: (function (param) {
+                        
+                      }),
+                    isEditing: isEditing,
+                    setIsEditing: setIsEditing,
+                    onCancel: handleCancel
+                  }));
 }
 
 var make = Profile;
