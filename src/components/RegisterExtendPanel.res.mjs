@@ -242,7 +242,7 @@ function RegisterExtendPanel(props) {
           onClick: (function (param) {
               handleConnectWallet();
             })
-        }, "Connect wallet");
+        }, "Connect Wallet");
   }
   return React.createElement("div", {
               className: "bg-white rounded-custom shadow-lg overflow-hidden"

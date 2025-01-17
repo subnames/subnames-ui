@@ -2,6 +2,7 @@
 
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
+import * as Wagmi from "wagmi";
 import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -191,6 +192,8 @@ var ViewProfile = {
   make: Profile$ViewProfile
 };
 
+var UseAccount = {};
+
 function Profile(props) {
   var match = React.useState(function () {
         return [
@@ -215,19 +218,37 @@ function Profile(props) {
       });
   var setIsEditing = match$1[1];
   var isEditing = match$1[0];
+  var account = Wagmi.useAccount();
   var handleCancel = function () {
     setIsEditing(function (param) {
           return false;
         });
   };
+  var handleConnectWallet = function () {
+    var connectButton = document.querySelector("[data-testid='rk-connect-button']");
+    connectButton.click();
+  };
   return React.createElement("div", {
               className: "p-8"
-            }, isEditing ? null : React.createElement(Profile$ViewProfile, {
-                    profile: match[0],
-                    isEditing: isEditing,
-                    setIsEditing: setIsEditing,
-                    onCancel: handleCancel
-                  }));
+            }, account.isConnected ? (
+                isEditing ? null : React.createElement(Profile$ViewProfile, {
+                        profile: match[0],
+                        isEditing: isEditing,
+                        setIsEditing: setIsEditing,
+                        onCancel: handleCancel
+                      })
+              ) : React.createElement("div", {
+                    className: "w-full max-w-xl mx-auto relative"
+                  }, React.createElement("div", {
+                        className: "bg-white rounded-custom shadow-lg p-8 py-6"
+                      }, React.createElement("div", {
+                            className: "flex justify-stretch items-center"
+                          }, React.createElement("button", {
+                                className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
+                                onClick: (function (param) {
+                                    handleConnectWallet();
+                                  })
+                              }, "Connect wallet to view profile")))));
 }
 
 var make = Profile;
@@ -235,6 +256,7 @@ var make = Profile;
 export {
   ProfileField ,
   ViewProfile ,
+  UseAccount ,
   make ,
 }
 /* Utils Not a pure module */

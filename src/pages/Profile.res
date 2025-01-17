@@ -363,12 +363,26 @@ module ViewProfile = {
   }
 }
 
+module UseAccount = {
+  type account = {
+    address: option<string>,
+    isConnected: bool,
+  }
+  @module("wagmi")
+  external use: unit => account = "useAccount"
+}
+
+@val external document: Dom.document = "document"
+@send external querySelector: (Dom.document, string) => Dom.element = "querySelector"
+@send external click: Dom.element => unit = "click"
+
 @react.component
 let make = () => {
   let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
   let (loading, setLoading) = React.useState(() => false)
   let (error, setError) = React.useState(() => None)
   let (isEditing, setIsEditing) = React.useState(() => false)
+  let account = UseAccount.use()
 
   let handleCancel = () => {
     setIsEditing(_ => false)
@@ -393,15 +407,32 @@ let make = () => {
     Console.log("Profile updated locally!")
   }
 
+  let handleConnectWallet = () => {
+    let connectButton = document->querySelector("[data-testid='rk-connect-button']")
+    connectButton->click
+  }
+
   <div className="p-8">
-    {isEditing
-      ? React.null
-      : <ViewProfile
-          profile={profile}
-          isEditing={isEditing}
-          setIsEditing={setIsEditing}
-          onCancel={handleCancel}
-        />
+    {account.isConnected
+      ? isEditing
+        ? React.null
+        : <ViewProfile
+            profile={profile}
+            isEditing={isEditing}
+            setIsEditing={setIsEditing}
+            onCancel={handleCancel}
+          />
+      : <div className="w-full max-w-xl mx-auto relative">
+          <div className="bg-white rounded-custom shadow-lg p-8 py-6">
+            <div className="flex justify-stretch items-center">
+              <button
+                onClick={_ => handleConnectWallet()}
+                className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md">
+                {React.string("Connect wallet to view profile")}
+              </button>
+            </div>
+          </div>
+        </div>
     }
   </div>
 }

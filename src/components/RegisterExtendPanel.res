@@ -171,7 +171,7 @@ let make = (
           <button
             onClick={_ => handleConnectWallet()}
             className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md">
-            {React.string("Connect wallet")}
+            {React.string("Connect Wallet")}
           </button>
         } else {
           <button
