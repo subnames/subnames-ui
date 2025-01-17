@@ -238,10 +238,17 @@ function Profile$ViewProfile(props) {
         name: "",
         expires: 0
       });
+  var name = match$2.name;
   return React.createElement("div", {
-              className: "w-full max-w-xl mx-auto"
+              className: "w-full max-w-xl mx-auto relative"
             }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg p-8 py-6"
+                  className: "absolute -top-20 left-1/2 transform -translate-x-1/2"
+                }, React.createElement("img", {
+                      className: "w-32 h-32 rounded-full border-4 border-white",
+                      alt: "Profile Avatar",
+                      src: "https://ui-avatars.com/api/?uppercase=false&name=" + name
+                    })), React.createElement("div", {
+                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
                 }, React.createElement("div", {
                       className: "flex flex-col mb-4"
                     }, React.createElement("div", {
@@ -252,7 +259,7 @@ function Profile$ViewProfile(props) {
                                       className: "text-sm text-gray-400 mt-1"
                                     }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("h1", {
                                       className: "text-3xl font-bold text-gray-900"
-                                    }, match$2.name + "." + Constants.sld)), React.createElement("div", {
+                                    }, name + "." + Constants.sld)), React.createElement("div", {
                                   className: "relative flex-shrink-0"
                                 }, React.createElement("button", {
                                       className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",

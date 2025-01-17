@@ -184,8 +184,15 @@ module ViewProfile = {
     | None => {name: "", expires: 0}
     }
 
-    <div className="w-full max-w-xl mx-auto">
-      <div className="bg-white rounded-custom shadow-lg p-8 py-6">
+    <div className="w-full max-w-xl mx-auto relative">
+      <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
+        <img
+          src=`https://ui-avatars.com/api/?uppercase=false&name=${name}`
+          alt="Profile Avatar"
+          className="w-32 h-32 rounded-full border-4 border-white"
+        />
+      </div>
+      <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
         // header
         <div className="flex flex-col mb-4">
           <div className="flex items-center justify-between w-full">
