@@ -5,14 +5,12 @@ import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function Profile$ProfileForm(props) {
   var onCancel = props.onCancel;
   var onSubmit = props.onSubmit;
   var match = React.useState(function () {
-        return "";
+        
       });
   var setDescription = match[1];
   var description = match[0];
@@ -107,10 +105,15 @@ function Profile$ProfileForm(props) {
                               className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                               placeholder: "About yourself...",
                               rows: 4,
-                              value: description,
+                              value: Core__Option.getWithDefault(description, ""),
                               onChange: (function ($$event) {
+                                  var value = $$event.target.value;
                                   setDescription(function (param) {
-                                        return $$event.target.value;
+                                        if (value === "") {
+                                          return ;
+                                        } else {
+                                          return value;
+                                        }
                                       });
                                 })
                             })), React.createElement("div", undefined, React.createElement("label", {
@@ -405,9 +408,19 @@ var ViewProfile = {
 
 function Profile(props) {
   var match = React.useState(function () {
-        
+        return [
+                undefined,
+                "",
+                "",
+                "",
+                "",
+                "",
+                "",
+                ""
+              ];
       });
   var setProfile = match[1];
+  var profile = match[0];
   var match$1 = React.useState(function () {
         return false;
       });
@@ -433,36 +446,22 @@ function Profile(props) {
     setError(function (param) {
           
         });
-    var updateProfile = async function () {
-      try {
-        var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
-        await OnChainOperationsCommon.currentAddress(walletClient);
-        console.log("Profile updated successfully!");
-        setProfile(function (param) {
-              return [
-                      description,
-                      $$location,
-                      twitter,
-                      telegram,
-                      github,
-                      website,
-                      email,
-                      avatar
-                    ];
-            });
-      }
-      catch (raw_error){
-        var error = Caml_js_exceptions.internalToOCamlException(raw_error);
-        setError(function (param) {
-              return "Failed to update profile";
-            });
-        console.log("Error updating profile:", error);
-      }
-      return setLoading(function (param) {
-                  return false;
-                });
-    };
-    updateProfile();
+    setProfile(function (param) {
+          return [
+                  description,
+                  $$location,
+                  twitter,
+                  telegram,
+                  github,
+                  website,
+                  email,
+                  avatar
+                ];
+        });
+    setLoading(function (param) {
+          return false;
+        });
+    console.log("Profile updated locally!");
   };
   return React.createElement("div", {
               className: "p-8"
@@ -475,18 +474,20 @@ function Profile(props) {
                       }),
                     onCancel: handleCancel
                   }) : React.createElement(Profile$ViewProfile, {
-                    profile: [
-                      undefined,
-                      "",
-                      "",
-                      "",
-                      "",
-                      "",
-                      "",
-                      ""
-                    ],
-                    setProfile: (function (param) {
-                        
+                    profile: profile !== undefined ? profile : [
+                        undefined,
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        "",
+                        ""
+                      ],
+                    setProfile: (function (profile) {
+                        setProfile(function (param) {
+                              return profile;
+                            });
                       }),
                     isEditing: isEditing,
                     setIsEditing: setIsEditing,

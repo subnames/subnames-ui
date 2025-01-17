@@ -4,28 +4,38 @@ open Utils
 module ProfileForm = {
   @react.component
   let make = (
-    ~onSubmit: (string, string, string, string, string, string, string, string) => unit,
+    ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
     ~onCancel: unit => unit
   ) => {
-    let (description, setDescription) = React.useState(() => "")
-    let (location, setLocation) = React.useState(() => "")
-    let (twitter, setTwitter) = React.useState(() => "")
-    let (telegram, setTelegram) = React.useState(() => "")
-    let (github, setGithub) = React.useState(() => "")
-    let (website, setWebsite) = React.useState(() => "")
-    let (email, setEmail) = React.useState(() => "")
-    let (avatar, setAvatar) = React.useState(() => "")
+    let (description, setDescription) = React.useState(() => None)
+    let (location, setLocation) = React.useState(() => None)
+    let (twitter, setTwitter) = React.useState(() => None)
+    let (telegram, setTelegram) = React.useState(() => None)
+    let (github, setGithub) = React.useState(() => None)
+    let (website, setWebsite) = React.useState(() => None)
+    let (email, setEmail) = React.useState(() => None)
+    let (avatar, setAvatar) = React.useState(() => None)
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
 
     let validateEmail = email => {
-      let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
-      Js.Re.test_(emailRegex, email)
+      switch email {
+      | Some(addr) when addr !== "" =>
+        let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+        Js.Re.test_(emailRegex, addr)
+      | None => true
+      | Some("") => true
+      }
     }
 
     let validateWebsite = website => {
-      let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
-      website === "" || Js.Re.test_(urlRegex, website)
+      switch website {
+      | Some(url) when url !== "" =>
+        let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
+        Js.Re.test_(urlRegex, url)
+      | None => true
+      | Some("") => true
+      }
     }
 
     let handleSubmit = event => {
@@ -36,7 +46,16 @@ module ProfileForm = {
       | (_, false) => setError(_ => Some("Please enter a valid website URL"))
       | _ => {
           setError(_ => None)
-          onSubmit(description, location, twitter, telegram, github, website, email, avatar)
+          onSubmit(
+            description,
+            location,
+            twitter,
+            telegram,
+            github,
+            website,
+            email,
+            avatar
+          )
         }
       }
     }
@@ -50,8 +69,11 @@ module ProfileForm = {
               {React.string("Description")}
             </label>
             <textarea
-              value={description}
-              onChange={event => setDescription(_ => ReactEvent.Form.target(event)["value"])}
+              value={description->Option.getOr("")}
+              onChange={event => {
+                let value = ReactEvent.Form.target(event)["value"]
+                setDescription(_ => value === "" ? None : Some(value))
+              }}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               rows={4}
               placeholder="About yourself..."
@@ -61,7 +83,7 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
             <input
               type_="text"
-              value={location}
+              value={location->Option.getOr("")}
               onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="Avatar URL"
@@ -71,8 +93,11 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Location")} </label>
             <input
               type_="text"
-              value={location}
-              onChange={event => setLocation(_ => ReactEvent.Form.target(event)["value"])}
+              value={location->Option.getOr("")}
+              onChange={event => {
+                let value = ReactEvent.Form.target(event)["value"]
+                setLocation(_ => value === "" ? None : Some(value))
+              }}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="City, Country"
             />
@@ -83,7 +108,7 @@ module ProfileForm = {
             </label>
             <input
               type_="text"
-              value={twitter}
+              value={twitter->Option.getOr("")}
               onChange={event => setTwitter(_ => ReactEvent.Form.target(event)["value"])}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="@username"
@@ -93,7 +118,7 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Telegram")} </label>
             <input
               type_="text"
-              value={telegram}
+              value={telegram->Option.getOr("")}
               onChange={event => setTelegram(_ => ReactEvent.Form.target(event)["value"])}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="@username"
@@ -103,8 +128,11 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("GitHub")} </label>
             <input
               type_="text"
-              value={github}
-              onChange={event => setGithub(_ => ReactEvent.Form.target(event)["value"])}
+              value={github->Option.getOr("")}
+              onChange={event => {
+                let value = ReactEvent.Form.target(event)["value"]
+                setGithub(_ => value === "" ? None : Some(value))
+              }}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="username"
             />
@@ -113,8 +141,11 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Website")} </label>
             <input
               type_="url"
-              value={website}
-              onChange={event => setWebsite(_ => ReactEvent.Form.target(event)["value"])}
+              value={website->Option.getOr("")}
+              onChange={event => {
+                let value = ReactEvent.Form.target(event)["value"]
+                setWebsite(_ => value === "" ? None : Some(value))
+              }}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="https://"
             />
@@ -123,8 +154,11 @@ module ProfileForm = {
             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Email")} </label>
             <input
               type_="email"
-              value={email}
-              onChange={event => setEmail(_ => ReactEvent.Form.target(event)["value"])}
+              value={email->Option.getOr("")}
+              onChange={event => {
+                let value = ReactEvent.Form.target(event)["value"]
+                setEmail(_ => value === "" ? None : Some(value))
+              }}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               placeholder="your@email.com"
             />
@@ -158,7 +192,7 @@ module ProfileForm = {
 
 module ProfileField = {
   @react.component
-  let make = (~icon: React.element, ~label: string, ~value: string) => {
+  let make = (~icon: React.element, ~label: string, ~value: option<string>) => {
     <div className="flex items-center space-x-3 rounded-lg p-3 bg-gradient-to-r to-white from-slate-100 ">
       <div className="flex items-center justify-center w-10 h-10 rounded-lg">
         {React.cloneElement(icon, {
@@ -168,9 +202,9 @@ module ProfileField = {
       <div className="flex-1">
         <div className="text-sm font-medium text-gray-500 mb-1"> {React.string(label)} </div>
         <div className="text-gray-800">
-          {value === "" 
+          {value === None 
             ? <span className="text-gray-400 italic">{ React.string("Not provided") }</span>
-            : React.string(value)}
+            : React.string(value->Option.getOr(""))}
         </div>
       </div>
     </div>
@@ -188,6 +222,13 @@ module ViewProfile = {
   ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
+    let location = location
+    let twitter = twitter
+    let telegram = telegram
+    let github = github
+    let website = website
+    let email = email
+    let avatar = avatar
     let {primaryName} = NameContext.use()
 
     let {name, expires} = switch primaryName {
@@ -272,7 +313,7 @@ module ViewProfile = {
               />
             </svg>}
             label="Location"
-            value={location}
+            value={Some(location)}
           />
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -331,7 +372,7 @@ module ViewProfile = {
 
 @react.component
 let make = () => {
-  let (profile, setProfile) = React.useState(() => None)
+  let (profile, setProfile) = React.useState(() => Some((None, "", "", "", "", "", "", "")))
   let (loading, setLoading) = React.useState(() => false)
   let (error, setError) = React.useState(() => None)
   let (isEditing, setIsEditing) = React.useState(() => false)
@@ -343,36 +384,20 @@ let make = () => {
   let handleSubmit = (description, location, twitter, telegram, github, website, email, avatar) => {
     setLoading(_ => true)
     setError(_ => None)
-
-    let updateProfile = async () => {
-      try {
-        let walletClient = buildWalletClient()->Option.getExn(~message="Wallet connection failed")
-        let currentAddress = await currentAddress(walletClient)
-
-        // Prepare the profile data
-        let profileData = [
-          ("description", description),
-          ("location", location),
-          ("com.twitter", twitter),
-          ("com.telegram", telegram),
-          ("com.github", github),
-          ("url", website),
-          ("email", email),
-          ("avatar", avatar),
-        ]
-
-        Console.log("Profile updated successfully!")
-        setProfile(_ => Some((description, location, twitter, telegram, github, website, email, avatar)))
-      } catch {
-      | error =>
-        setError(_ => Some("Failed to update profile"))
-        Console.log2("Error updating profile:", error)
-      }
-
-      setLoading(_ => false)
-    }
-
-    updateProfile()->ignore
+    
+    // Update local state immediately
+    setProfile(_ => Some((
+      description,
+      location,
+      twitter,
+      telegram,
+      github,
+      website,
+      email,
+      avatar
+    )))
+    setLoading(_ => false)
+    Console.log("Profile updated locally!")
   }
 
   <div className="p-8">
@@ -385,8 +410,11 @@ let make = () => {
           onCancel={handleCancel}
         />
       : <ViewProfile
-          profile={(None, "", "", "", "", "", "", "")}
-          setProfile={_ => ()}
+          profile={switch profile {
+            | Some(p) => p
+            | None => (None, "", "", "", "", "", "", "")
+          }}
+          setProfile={profile => setProfile(_ => Some(profile))}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           onCancel={handleCancel}
