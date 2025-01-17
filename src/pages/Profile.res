@@ -4,7 +4,7 @@ open Utils
 module ProfileForm = {
   @react.component
   let make = (
-    ~onSubmit: (string, string, string, string, string, string, string) => unit,
+    ~onSubmit: (string, string, string, string, string, string, string, string) => unit,
     ~onCancel: unit => unit
   ) => {
     let (description, setDescription) = React.useState(() => "")
@@ -14,6 +14,7 @@ module ProfileForm = {
     let (github, setGithub) = React.useState(() => "")
     let (website, setWebsite) = React.useState(() => "")
     let (email, setEmail) = React.useState(() => "")
+    let (avatar, setAvatar) = React.useState(() => "")
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
 
@@ -35,7 +36,7 @@ module ProfileForm = {
       | (_, false) => setError(_ => Some("Please enter a valid website URL"))
       | _ => {
           setError(_ => None)
-          onSubmit(description, location, twitter, telegram, github, website, email)
+          onSubmit(description, location, twitter, telegram, github, website, email, avatar)
         }
       }
     }
@@ -53,7 +54,17 @@ module ProfileForm = {
               onChange={event => setDescription(_ => ReactEvent.Form.target(event)["value"])}
               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
               rows={4}
-              placeholder="Tell us about yourself..."
+              placeholder="About yourself..."
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
+            <input
+              type_="text"
+              value={location}
+              onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
+              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+              placeholder="Avatar URL"
             />
           </div>
           <div>
@@ -169,14 +180,14 @@ module ProfileField = {
 module ViewProfile = {
   @react.component
   let make = (
-    ~profile: (option<string>, string, string, string, string, string, string),
-    ~setProfile: ((option<string>, string, string, string, string, string, string)) => unit,
+    ~profile: (option<string>, string, string, string, string, string, string, string),
+    ~setProfile: ((option<string>, string, string, string, string, string, string, string)) => unit,
     ~isEditing: bool,
     ~setIsEditing: (bool => bool) => unit,
     ~onCancel: unit => unit
   ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
-    let (description, location, twitter, telegram, github, website, email) = profile
+    let (description, location, twitter, telegram, github, website, email, avatar) = profile
     let {primaryName} = NameContext.use()
 
     let {name, expires} = switch primaryName {
@@ -329,7 +340,7 @@ let make = () => {
     setIsEditing(_ => false)
   }
 
-  let handleSubmit = (description, location, twitter, telegram, github, website, email) => {
+  let handleSubmit = (description, location, twitter, telegram, github, website, email, avatar) => {
     setLoading(_ => true)
     setError(_ => None)
 
@@ -347,10 +358,11 @@ let make = () => {
           ("com.github", github),
           ("url", website),
           ("email", email),
+          ("avatar", avatar),
         ]
 
         Console.log("Profile updated successfully!")
-        setProfile(_ => Some((description, location, twitter, telegram, github, website, email)))
+        setProfile(_ => Some((description, location, twitter, telegram, github, website, email, avatar)))
       } catch {
       | error =>
         setError(_ => Some("Failed to update profile"))
@@ -366,14 +378,14 @@ let make = () => {
   <div className="p-8">
     {isEditing
       ? <ProfileForm
-          onSubmit={(description, location, twitter, telegram, github, website, email) => {
-            handleSubmit(description, location, twitter, telegram, github, website, email)
+          onSubmit={(description, location, twitter, telegram, github, website, email, avatar) => {
+            handleSubmit(description, location, twitter, telegram, github, website, email, avatar)
             setIsEditing(_ => false)
           }}
           onCancel={handleCancel}
         />
       : <ViewProfile
-          profile={(None, "", "", "", "", "", "")}
+          profile={(None, "", "", "", "", "", "", "")}
           setProfile={_ => ()}
           isEditing={isEditing}
           setIsEditing={setIsEditing}

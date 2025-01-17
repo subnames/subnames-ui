@@ -47,14 +47,19 @@ function Profile$ProfileForm(props) {
   var setEmail = match$6[1];
   var email = match$6[0];
   var match$7 = React.useState(function () {
+        return "";
+      });
+  var setAvatar = match$7[1];
+  var avatar = match$7[0];
+  var match$8 = React.useState(function () {
         return false;
       });
-  var loading = match$7[0];
-  var match$8 = React.useState(function () {
+  var loading = match$8[0];
+  var match$9 = React.useState(function () {
         
       });
-  var setError = match$8[1];
-  var error = match$8[0];
+  var setError = match$9[1];
+  var error = match$9[0];
   var validateEmail = function (email) {
     var emailRegex = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
     return emailRegex.test(email);
@@ -76,7 +81,7 @@ function Profile$ProfileForm(props) {
         setError(function (param) {
               
             });
-        return onSubmit(description, $$location, twitter, telegram, github, website, email);
+        return onSubmit(description, $$location, twitter, telegram, github, website, email, avatar);
       } else {
         return setError(function (param) {
                     return "Please enter a valid website URL";
@@ -100,11 +105,23 @@ function Profile$ProfileForm(props) {
                               className: "block text-sm font-medium mb-2 text-gray-700"
                             }, "Description"), React.createElement("textarea", {
                               className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                              placeholder: "Tell us about yourself...",
+                              placeholder: "About yourself...",
                               rows: 4,
                               value: description,
                               onChange: (function ($$event) {
                                   setDescription(function (param) {
+                                        return $$event.target.value;
+                                      });
+                                })
+                            })), React.createElement("div", undefined, React.createElement("label", {
+                              className: "block text-sm font-medium mb-2 text-gray-700"
+                            }, "Avatar"), React.createElement("input", {
+                              className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                              placeholder: "Avatar URL",
+                              type: "text",
+                              value: $$location,
+                              onChange: (function ($$event) {
+                                  setAvatar(function (param) {
                                         return $$event.target.value;
                                       });
                                 })
@@ -409,7 +426,7 @@ function Profile(props) {
           return false;
         });
   };
-  var handleSubmit = function (description, $$location, twitter, telegram, github, website, email) {
+  var handleSubmit = function (description, $$location, twitter, telegram, github, website, email, avatar) {
     setLoading(function (param) {
           return true;
         });
@@ -429,7 +446,8 @@ function Profile(props) {
                       telegram,
                       github,
                       website,
-                      email
+                      email,
+                      avatar
                     ];
             });
       }
@@ -449,8 +467,8 @@ function Profile(props) {
   return React.createElement("div", {
               className: "p-8"
             }, isEditing ? React.createElement(Profile$ProfileForm, {
-                    onSubmit: (function (description, $$location, twitter, telegram, github, website, email) {
-                        handleSubmit(description, $$location, twitter, telegram, github, website, email);
+                    onSubmit: (function (description, $$location, twitter, telegram, github, website, email, avatar) {
+                        handleSubmit(description, $$location, twitter, telegram, github, website, email, avatar);
                         setIsEditing(function (param) {
                               return false;
                             });
@@ -459,6 +477,7 @@ function Profile(props) {
                   }) : React.createElement(Profile$ViewProfile, {
                     profile: [
                       undefined,
+                      "",
                       "",
                       "",
                       "",
