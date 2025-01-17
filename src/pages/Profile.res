@@ -1,194 +1,194 @@
 open OnChainOperationsCommon
 open Utils
 
-module ProfileForm = {
-  @react.component
-  let make = (
-    ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
-    ~onCancel: unit => unit
-  ) => {
-    let (description, setDescription) = React.useState(() => None)
-    let (location, setLocation) = React.useState(() => None)
-    let (twitter, setTwitter) = React.useState(() => None)
-    let (telegram, setTelegram) = React.useState(() => None)
-    let (github, setGithub) = React.useState(() => None)
-    let (website, setWebsite) = React.useState(() => None)
-    let (email, setEmail) = React.useState(() => None)
-    let (avatar, setAvatar) = React.useState(() => None)
-    let (loading, setLoading) = React.useState(() => false)
-    let (error, setError) = React.useState(() => None)
+// module ProfileForm = {
+//   @react.component
+//   let make = (
+//     ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
+//     ~onCancel: unit => unit
+//   ) => {
+//     let (description, setDescription) = React.useState(() => None)
+//     let (location, setLocation) = React.useState(() => None)
+//     let (twitter, setTwitter) = React.useState(() => None)
+//     let (telegram, setTelegram) = React.useState(() => None)
+//     let (github, setGithub) = React.useState(() => None)
+//     let (website, setWebsite) = React.useState(() => None)
+//     let (email, setEmail) = React.useState(() => None)
+//     let (avatar, setAvatar) = React.useState(() => None)
+//     let (loading, setLoading) = React.useState(() => false)
+//     let (error, setError) = React.useState(() => None)
 
-    let validateEmail = email => {
-      switch email {
-      | Some(addr) when addr !== "" =>
-        let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
-        Js.Re.test_(emailRegex, addr)
-      | None => true
-      | Some("") => true
-      }
-    }
+//     let validateEmail = email => {
+//       switch email {
+//       | Some(addr) when addr !== "" =>
+//         let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+//         Js.Re.test_(emailRegex, addr)
+//       | None => true
+//       | Some("") => true
+//       }
+//     }
 
-    let validateWebsite = website => {
-      switch website {
-      | Some(url) when url !== "" =>
-        let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
-        Js.Re.test_(urlRegex, url)
-      | None => true
-      | Some("") => true
-      }
-    }
+//     let validateWebsite = website => {
+//       switch website {
+//       | Some(url) when url !== "" =>
+//         let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
+//         Js.Re.test_(urlRegex, url)
+//       | None => true
+//       | Some("") => true
+//       }
+//     }
 
-    let handleSubmit = event => {
-      ReactEvent.Form.preventDefault(event)
+//     let handleSubmit = event => {
+//       ReactEvent.Form.preventDefault(event)
       
-      switch (validateEmail(email), validateWebsite(website)) {
-      | (false, _) => setError(_ => Some("Please enter a valid email address"))
-      | (_, false) => setError(_ => Some("Please enter a valid website URL"))
-      | _ => {
-          setError(_ => None)
-          onSubmit(
-            description,
-            location,
-            twitter,
-            telegram,
-            github,
-            website,
-            email,
-            avatar
-          )
-        }
-      }
-    }
+//       switch (validateEmail(email), validateWebsite(website)) {
+//       | (false, _) => setError(_ => Some("Please enter a valid email address"))
+//       | (_, false) => setError(_ => Some("Please enter a valid website URL"))
+//       | _ => {
+//           setError(_ => None)
+//           onSubmit(
+//             description,
+//             location,
+//             twitter,
+//             telegram,
+//             github,
+//             website,
+//             email,
+//             avatar
+//           )
+//         }
+//       }
+//     }
 
-    <div className="w-full max-w-xl mx-auto bg-white rounded-custom shadow-lg p-8">
-      <h1 className="text-3xl font-bold mb-8 text-gray-900"> {React.string("Edit Profile")} </h1>
-      <form onSubmit={handleSubmit}>
-        <div className="space-y-6">
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700">
-              {React.string("Description")}
-            </label>
-            <textarea
-              value={description->Option.getOr("")}
-              onChange={event => {
-                let value = ReactEvent.Form.target(event)["value"]
-                setDescription(_ => value === "" ? None : Some(value))
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              rows={4}
-              placeholder="About yourself..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
-            <input
-              type_="text"
-              value={location->Option.getOr("")}
-              onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="Avatar URL"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Location")} </label>
-            <input
-              type_="text"
-              value={location->Option.getOr("")}
-              onChange={event => {
-                let value = ReactEvent.Form.target(event)["value"]
-                setLocation(_ => value === "" ? None : Some(value))
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="City, Country"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700">
-              {React.string("X (Twitter)")}
-            </label>
-            <input
-              type_="text"
-              value={twitter->Option.getOr("")}
-              onChange={event => setTwitter(_ => ReactEvent.Form.target(event)["value"])}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="@username"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Telegram")} </label>
-            <input
-              type_="text"
-              value={telegram->Option.getOr("")}
-              onChange={event => setTelegram(_ => ReactEvent.Form.target(event)["value"])}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="@username"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("GitHub")} </label>
-            <input
-              type_="text"
-              value={github->Option.getOr("")}
-              onChange={event => {
-                let value = ReactEvent.Form.target(event)["value"]
-                setGithub(_ => value === "" ? None : Some(value))
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="username"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Website")} </label>
-            <input
-              type_="url"
-              value={website->Option.getOr("")}
-              onChange={event => {
-                let value = ReactEvent.Form.target(event)["value"]
-                setWebsite(_ => value === "" ? None : Some(value))
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="https://"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Email")} </label>
-            <input
-              type_="email"
-              value={email->Option.getOr("")}
-              onChange={event => {
-                let value = ReactEvent.Form.target(event)["value"]
-                setEmail(_ => value === "" ? None : Some(value))
-              }}
-              className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-              placeholder="your@email.com"
-            />
-          </div>
-          {switch error {
-          | Some(message) => 
-            <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-              {React.string(message)}
-            </div>
-          | None => React.null
-          }}
-          <div className="flex gap-4">
-            <button
-              type_="button"
-              onClick={_ => onCancel()}
-              className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-              {React.string("Cancel")}
-            </button>
-            <button
-              type_="submit"
-              disabled={loading}
-              className="flex-1 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-              {React.string(loading ? "Saving..." : "Save Profile")}
-            </button>
-          </div>
-        </div>
-      </form>
-    </div>
-  }
-}
+//     <div className="w-full max-w-xl mx-auto bg-white rounded-custom shadow-lg p-8">
+//       <h1 className="text-3xl font-bold mb-8 text-gray-900"> {React.string("Edit Profile")} </h1>
+//       <form onSubmit={handleSubmit}>
+//         <div className="space-y-6">
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700">
+//               {React.string("Description")}
+//             </label>
+//             <textarea
+//               value={description->Option.getOr("")}
+//               onChange={event => {
+//                 let value = ReactEvent.Form.target(event)["value"]
+//                 setDescription(_ => value === "" ? None : Some(value))
+//               }}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               rows={4}
+//               placeholder="About yourself..."
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
+//             <input
+//               type_="text"
+//               value={location->Option.getOr("")}
+//               onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="Avatar URL"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Location")} </label>
+//             <input
+//               type_="text"
+//               value={location->Option.getOr("")}
+//               onChange={event => {
+//                 let value = ReactEvent.Form.target(event)["value"]
+//                 setLocation(_ => value === "" ? None : Some(value))
+//               }}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="City, Country"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700">
+//               {React.string("X (Twitter)")}
+//             </label>
+//             <input
+//               type_="text"
+//               value={twitter->Option.getOr("")}
+//               onChange={event => setTwitter(_ => ReactEvent.Form.target(event)["value"])}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="@username"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Telegram")} </label>
+//             <input
+//               type_="text"
+//               value={telegram->Option.getOr("")}
+//               onChange={event => setTelegram(_ => ReactEvent.Form.target(event)["value"])}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="@username"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("GitHub")} </label>
+//             <input
+//               type_="text"
+//               value={github->Option.getOr("")}
+//               onChange={event => {
+//                 let value = ReactEvent.Form.target(event)["value"]
+//                 setGithub(_ => value === "" ? None : Some(value))
+//               }}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="username"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Website")} </label>
+//             <input
+//               type_="url"
+//               value={website->Option.getOr("")}
+//               onChange={event => {
+//                 let value = ReactEvent.Form.target(event)["value"]
+//                 setWebsite(_ => value === "" ? None : Some(value))
+//               }}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="https://"
+//             />
+//           </div>
+//           <div>
+//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Email")} </label>
+//             <input
+//               type_="email"
+//               value={email->Option.getOr("")}
+//               onChange={event => {
+//                 let value = ReactEvent.Form.target(event)["value"]
+//                 setEmail(_ => value === "" ? None : Some(value))
+//               }}
+//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+//               placeholder="your@email.com"
+//             />
+//           </div>
+//           {switch error {
+//           | Some(message) => 
+//             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
+//               {React.string(message)}
+//             </div>
+//           | None => React.null
+//           }}
+//           <div className="flex gap-4">
+//             <button
+//               type_="button"
+//               onClick={_ => onCancel()}
+//               className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
+//               {React.string("Cancel")}
+//             </button>
+//             <button
+//               type_="submit"
+//               disabled={loading}
+//               className="flex-1 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
+//               {React.string(loading ? "Saving..." : "Save Profile")}
+//             </button>
+//           </div>
+//         </div>
+//       </form>
+//     </div>
+//   }
+// }
 
 module ProfileField = {
   @react.component
@@ -214,21 +214,13 @@ module ProfileField = {
 module ViewProfile = {
   @react.component
   let make = (
-    ~profile: (option<string>, string, string, string, string, string, string, string),
-    ~setProfile: ((option<string>, string, string, string, string, string, string, string)) => unit,
+    ~profile: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>),
     ~isEditing: bool,
     ~setIsEditing: (bool => bool) => unit,
     ~onCancel: unit => unit
   ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
-    let location = location
-    let twitter = twitter
-    let telegram = telegram
-    let github = github
-    let website = website
-    let email = email
-    let avatar = avatar
     let {primaryName} = NameContext.use()
 
     let {name, expires} = switch primaryName {
@@ -237,28 +229,28 @@ module ViewProfile = {
     }
 
     <div className="w-full max-w-xl mx-auto relative">
-      <div className="absolute -top-20 left-1/2 transform -translate-x-1/2">
-        <img
-          src=`https://ui-avatars.com/api/?uppercase=false&name=${name}`
-          alt="Profile Avatar"
-          className="w-32 h-32 rounded-full border-4 border-white"
-        />
-      </div>
       <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
+        
         // header
-        <div className="flex flex-col mb-4">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex  w-full justify-between items-end">
-              <div>
-                <div className="text-sm text-gray-400 mt-1">
-                  {React.string("Expiry: ")}
-                  {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
-                </div>
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {React.string(`${name}.${Constants.sld}`)}
-                </h1>
-              </div>
-              <div className="relative flex-shrink-0">
+        <div className="flex flex-col mb-4 items-center">
+          // avatar
+          <div className="flex justify-center -mt-20 mb-3 relative">
+            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+              <img
+                src=`https://ui-avatars.com/api/?uppercase=false&name=${name}`
+                alt="Profile Avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          // name line
+          <div className="flex justify-end items-center w-full relative">
+            <h1 className="text-3xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
+              {React.string(`${name}.${Constants.sld}`)}
+            </h1>
+            <div className="flex items-center gap-4">
+              
+              <div className="relative flex-shrink-0 z-10">
                 <button
                   className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
                   onClick={_ => setShowDropdown(prev => !prev)}>
@@ -284,6 +276,7 @@ module ViewProfile = {
               </div>
             </div>
           </div>
+          <div>{React.string("Expiry: ")}{React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}</div>
           {switch description {
           | Some(desc) => 
             <div className="text-gray-400 leading-relaxed  py-2">
@@ -313,7 +306,7 @@ module ViewProfile = {
               />
             </svg>}
             label="Location"
-            value={Some(location)}
+            value={location}
           />
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
@@ -372,7 +365,7 @@ module ViewProfile = {
 
 @react.component
 let make = () => {
-  let (profile, setProfile) = React.useState(() => Some((None, "", "", "", "", "", "", "")))
+  let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
   let (loading, setLoading) = React.useState(() => false)
   let (error, setError) = React.useState(() => None)
   let (isEditing, setIsEditing) = React.useState(() => false)
@@ -386,7 +379,7 @@ let make = () => {
     setError(_ => None)
     
     // Update local state immediately
-    setProfile(_ => Some((
+    setProfile(_ => (
       description,
       location,
       twitter,
@@ -395,26 +388,16 @@ let make = () => {
       website,
       email,
       avatar
-    )))
+    ))
     setLoading(_ => false)
     Console.log("Profile updated locally!")
   }
 
   <div className="p-8">
     {isEditing
-      ? <ProfileForm
-          onSubmit={(description, location, twitter, telegram, github, website, email, avatar) => {
-            handleSubmit(description, location, twitter, telegram, github, website, email, avatar)
-            setIsEditing(_ => false)
-          }}
-          onCancel={handleCancel}
-        />
+      ? React.null
       : <ViewProfile
-          profile={switch profile {
-            | Some(p) => p
-            | None => (None, "", "", "", "", "", "", "")
-          }}
-          setProfile={profile => setProfile(_ => Some(profile))}
+          profile={profile}
           isEditing={isEditing}
           setIsEditing={setIsEditing}
           onCancel={handleCancel}
