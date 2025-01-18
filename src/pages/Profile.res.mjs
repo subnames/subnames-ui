@@ -192,6 +192,30 @@ var ViewProfile = {
   make: Profile$ViewProfile
 };
 
+function Profile$NotConnected(props) {
+  return React.createElement("div", {
+              className: "w-full max-w-xl mx-auto relative"
+            }, React.createElement("div", {
+                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
+                }, React.createElement("div", {
+                      className: "flex flex-col mb-4 items-center"
+                    }, React.createElement("div", {
+                          className: "flex justify-center -mt-20 mb-3 relative"
+                        }, React.createElement("div", {
+                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden"
+                            }, React.createElement("img", {
+                                  className: "w-full h-full object-cover",
+                                  alt: "Profile Avatar",
+                                  src: "https://placehold.co/128x128?text=Disconnected"
+                                })))), React.createElement("div", {
+                      className: "flex justify-center items-center text-gray-500 w-full text-center"
+                    }, "Please connect your wallet to see your profile")));
+}
+
+var NotConnected = {
+  make: Profile$NotConnected
+};
+
 var UseAccount = {};
 
 function Profile(props) {
@@ -224,10 +248,6 @@ function Profile(props) {
           return false;
         });
   };
-  var handleConnectWallet = function () {
-    var connectButton = document.querySelector("[data-testid='rk-connect-button']");
-    connectButton.click();
-  };
   return React.createElement("div", {
               className: "p-8"
             }, account.isConnected ? (
@@ -237,18 +257,7 @@ function Profile(props) {
                         setIsEditing: setIsEditing,
                         onCancel: handleCancel
                       })
-              ) : React.createElement("div", {
-                    className: "w-full max-w-xl mx-auto relative"
-                  }, React.createElement("div", {
-                        className: "bg-white rounded-custom shadow-lg p-8 py-6"
-                      }, React.createElement("div", {
-                            className: "flex justify-stretch items-center"
-                          }, React.createElement("button", {
-                                className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
-                                onClick: (function (param) {
-                                    handleConnectWallet();
-                                  })
-                              }, "Connect wallet to view profile")))));
+              ) : React.createElement(Profile$NotConnected, {}));
 }
 
 var make = Profile;
@@ -256,6 +265,7 @@ var make = Profile;
 export {
   ProfileField ,
   ViewProfile ,
+  NotConnected ,
   UseAccount ,
   make ,
 }

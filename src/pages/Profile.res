@@ -363,6 +363,32 @@ module ViewProfile = {
   }
 }
 
+module NotConnected = {
+  @react.component
+  let make = () => {
+    <div className="w-full max-w-xl mx-auto relative">
+      <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
+        <div className="flex flex-col mb-4 items-center">
+          // avatar
+          <div className="flex justify-center -mt-20 mb-3 relative">
+            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+              <img
+                src=`https://placehold.co/128x128?text=Disconnected`
+                alt="Profile Avatar"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+      
+        </div>
+        <div className="flex justify-center items-center text-gray-500 w-full text-center">
+            {React.string("Please connect your wallet to see your profile")}
+        </div>
+      </div>
+    </div>
+  }
+}
+
 module UseAccount = {
   type account = {
     address: option<string>,
@@ -422,17 +448,7 @@ let make = () => {
             setIsEditing={setIsEditing}
             onCancel={handleCancel}
           />
-      : <div className="w-full max-w-xl mx-auto relative">
-          <div className="bg-white rounded-custom shadow-lg p-8 py-6">
-            <div className="flex justify-stretch items-center">
-              <button
-                onClick={_ => handleConnectWallet()}
-                className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md">
-                {React.string("Connect wallet to view profile")}
-              </button>
-            </div>
-          </div>
-        </div>
+      : <NotConnected />
     }
   </div>
 }
