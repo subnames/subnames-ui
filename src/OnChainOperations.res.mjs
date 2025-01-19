@@ -517,6 +517,37 @@ async function reclaimSubname(walletClient, name) {
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
+async function getText(name, key) {
+  var node = Ens.namehash(name + "." + Constants.sld);
+  return await OnChainOperationsCommon.publicClient.readContract({
+              address: resolverContract.address,
+              abi: [{
+                  type: "function",
+                  name: "text",
+                  inputs: [
+                    {
+                      name: "node",
+                      type: "bytes32"
+                    },
+                    {
+                      name: "key",
+                      type: "string"
+                    }
+                  ],
+                  outputs: [{
+                      name: "",
+                      type: "string"
+                    }],
+                  stateMutability: "view"
+                }],
+              functionName: "text",
+              args: [
+                node,
+                key
+              ]
+            });
+}
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -536,5 +567,6 @@ export {
   renew ,
   transferSubname ,
   reclaimSubname ,
+  getText ,
 }
 /* controllerContract Not a pure module */

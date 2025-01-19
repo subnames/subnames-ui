@@ -4,7 +4,6 @@ open Utils
 module ProfileForm = {
   @react.component
   let make = (
-    ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
     ~onCancel: unit => unit
   ) => {
     let (description, setDescription) = React.useState(() => None)
@@ -92,16 +91,6 @@ module ProfileForm = {
           try {
             let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
             setLoading(_ => false)
-            onSubmit(
-              description,
-              location,
-              twitter,
-              telegram,
-              github,
-              website,
-              email,
-              avatar
-            )
             // Navigate back to profile view
             RescriptReactRouter.push("/profile")
           } catch {
@@ -275,7 +264,6 @@ module ViewProfile = {
     ~profile: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>),
     ~isEditing: bool,
     ~setIsEditing: (bool => bool) => unit,
-    ~onCancel: unit => unit
   ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
@@ -460,53 +448,74 @@ module UseAccount = {
 @send external querySelector: (Dom.document, string) => Dom.element = "querySelector"
 @send external click: Dom.element => unit = "click"
 
+let loadProfile = async (name: string) => {
+  let description = await OnChainOperations.getText(name, "description")
+  let location = await OnChainOperations.getText(name, "location")
+  let twitter = await OnChainOperations.getText(name, "twitter")
+  let telegram = await OnChainOperations.getText(name, "telegram")
+  let github = await OnChainOperations.getText(name, "github")
+  let website = await OnChainOperations.getText(name, "website")
+  let email = await OnChainOperations.getText(name, "email")
+  let avatar = await OnChainOperations.getText(name, "avatar")
+  
+  (
+    Some(description),
+    Some(location),
+    Some(twitter),
+    Some(telegram),
+    Some(github),
+    Some(website),
+    Some(email),
+    Some(avatar)
+  )
+}
+
 @react.component
 let make = () => {
-  let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
-  let (loading, setLoading) = React.useState(() => false)
-  let (error, setError) = React.useState(() => None)
+  let {primaryName} = NameContext.use()
   let (isEditing, setIsEditing) = React.useState(() => false)
-  let account = UseAccount.use()
+  let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
+  let (loading, setLoading) = React.useState(() => true)
+
+  React.useEffect1(() => {
+    switch primaryName {
+    | Some({name}) => {
+        let loadProfileData = async () => {
+          try {
+            let profileData = await loadProfile(name)
+            setProfile(_ => profileData)
+          } catch {
+          | Js.Exn.Error(e) => 
+            Console.error(`Failed to load profile: ${Js.Exn.message(e)->Option.getOr("Unknown error")}`)
+          }
+          setLoading(_ => false)
+        }
+        loadProfileData()->ignore
+      }
+    | None => setLoading(_ => false)
+    }
+    None
+  }, [primaryName])
 
   let handleCancel = () => {
     setIsEditing(_ => false)
   }
 
-  let handleSubmit = (description, location, twitter, telegram, github, website, email, avatar) => {
-    setLoading(_ => true)
-    setError(_ => None)
-    
-    // Update local state immediately
-    setProfile(_ => (
-      description,
-      location,
-      twitter,
-      telegram,
-      github,
-      website,
-      email,
-      avatar
-    ))
-    setLoading(_ => false)
-    Console.log("Profile updated locally!")
-  }
-
-  let handleConnectWallet = () => {
-    let connectButton = document->querySelector("[data-testid='rk-connect-button']")
-    connectButton->click
-  }
-
-  <div className="p-8">
-    {account.isConnected
-      ? isEditing
-        ? <ProfileForm onSubmit={handleSubmit} onCancel={handleCancel} />
-        : <ViewProfile
-            profile={profile}
-            isEditing={isEditing}
-            setIsEditing={setIsEditing}
-            onCancel={handleCancel}
-          />
-      : <NotConnected />
+  switch primaryName {
+  | Some(_) =>
+    if loading {
+      <div className="w-full max-w-xl mx-auto relative">
+        <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
+          <div className="flex justify-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+          </div>
+        </div>
+      </div>
+    } else if isEditing {
+      <ProfileForm onCancel=handleCancel />
+    } else {
+      <ViewProfile profile isEditing=false setIsEditing />
     }
-  </div>
+  | None => <NotConnected />
+  }
 }

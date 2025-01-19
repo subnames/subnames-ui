@@ -2,9 +2,9 @@
 
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
-import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
@@ -14,7 +14,6 @@ import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function Profile$ProfileForm(props) {
   var onCancel = props.onCancel;
-  var onSubmit = props.onSubmit;
   var match = React.useState(function () {
         
       });
@@ -82,7 +81,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            24,
+            23,
             6
           ],
           Error: new Error()
@@ -103,7 +102,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            34,
+            33,
             6
           ],
           Error: new Error()
@@ -162,7 +161,6 @@ function Profile$ProfileForm(props) {
       setLoading(function (param) {
             return false;
           });
-      onSubmit(description, $$location, twitter, telegram, github, website, email, avatar);
       return RescriptReactRouter.push("/profile");
     }
     catch (raw_e){
@@ -546,8 +544,35 @@ var NotConnected = {
 
 var UseAccount = {};
 
+async function loadProfile(name) {
+  var description = await OnChainOperations.getText(name, "description");
+  var $$location = await OnChainOperations.getText(name, "location");
+  var twitter = await OnChainOperations.getText(name, "twitter");
+  var telegram = await OnChainOperations.getText(name, "telegram");
+  var github = await OnChainOperations.getText(name, "github");
+  var website = await OnChainOperations.getText(name, "website");
+  var email = await OnChainOperations.getText(name, "email");
+  var avatar = await OnChainOperations.getText(name, "avatar");
+  return [
+          Caml_option.some(description),
+          Caml_option.some($$location),
+          Caml_option.some(twitter),
+          Caml_option.some(telegram),
+          Caml_option.some(github),
+          Caml_option.some(website),
+          Caml_option.some(email),
+          Caml_option.some(avatar)
+        ];
+}
+
 function Profile(props) {
-  var match = React.useState(function () {
+  var match = NameContext.use();
+  var primaryName = match.primaryName;
+  var match$1 = React.useState(function () {
+        return false;
+      });
+  var setIsEditing = match$1[1];
+  var match$2 = React.useState(function () {
         return [
                 undefined,
                 undefined,
@@ -559,63 +584,70 @@ function Profile(props) {
                 undefined
               ];
       });
-  var setProfile = match[1];
-  var match$1 = React.useState(function () {
-        return false;
-      });
-  var setLoading = match$1[1];
-  var match$2 = React.useState(function () {
-        
-      });
-  var setError = match$2[1];
+  var setProfile = match$2[1];
   var match$3 = React.useState(function () {
-        return false;
+        return true;
       });
-  var setIsEditing = match$3[1];
-  var isEditing = match$3[0];
-  var account = Wagmi.useAccount();
+  var setLoading = match$3[1];
+  React.useEffect((function () {
+          if (primaryName !== undefined) {
+            var name = primaryName.name;
+            var loadProfileData = async function () {
+              try {
+                var profileData = await loadProfile(name);
+                setProfile(function (param) {
+                      return profileData;
+                    });
+              }
+              catch (raw_e){
+                var e = Caml_js_exceptions.internalToOCamlException(raw_e);
+                if (e.RE_EXN_ID === Js_exn.$$Error) {
+                  console.error("Failed to load profile: " + Core__Option.getOr(e._1.message, "Unknown error"));
+                } else {
+                  throw e;
+                }
+              }
+              return setLoading(function (param) {
+                          return false;
+                        });
+            };
+            loadProfileData();
+          } else {
+            setLoading(function (param) {
+                  return false;
+                });
+          }
+        }), [primaryName]);
   var handleCancel = function () {
     setIsEditing(function (param) {
           return false;
         });
   };
-  var handleSubmit = function (description, $$location, twitter, telegram, github, website, email, avatar) {
-    setLoading(function (param) {
-          return true;
-        });
-    setError(function (param) {
-          
-        });
-    setProfile(function (param) {
-          return [
-                  description,
-                  $$location,
-                  twitter,
-                  telegram,
-                  github,
-                  website,
-                  email,
-                  avatar
-                ];
-        });
-    setLoading(function (param) {
-          return false;
-        });
-    console.log("Profile updated locally!");
-  };
-  return React.createElement("div", {
-              className: "p-8"
-            }, account.isConnected ? (
-                isEditing ? React.createElement(Profile$ProfileForm, {
-                        onSubmit: handleSubmit,
-                        onCancel: handleCancel
-                      }) : React.createElement(Profile$ViewProfile, {
-                        profile: match[0],
-                        isEditing: isEditing,
-                        setIsEditing: setIsEditing,
-                        onCancel: handleCancel
-                      })
-              ) : React.createElement(Profile$NotConnected, {}));
+  if (primaryName !== undefined) {
+    if (match$3[0]) {
+      return React.createElement("div", {
+                  className: "w-full max-w-xl mx-auto relative"
+                }, React.createElement("div", {
+                      className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
+                    }, React.createElement("div", {
+                          className: "flex justify-center"
+                        }, React.createElement("div", {
+                              className: "animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900"
+                            }))));
+    } else if (match$1[0]) {
+      return React.createElement(Profile$ProfileForm, {
+                  onCancel: handleCancel
+                });
+    } else {
+      return React.createElement(Profile$ViewProfile, {
+                  profile: match$2[0],
+                  isEditing: false,
+                  setIsEditing: setIsEditing
+                });
+    }
+  } else {
+    return React.createElement(Profile$NotConnected, {});
+  }
 }
 
 var make = Profile;
@@ -626,6 +658,7 @@ export {
   ViewProfile ,
   NotConnected ,
   UseAccount ,
+  loadProfile ,
   make ,
 }
 /* Utils Not a pure module */

@@ -466,3 +466,27 @@ let reclaimSubname = async (walletClient, name) => {
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
+
+let getText = async (name: string, key: string) => {
+  let node = namehash(`${name}.${Constants.sld}`)
+  await readContract(
+    publicClient,
+    {
+      "address": resolverContract["address"],
+      "abi": [
+        {
+          "type": "function",
+          "name": "text",
+          "inputs": [
+            {"name": "node", "type": "bytes32"},
+            {"name": "key", "type": "string"}
+          ],
+          "outputs": [{"name": "", "type": "string"}],
+          "stateMutability": "view"
+        }
+      ],
+      "functionName": "text",
+      "args": [String(node), String(key)],
+    },
+  )
+}
