@@ -14,7 +14,7 @@ type walletClient
 @module("viem/chains") external koi: 'chain = "koi"
 @module("viem/ens") external namehash: string => string = "namehash"
 
-@unboxed type argType = String(string) | Int(int) | BigInt(bigint)
+@unboxed type argType = String(string) | Int(int) | BigInt(bigint) | Array(array<string>)
 
 type request
 type requestResult = {request: request}

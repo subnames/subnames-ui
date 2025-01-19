@@ -322,9 +322,6 @@ async function name(address) {
 async function multicallWithNodeCheck(walletClient, name, calls) {
   var node = Ens.namehash(name + "." + Constants.sld);
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
-  var data = calls.map(function (call) {
-          return "0x" + call;
-        }).join("");
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
         account: currentAddress,
         address: resolverContract.address,
@@ -332,7 +329,7 @@ async function multicallWithNodeCheck(walletClient, name, calls) {
         functionName: "multicallWithNodeCheck",
         args: [
           node,
-          data
+          calls
         ]
       });
   var hash = await walletClient.writeContract(match.request);
@@ -340,6 +337,39 @@ async function multicallWithNodeCheck(walletClient, name, calls) {
         hash: hash
       });
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+function encodeSetText(name, key, value) {
+  var node = Ens.namehash(name + "." + Constants.sld);
+  var abi = [{
+      type: "function",
+      name: "setText",
+      inputs: [
+        {
+          name: "node",
+          type: "bytes32"
+        },
+        {
+          name: "key",
+          type: "string"
+        },
+        {
+          name: "value",
+          type: "string"
+        }
+      ],
+      outputs: [],
+      stateMutability: "view"
+    }];
+  return Viem.encodeFunctionData({
+              abi: abi,
+              functionName: "setText",
+              args: [
+                node,
+                key,
+                value
+              ]
+            });
 }
 
 async function nameExpires(name) {
@@ -498,6 +528,7 @@ export {
   rentPrice ,
   name ,
   multicallWithNodeCheck ,
+  encodeSetText ,
   nameExpires ,
   owner ,
   encodeSetAddr ,

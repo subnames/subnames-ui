@@ -3,9 +3,337 @@
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
+import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
+import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
+import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
+import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+
+function Profile$ProfileForm(props) {
+  var onCancel = props.onCancel;
+  var onSubmit = props.onSubmit;
+  var match = React.useState(function () {
+        
+      });
+  var setDescription = match[1];
+  var description = match[0];
+  var match$1 = React.useState(function () {
+        
+      });
+  var setLocation = match$1[1];
+  var $$location = match$1[0];
+  var match$2 = React.useState(function () {
+        
+      });
+  var setTwitter = match$2[1];
+  var twitter = match$2[0];
+  var match$3 = React.useState(function () {
+        
+      });
+  var setTelegram = match$3[1];
+  var telegram = match$3[0];
+  var match$4 = React.useState(function () {
+        
+      });
+  var setGithub = match$4[1];
+  var github = match$4[0];
+  var match$5 = React.useState(function () {
+        
+      });
+  var setWebsite = match$5[1];
+  var website = match$5[0];
+  var match$6 = React.useState(function () {
+        
+      });
+  var setEmail = match$6[1];
+  var email = match$6[0];
+  var match$7 = React.useState(function () {
+        
+      });
+  var setAvatar = match$7[1];
+  var avatar = match$7[0];
+  var match$8 = React.useState(function () {
+        return false;
+      });
+  var setLoading = match$8[1];
+  var loading = match$8[0];
+  var match$9 = React.useState(function () {
+        
+      });
+  var setError = match$9[1];
+  var error = match$9[0];
+  var match$10 = NameContext.use();
+  var primaryName = match$10.primaryName;
+  var validateEmail = function (email) {
+    if (email === undefined) {
+      return true;
+    }
+    if (email !== "") {
+      var emailRegex = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+      return emailRegex.test(email);
+    }
+    if (email === "") {
+      return true;
+    }
+    throw {
+          RE_EXN_ID: "Match_failure",
+          _1: [
+            "Profile.res",
+            24,
+            6
+          ],
+          Error: new Error()
+        };
+  };
+  var validateWebsite = function (website) {
+    if (website === undefined) {
+      return true;
+    }
+    if (website !== "") {
+      var urlRegex = new RegExp("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$");
+      return urlRegex.test(website);
+    }
+    if (website === "") {
+      return true;
+    }
+    throw {
+          RE_EXN_ID: "Match_failure",
+          _1: [
+            "Profile.res",
+            34,
+            6
+          ],
+          Error: new Error()
+        };
+  };
+  var handleSubmit = async function ($$event) {
+    $$event.preventDefault();
+    var match = validateEmail(email);
+    var match$1 = validateWebsite(website);
+    if (!match) {
+      return setError(function (param) {
+                  return "Please enter a valid email address";
+                });
+    }
+    if (!match$1) {
+      return setError(function (param) {
+                  return "Please enter a valid website URL";
+                });
+    }
+    setError(function (param) {
+          
+        });
+    setLoading(function (param) {
+          return true;
+        });
+    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
+    var match$2 = Core__Option.getExn(primaryName, undefined);
+    var name = match$2.name;
+    var calls = [];
+    if (description !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "description", description));
+    }
+    if ($$location !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "location", $$location));
+    }
+    if (twitter !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter));
+    }
+    if (telegram !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram));
+    }
+    if (github !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "github", github));
+    }
+    if (website !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "website", website));
+    }
+    if (email !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "email", email));
+    }
+    if (avatar !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar));
+    }
+    try {
+      await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
+      setLoading(function (param) {
+            return false;
+          });
+      onSubmit(description, $$location, twitter, telegram, github, website, email, avatar);
+      return RescriptReactRouter.push("/profile");
+    }
+    catch (raw_e){
+      var e = Caml_js_exceptions.internalToOCamlException(raw_e);
+      if (e.RE_EXN_ID === Js_exn.$$Error) {
+        var e$1 = e._1;
+        setLoading(function (param) {
+              return false;
+            });
+        return setError(function (param) {
+                    return Core__Option.getOr(e$1.message, "Failed to save profile");
+                  });
+      }
+      throw e;
+    }
+  };
+  return React.createElement("div", {
+              className: "w-full max-w-xl mx-auto relative"
+            }, React.createElement("div", {
+                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
+                }, React.createElement("h1", {
+                      className: "text-3xl font-bold mb-8 text-gray-900"
+                    }, "Edit Profile"), React.createElement("form", {
+                      onSubmit: (function (e) {
+                          handleSubmit(e);
+                        })
+                    }, React.createElement("div", {
+                          className: "space-y-6"
+                        }, React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Description"), React.createElement("textarea", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "About yourself...",
+                                  rows: 4,
+                                  value: Core__Option.getOr(description, ""),
+                                  onChange: (function ($$event) {
+                                      var value = $$event.target.value;
+                                      setDescription(function (param) {
+                                            if (value === "") {
+                                              return ;
+                                            } else {
+                                              return value;
+                                            }
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Avatar"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "Avatar URL",
+                                  type: "text",
+                                  value: Core__Option.getOr(avatar, ""),
+                                  onChange: (function ($$event) {
+                                      setAvatar(function (param) {
+                                            return $$event.target.value;
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Location"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "City, Country",
+                                  type: "text",
+                                  value: Core__Option.getOr($$location, ""),
+                                  onChange: (function ($$event) {
+                                      var value = $$event.target.value;
+                                      setLocation(function (param) {
+                                            if (value === "") {
+                                              return ;
+                                            } else {
+                                              return value;
+                                            }
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "X (Twitter)"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "@username",
+                                  type: "text",
+                                  value: Core__Option.getOr(twitter, ""),
+                                  onChange: (function ($$event) {
+                                      setTwitter(function (param) {
+                                            return $$event.target.value;
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Telegram"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "@username",
+                                  type: "text",
+                                  value: Core__Option.getOr(telegram, ""),
+                                  onChange: (function ($$event) {
+                                      setTelegram(function (param) {
+                                            return $$event.target.value;
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "GitHub"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "username",
+                                  type: "text",
+                                  value: Core__Option.getOr(github, ""),
+                                  onChange: (function ($$event) {
+                                      var value = $$event.target.value;
+                                      setGithub(function (param) {
+                                            if (value === "") {
+                                              return ;
+                                            } else {
+                                              return value;
+                                            }
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Website"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "https://",
+                                  type: "url",
+                                  value: Core__Option.getOr(website, ""),
+                                  onChange: (function ($$event) {
+                                      var value = $$event.target.value;
+                                      setWebsite(function (param) {
+                                            if (value === "") {
+                                              return ;
+                                            } else {
+                                              return value;
+                                            }
+                                          });
+                                    })
+                                })), React.createElement("div", undefined, React.createElement("label", {
+                                  className: "block text-sm font-medium mb-2 text-gray-700"
+                                }, "Email"), React.createElement("input", {
+                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                  placeholder: "your@email.com",
+                                  type: "email",
+                                  value: Core__Option.getOr(email, ""),
+                                  onChange: (function ($$event) {
+                                      var value = $$event.target.value;
+                                      setEmail(function (param) {
+                                            if (value === "") {
+                                              return ;
+                                            } else {
+                                              return value;
+                                            }
+                                          });
+                                    })
+                                })), error !== undefined ? React.createElement("div", {
+                                className: "mt-4 text-sm text-red-600"
+                              }, error) : null, React.createElement("div", {
+                              className: "flex justify-end space-x-4 mt-8"
+                            }, React.createElement("button", {
+                                  className: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                                  type: "button",
+                                  onClick: (function (param) {
+                                      onCancel();
+                                    })
+                                }, "Cancel"), React.createElement("button", {
+                                  className: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg " + (
+                                    loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
+                                  ) + " focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                                  disabled: loading,
+                                  type: "submit"
+                                }, loading ? "Saving..." : "Save Profile"))))));
+}
+
+var ProfileForm = {
+  make: Profile$ProfileForm
+};
 
 function Profile$ProfileField(props) {
   var value = props.value;
@@ -231,27 +559,57 @@ function Profile(props) {
                 undefined
               ];
       });
-  React.useState(function () {
-        return false;
-      });
-  React.useState(function () {
-        
-      });
+  var setProfile = match[1];
   var match$1 = React.useState(function () {
         return false;
       });
-  var setIsEditing = match$1[1];
-  var isEditing = match$1[0];
+  var setLoading = match$1[1];
+  var match$2 = React.useState(function () {
+        
+      });
+  var setError = match$2[1];
+  var match$3 = React.useState(function () {
+        return false;
+      });
+  var setIsEditing = match$3[1];
+  var isEditing = match$3[0];
   var account = Wagmi.useAccount();
   var handleCancel = function () {
     setIsEditing(function (param) {
           return false;
         });
   };
+  var handleSubmit = function (description, $$location, twitter, telegram, github, website, email, avatar) {
+    setLoading(function (param) {
+          return true;
+        });
+    setError(function (param) {
+          
+        });
+    setProfile(function (param) {
+          return [
+                  description,
+                  $$location,
+                  twitter,
+                  telegram,
+                  github,
+                  website,
+                  email,
+                  avatar
+                ];
+        });
+    setLoading(function (param) {
+          return false;
+        });
+    console.log("Profile updated locally!");
+  };
   return React.createElement("div", {
               className: "p-8"
             }, account.isConnected ? (
-                isEditing ? null : React.createElement(Profile$ViewProfile, {
+                isEditing ? React.createElement(Profile$ProfileForm, {
+                        onSubmit: handleSubmit,
+                        onCancel: handleCancel
+                      }) : React.createElement(Profile$ViewProfile, {
                         profile: match[0],
                         isEditing: isEditing,
                         setIsEditing: setIsEditing,
@@ -263,6 +621,7 @@ function Profile(props) {
 var make = Profile;
 
 export {
+  ProfileForm ,
   ProfileField ,
   ViewProfile ,
   NotConnected ,

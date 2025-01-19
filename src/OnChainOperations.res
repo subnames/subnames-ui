@@ -76,7 +76,7 @@ let resolverContract = {
       ],
       "stateMutability": "nonpayable",
       "type": "function",
-    },
+    }
   ],
 }
 
@@ -271,9 +271,6 @@ let multicallWithNodeCheck = async (walletClient, name, calls) => {
   let node = namehash(`${name}.${Constants.sld}`)
   let currentAddress = await currentAddress(walletClient)
 
-  // Convert string calls to bytes array
-  let data = calls->Array.map(call => `0x${call}`)->Array.join("")
-
   let {request} = await simulateContract(
     publicClient,
     {
@@ -281,13 +278,37 @@ let multicallWithNodeCheck = async (walletClient, name, calls) => {
       "address": resolverContract["address"],
       "abi": resolverContract["abi"],
       "functionName": "multicallWithNodeCheck",
-      "args": [String(node), String(data)],
+      "args": [String(node), Array(calls)],
     },
   )
 
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let encodeSetText = (name: string, key: string, value: string): string => {
+  let node = namehash(`${name}.${Constants.sld}`)
+  let abi = [
+    {
+      "type": "function",
+      "name": "setText",
+      "inputs": [
+        {"name": "node", "type": "bytes32"}, 
+        {"name": "key", "type": "string"}, 
+        {"name": "value", "type": "string"},
+      ],
+      "outputs": [],
+      "stateMutability": "view",
+    },
+  ]
+  encodeFunctionData(
+    {
+      "abi": abi,
+      "functionName": "setText",
+      "args": [String(node), String(key), String(value)],
+    },
+  )
 }
 
 let nameExpires: string => promise<int> = async name => {

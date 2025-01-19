@@ -1,194 +1,252 @@
 open OnChainOperationsCommon
 open Utils
 
-// module ProfileForm = {
-//   @react.component
-//   let make = (
-//     ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
-//     ~onCancel: unit => unit
-//   ) => {
-//     let (description, setDescription) = React.useState(() => None)
-//     let (location, setLocation) = React.useState(() => None)
-//     let (twitter, setTwitter) = React.useState(() => None)
-//     let (telegram, setTelegram) = React.useState(() => None)
-//     let (github, setGithub) = React.useState(() => None)
-//     let (website, setWebsite) = React.useState(() => None)
-//     let (email, setEmail) = React.useState(() => None)
-//     let (avatar, setAvatar) = React.useState(() => None)
-//     let (loading, setLoading) = React.useState(() => false)
-//     let (error, setError) = React.useState(() => None)
+module ProfileForm = {
+  @react.component
+  let make = (
+    ~onSubmit: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>) => unit,
+    ~onCancel: unit => unit
+  ) => {
+    let (description, setDescription) = React.useState(() => None)
+    let (location, setLocation) = React.useState(() => None)
+    let (twitter, setTwitter) = React.useState(() => None)
+    let (telegram, setTelegram) = React.useState(() => None)
+    let (github, setGithub) = React.useState(() => None)
+    let (website, setWebsite) = React.useState(() => None)
+    let (email, setEmail) = React.useState(() => None)
+    let (avatar, setAvatar) = React.useState(() => None)
+    let (loading, setLoading) = React.useState(() => false)
+    let (error, setError) = React.useState(() => None)
 
-//     let validateEmail = email => {
-//       switch email {
-//       | Some(addr) when addr !== "" =>
-//         let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
-//         Js.Re.test_(emailRegex, addr)
-//       | None => true
-//       | Some("") => true
-//       }
-//     }
+    let {primaryName} = NameContext.use()
 
-//     let validateWebsite = website => {
-//       switch website {
-//       | Some(url) when url !== "" =>
-//         let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
-//         Js.Re.test_(urlRegex, url)
-//       | None => true
-//       | Some("") => true
-//       }
-//     }
+    let validateEmail = email => {
+      switch email {
+      | Some(addr) when addr !== "" =>
+        let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
+        Js.Re.test_(emailRegex, addr)
+      | None => true
+      | Some("") => true
+      }
+    }
 
-//     let handleSubmit = event => {
-//       ReactEvent.Form.preventDefault(event)
+    let validateWebsite = website => {
+      switch website {
+      | Some(url) when url !== "" =>
+        let urlRegex = Js.Re.fromString("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$")
+        Js.Re.test_(urlRegex, url)
+      | None => true
+      | Some("") => true
+      }
+    }
+
+    let handleSubmit = async event => {
+      ReactEvent.Form.preventDefault(event)
       
-//       switch (validateEmail(email), validateWebsite(website)) {
-//       | (false, _) => setError(_ => Some("Please enter a valid email address"))
-//       | (_, false) => setError(_ => Some("Please enter a valid website URL"))
-//       | _ => {
-//           setError(_ => None)
-//           onSubmit(
-//             description,
-//             location,
-//             twitter,
-//             telegram,
-//             github,
-//             website,
-//             email,
-//             avatar
-//           )
-//         }
-//       }
-//     }
+      switch (validateEmail(email), validateWebsite(website)) {
+      | (false, _) => setError(_ => Some("Please enter a valid email address"))
+      | (_, false) => setError(_ => Some("Please enter a valid website URL"))
+      | _ => {
+          setError(_ => None)
+          setLoading(_ => true)
 
-//     <div className="w-full max-w-xl mx-auto bg-white rounded-custom shadow-lg p-8">
-//       <h1 className="text-3xl font-bold mb-8 text-gray-900"> {React.string("Edit Profile")} </h1>
-//       <form onSubmit={handleSubmit}>
-//         <div className="space-y-6">
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700">
-//               {React.string("Description")}
-//             </label>
-//             <textarea
-//               value={description->Option.getOr("")}
-//               onChange={event => {
-//                 let value = ReactEvent.Form.target(event)["value"]
-//                 setDescription(_ => value === "" ? None : Some(value))
-//               }}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               rows={4}
-//               placeholder="About yourself..."
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
-//             <input
-//               type_="text"
-//               value={location->Option.getOr("")}
-//               onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="Avatar URL"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Location")} </label>
-//             <input
-//               type_="text"
-//               value={location->Option.getOr("")}
-//               onChange={event => {
-//                 let value = ReactEvent.Form.target(event)["value"]
-//                 setLocation(_ => value === "" ? None : Some(value))
-//               }}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="City, Country"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700">
-//               {React.string("X (Twitter)")}
-//             </label>
-//             <input
-//               type_="text"
-//               value={twitter->Option.getOr("")}
-//               onChange={event => setTwitter(_ => ReactEvent.Form.target(event)["value"])}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="@username"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Telegram")} </label>
-//             <input
-//               type_="text"
-//               value={telegram->Option.getOr("")}
-//               onChange={event => setTelegram(_ => ReactEvent.Form.target(event)["value"])}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="@username"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("GitHub")} </label>
-//             <input
-//               type_="text"
-//               value={github->Option.getOr("")}
-//               onChange={event => {
-//                 let value = ReactEvent.Form.target(event)["value"]
-//                 setGithub(_ => value === "" ? None : Some(value))
-//               }}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="username"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Website")} </label>
-//             <input
-//               type_="url"
-//               value={website->Option.getOr("")}
-//               onChange={event => {
-//                 let value = ReactEvent.Form.target(event)["value"]
-//                 setWebsite(_ => value === "" ? None : Some(value))
-//               }}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="https://"
-//             />
-//           </div>
-//           <div>
-//             <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Email")} </label>
-//             <input
-//               type_="email"
-//               value={email->Option.getOr("")}
-//               onChange={event => {
-//                 let value = ReactEvent.Form.target(event)["value"]
-//                 setEmail(_ => value === "" ? None : Some(value))
-//               }}
-//               className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-//               placeholder="your@email.com"
-//             />
-//           </div>
-//           {switch error {
-//           | Some(message) => 
-//             <div className="p-3 bg-red-50 border border-red-200 rounded-lg text-red-600 text-sm">
-//               {React.string(message)}
-//             </div>
-//           | None => React.null
-//           }}
-//           <div className="flex gap-4">
-//             <button
-//               type_="button"
-//               onClick={_ => onCancel()}
-//               className="flex-1 bg-gray-100 text-gray-700 p-3 rounded-xl font-medium hover:bg-gray-200 transition-colors">
-//               {React.string("Cancel")}
-//             </button>
-//             <button
-//               type_="submit"
-//               disabled={loading}
-//               className="flex-1 bg-blue-600 text-white p-3 rounded-xl font-medium hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed transition-colors">
-//               {React.string(loading ? "Saving..." : "Save Profile")}
-//             </button>
-//           </div>
-//         </div>
-//       </form>
-//     </div>
-//   }
-// }
+          let walletClient = buildWalletClient()->Option.getExn
+          let {name} = Option.getExn(primaryName)
+
+          // Encode each field using setText
+          let calls = []
+          switch description {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "description", value))
+          | None => ()
+          }
+          switch location {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "location", value))
+          | None => ()
+          }
+          switch twitter {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "twitter", value))
+          | None => ()
+          }
+          switch telegram {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "telegram", value))
+          | None => ()
+          }
+          switch github {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
+          | None => ()
+          }
+          switch website {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "website", value))
+          | None => ()
+          }
+          switch email {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
+          | None => ()
+          }
+          switch avatar {
+          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
+          | None => ()
+          }
+
+          // Save profile to blockchain
+          try {
+            let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
+            setLoading(_ => false)
+            onSubmit(
+              description,
+              location,
+              twitter,
+              telegram,
+              github,
+              website,
+              email,
+              avatar
+            )
+            // Navigate back to profile view
+            RescriptReactRouter.push("/profile")
+          } catch {
+          | Js.Exn.Error(e) => {
+              setLoading(_ => false)
+              setError(_ => Some(Js.Exn.message(e)->Option.getOr("Failed to save profile")))
+            }
+          }
+        }
+      }
+    }
+
+    <div className="w-full max-w-xl mx-auto relative">
+      <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
+        <h1 className="text-3xl font-bold mb-8 text-gray-900"> {React.string("Edit Profile")} </h1>
+        <form onSubmit={e => handleSubmit(e)->ignore}>
+          <div className="space-y-6">
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                {React.string("Description")}
+              </label>
+              <textarea
+                value={description->Option.getOr("")}
+                onChange={event => {
+                  let value = ReactEvent.Form.target(event)["value"]
+                  setDescription(_ => value === "" ? None : Some(value))
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                rows={4}
+                placeholder="About yourself..."
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Avatar")} </label>
+              <input
+                type_="text"
+                value={avatar->Option.getOr("")}
+                onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="Avatar URL"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Location")} </label>
+              <input
+                type_="text"
+                value={location->Option.getOr("")}
+                onChange={event => {
+                  let value = ReactEvent.Form.target(event)["value"]
+                  setLocation(_ => value === "" ? None : Some(value))
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="City, Country"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700">
+                {React.string("X (Twitter)")}
+              </label>
+              <input
+                type_="text"
+                value={twitter->Option.getOr("")}
+                onChange={event => setTwitter(_ => ReactEvent.Form.target(event)["value"])}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="@username"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Telegram")} </label>
+              <input
+                type_="text"
+                value={telegram->Option.getOr("")}
+                onChange={event => setTelegram(_ => ReactEvent.Form.target(event)["value"])}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="@username"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("GitHub")} </label>
+              <input
+                type_="text"
+                value={github->Option.getOr("")}
+                onChange={event => {
+                  let value = ReactEvent.Form.target(event)["value"]
+                  setGithub(_ => value === "" ? None : Some(value))
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="username"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Website")} </label>
+              <input
+                type_="url"
+                value={website->Option.getOr("")}
+                onChange={event => {
+                  let value = ReactEvent.Form.target(event)["value"]
+                  setWebsite(_ => value === "" ? None : Some(value))
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="https://"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium mb-2 text-gray-700"> {React.string("Email")} </label>
+              <input
+                type_="email"
+                value={email->Option.getOr("")}
+                onChange={event => {
+                  let value = ReactEvent.Form.target(event)["value"]
+                  setEmail(_ => value === "" ? None : Some(value))
+                }}
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                placeholder="your@email.com"
+              />
+            </div>
+            {switch error {
+            | Some(message) =>
+              <div className="mt-4 text-sm text-red-600">
+                {React.string(message)}
+              </div>
+            | None => React.null
+            }}
+            <div className="flex justify-end space-x-4 mt-8">
+              <button
+                type_="button"
+                onClick={_ => onCancel()}
+                className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+              >
+                {React.string("Cancel")}
+              </button>
+              <button
+                type_="submit"
+                disabled={loading}
+                className={`px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg ${loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"} focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500`}
+              >
+                {React.string(loading ? "Saving..." : "Save Profile")}
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  }
+}
 
 module ProfileField = {
   @react.component
@@ -441,7 +499,7 @@ let make = () => {
   <div className="p-8">
     {account.isConnected
       ? isEditing
-        ? React.null
+        ? <ProfileForm onSubmit={handleSubmit} onCancel={handleCancel} />
         : <ViewProfile
             profile={profile}
             isEditing={isEditing}
