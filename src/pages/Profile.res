@@ -5,7 +5,7 @@ module ProfileForm = {
   @react.component
   let make = (
     ~onCancel: unit => unit,
-    ~onSave: unit => unit,
+    ~onSave: ((option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>)) => unit,
     ~profile: (
       option<string>,
       option<string>,
@@ -110,10 +110,8 @@ module ProfileForm = {
           try {
             let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
             setLoading(_ => false)
-            // Call onSave to trigger profile reload
-            onSave()
-            // Return to view mode
-            onCancel()
+            // Call onSave with the updated profile data
+            onSave((description, location, twitter, telegram, github, website, email, avatar))
           } catch {
           | Js.Exn.Error(e) => {
               setLoading(_ => false)
@@ -550,12 +548,17 @@ let make = () => {
     None
   }, [primaryName])
 
+  let onSave = profile => {
+    setProfile(_ => profile)
+    setIsEditing(_ => false)
+  }
+
   switch (primaryName, loading) {
   | (None, false) => <NotConnected />
   | (Some(_), false) =>
     isEditing
       ? <ProfileForm
-          onCancel={() => setIsEditing(_ => false)} onSave={() => loadProfileData()->ignore} profile
+          onCancel={() => setIsEditing(_ => false)} onSave={onSave} profile
         />
       : <ViewProfile profile setIsEditing />
   | (_, true) =>

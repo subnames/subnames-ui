@@ -170,8 +170,16 @@ function Profile$ProfileForm(props) {
       setLoading(function (param) {
             return false;
           });
-      onSave();
-      return onCancel();
+      return onSave([
+                  description$1,
+                  $$location$1,
+                  twitter$1,
+                  telegram$1,
+                  github$1,
+                  website$1,
+                  email$1,
+                  avatar$1
+                ]);
     }
     catch (raw_e){
       var e = Caml_js_exceptions.internalToOCamlException(raw_e);
@@ -640,6 +648,14 @@ function Profile(props) {
   React.useEffect((function () {
           loadProfileData();
         }), [primaryName]);
+  var onSave = function (profile) {
+    setProfile(function (param) {
+          return profile;
+        });
+    setIsEditing(function (param) {
+          return false;
+        });
+  };
   if (primaryName !== undefined) {
     if (!loading) {
       if (match$1[0]) {
@@ -649,9 +665,7 @@ function Profile(props) {
                               return false;
                             });
                       }),
-                    onSave: (function () {
-                        loadProfileData();
-                      }),
+                    onSave: onSave,
                     profile: profile
                   });
       } else {
