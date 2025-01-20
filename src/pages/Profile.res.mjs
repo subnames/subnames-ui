@@ -372,10 +372,12 @@ function Profile$ViewProfile(props) {
   var match = React.useState(function () {
         return false;
       });
+  var avatar = profile[7];
   var description = profile[0];
   var setShowDropdown = match[1];
   var match$1 = NameContext.use();
   var primaryName = match$1.primaryName;
+  console.log("avatar: ", avatar);
   var match$2 = primaryName !== undefined ? primaryName : ({
         name: "",
         expires: 0
@@ -394,7 +396,7 @@ function Profile$ViewProfile(props) {
                             }, React.createElement("img", {
                                   className: "w-full h-full object-cover",
                                   alt: "Profile Avatar",
-                                  src: "https://ui-avatars.com/api/?uppercase=false&name=" + name
+                                  src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name
                                 }))), React.createElement("div", {
                           className: "flex justify-end items-center w-full relative"
                         }, React.createElement("h1", {
@@ -436,11 +438,9 @@ function Profile$ViewProfile(props) {
                                                         return true;
                                                       });
                                                 })
-                                            }, "Edit Profile")))))), React.createElement("div", undefined, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), description !== undefined ? React.createElement("div", {
-                            className: "text-gray-400 leading-relaxed  py-2"
-                          }, description) : React.createElement("div", {
-                            className: "text-gray-400 italic leading-relaxed py-2"
-                          }, "No description")), React.createElement("div", {
+                                            }, "Edit Profile")))))), React.createElement("div", undefined, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
+                          className: "text-center text-gray-400 leading-relaxed  py-2"
+                        }, description !== undefined ? description : "No description")), React.createElement("div", {
                       className: "grid grid-cols-1 md:grid-cols-2 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {

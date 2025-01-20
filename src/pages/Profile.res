@@ -272,6 +272,7 @@ module ViewProfile = {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
     let {primaryName} = NameContext.use()
+    Console.log2("avatar: ", avatar)
 
     let {name, expires} = switch primaryName {
     | Some(pn) => pn
@@ -287,7 +288,12 @@ module ViewProfile = {
           <div className="flex justify-center -mt-20 mb-3 relative">
             <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
               <img
-                src=`https://ui-avatars.com/api/?uppercase=false&name=${name}`
+                src={
+                  switch avatar {
+                  | Some(value) => value
+                  | None => `https://ui-avatars.com/api/?uppercase=false&name=${name}`
+                  }
+                }
                 alt="Profile Avatar"
                 className="w-full h-full object-cover"
               />
@@ -327,16 +333,12 @@ module ViewProfile = {
             </div>
           </div>
           <div>{React.string("Expiry: ")}{React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}</div>
-          {switch description {
-          | Some(desc) => 
-            <div className="text-gray-400 leading-relaxed  py-2">
-              {React.string(desc)}
-            </div>
-          | None => 
-            <div className="text-gray-400 italic leading-relaxed py-2">
-              {React.string("No description")}
-            </div>
-          }}
+          <div className="text-center text-gray-400 leading-relaxed  py-2">
+            {switch description {
+            | Some(desc) => React.string(desc)
+            | None => React.string("No description")
+            }}
+          </div>
         </div>
         // body
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
