@@ -66,44 +66,65 @@ module ProfileForm = {
           let walletClient = buildWalletClient()->Option.getExn
           let {name} = Option.getExn(primaryName)
 
-          // Encode each field using setText
+          let (initialDescription, initialLocation, initialTwitter, initialTelegram, initialGithub, initialWebsite, initialEmail, initialAvatar) = profile
+
+          // Encode each field using setText only if it has changed
           let calls = []
-          switch description {
-          | Some(value) =>
+          switch (description, initialDescription) {
+          | (Some(value), Some(initial)) if value != initial =>
             calls->Array.push(OnChainOperations.encodeSetText(name, "description", value))
-          | None => ()
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "description", value))
+          | _ => ()
           }
-          switch location {
-          | Some(value) =>
+          switch (location, initialLocation) {
+          | (Some(value), Some(initial)) if value != initial =>
             calls->Array.push(OnChainOperations.encodeSetText(name, "location", value))
-          | None => ()
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "location", value))
+          | _ => ()
           }
-          switch twitter {
-          | Some(value) =>
+          switch (twitter, initialTwitter) {
+          | (Some(value), Some(initial)) if value != initial =>
             calls->Array.push(OnChainOperations.encodeSetText(name, "twitter", value))
-          | None => ()
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "twitter", value))
+          | _ => ()
           }
-          switch telegram {
-          | Some(value) =>
+          switch (telegram, initialTelegram) {
+          | (Some(value), Some(initial)) if value != initial =>
             calls->Array.push(OnChainOperations.encodeSetText(name, "telegram", value))
-          | None => ()
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "telegram", value))
+          | _ => ()
           }
-          switch github {
-          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
-          | None => ()
+          switch (github, initialGithub) {
+          | (Some(value), Some(initial)) if value != initial =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
+          | _ => ()
           }
-          switch website {
-          | Some(value) =>
+          switch (website, initialWebsite) {
+          | (Some(value), Some(initial)) if value != initial =>
             calls->Array.push(OnChainOperations.encodeSetText(name, "website", value))
-          | None => ()
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "website", value))
+          | _ => ()
           }
-          switch email {
-          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
-          | None => ()
+          switch (email, initialEmail) {
+          | (Some(value), Some(initial)) if value != initial =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
+          | _ => ()
           }
-          switch avatar {
-          | Some(value) => calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
-          | None => ()
+          switch (avatar, initialAvatar) {
+          | (Some(value), Some(initial)) if value != initial =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
+          | (Some(value), None) =>
+            calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
+          | _ => ()
           }
 
           // Save profile to blockchain
@@ -474,14 +495,14 @@ module NotConnected = {
   let make = () => {
     <div className="w-full max-w-xl mx-auto relative">
       <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
-        <div className="flex flex-col mb-4 items-center">
+        <div className="flex flex-col items-center">
           // avatar
-          <div className="flex justify-center -mt-20 mb-3 relative">
-            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+          <div className="flex justify-center items-center -mt-20 mb-3 relative">
+            <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden flex items-center justify-center">
               <img
-                src={`https://placehold.co/128x128?text=`}
+                src="/src/assets/avatar.png"
                 alt="Profile Avatar"
-                className="w-full h-full object-cover"
+                className="w-12 h-12 object-cover"
               />
             </div>
           </div>

@@ -139,30 +139,38 @@ function Profile$ProfileForm(props) {
         });
     var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
     var match$2 = Core__Option.getExn(primaryName, undefined);
+    var initialAvatar = profile[7];
+    var initialEmail = profile[6];
+    var initialWebsite = profile[5];
+    var initialGithub = profile[4];
+    var initialTelegram = profile[3];
+    var initialTwitter = profile[2];
+    var initialLocation = profile[1];
+    var initialDescription = profile[0];
     var name = match$2.name;
     var calls = [];
-    if (description$1 !== undefined) {
+    if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
       calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
     }
-    if ($$location$1 !== undefined) {
+    if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
       calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
     }
-    if (twitter$1 !== undefined) {
+    if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
       calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
     }
-    if (telegram$1 !== undefined) {
+    if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
       calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
     }
-    if (github$1 !== undefined) {
+    if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
       calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
     }
-    if (website$1 !== undefined) {
+    if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
       calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
     }
-    if (email$1 !== undefined) {
+    if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
       calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
     }
-    if (avatar$1 !== undefined) {
+    if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
       calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
     }
     try {
@@ -554,15 +562,15 @@ function Profile$NotConnected(props) {
             }, React.createElement("div", {
                   className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
                 }, React.createElement("div", {
-                      className: "flex flex-col mb-4 items-center"
+                      className: "flex flex-col items-center"
                     }, React.createElement("div", {
-                          className: "flex justify-center -mt-20 mb-3 relative"
+                          className: "flex justify-center items-center -mt-20 mb-3 relative"
                         }, React.createElement("div", {
-                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden"
+                              className: "w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden flex items-center justify-center"
                             }, React.createElement("img", {
-                                  className: "w-full h-full object-cover",
+                                  className: "w-12 h-12 object-cover",
                                   alt: "Profile Avatar",
-                                  src: "https://placehold.co/128x128?text="
+                                  src: "/src/assets/avatar.png"
                                 })))), React.createElement("div", {
                       className: "flex justify-center items-center text-gray-500 w-full text-center"
                     }, "Please connect your wallet to see your profile")));
