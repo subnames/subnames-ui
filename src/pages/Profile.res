@@ -93,8 +93,8 @@ module ProfileForm = {
           try {
             let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
             setLoading(_ => false)
-            // Navigate back to profile view
-            RescriptReactRouter.push("/profile")
+            // Return to view mode
+            onCancel()
           } catch {
           | Js.Exn.Error(e) => {
               setLoading(_ => false)
@@ -458,16 +458,17 @@ let loadProfile = async (name: string) => {
   let website = await OnChainOperations.getText(name, "website")
   let email = await OnChainOperations.getText(name, "email")
   let avatar = await OnChainOperations.getText(name, "avatar")
+
   
   (
-    Some(description),
-    Some(location),
-    Some(twitter),
-    Some(telegram),
-    Some(github),
-    Some(website),
-    Some(email),
-    Some(avatar)
+    description,
+    location,
+    twitter,
+    telegram,
+    github,
+    website,
+    email,
+    avatar
   )
 }
 
@@ -479,6 +480,7 @@ let make = () => {
   let (loading, setLoading) = React.useState(() => true)
 
   React.useEffect1(() => {
+    Console.log2("primaryName changed to:", primaryName)
     switch primaryName {
     | Some({name}) => {
         let loadProfileData = async () => {
@@ -508,7 +510,7 @@ let make = () => {
       <div className="w-full max-w-xl mx-auto relative">
         <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
           <div className="flex justify-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900" />
+            <Icons.Spinner className="w-5 h-5 text-zinc-600" />
           </div>
         </div>
       </div>

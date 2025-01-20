@@ -3,6 +3,7 @@
 import * as Viem from "viem";
 import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
 import * as Core__BigInt from "@rescript/core/src/Core__BigInt.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -519,33 +520,38 @@ async function reclaimSubname(walletClient, name) {
 
 async function getText(name, key) {
   var node = Ens.namehash(name + "." + Constants.sld);
-  return await OnChainOperationsCommon.publicClient.readContract({
-              address: resolverContract.address,
-              abi: [{
-                  type: "function",
-                  name: "text",
-                  inputs: [
-                    {
-                      name: "node",
-                      type: "bytes32"
-                    },
-                    {
-                      name: "key",
-                      type: "string"
-                    }
-                  ],
-                  outputs: [{
-                      name: "",
-                      type: "string"
-                    }],
-                  stateMutability: "view"
-                }],
-              functionName: "text",
-              args: [
-                node,
-                key
-              ]
-            });
+  var result = await OnChainOperationsCommon.publicClient.readContract({
+        address: resolverContract.address,
+        abi: [{
+            type: "function",
+            name: "text",
+            inputs: [
+              {
+                name: "node",
+                type: "bytes32"
+              },
+              {
+                name: "key",
+                type: "string"
+              }
+            ],
+            outputs: [{
+                name: "",
+                type: "string"
+              }],
+            stateMutability: "view"
+          }],
+        functionName: "text",
+        args: [
+          node,
+          key
+        ]
+      });
+  if (result === "") {
+    return ;
+  } else {
+    return Caml_option.some(result);
+  }
 }
 
 export {

@@ -55,14 +55,16 @@ function MyConnectButton(props) {
                   var primaryName = match.primaryName;
                   var setForceRefresh = match.setForceRefresh;
                   var forceRefresh = match.forceRefresh;
-                  React.useEffect((function () {
-                          updatePrimaryName(account, setPrimaryName);
+                  var accountAddress = React.useMemo((function () {
+                          return Core__Option.map(account, (function (acc) {
+                                        return acc.address;
+                                      }));
                         }), [account]);
                   React.useEffect((function () {
+                          updatePrimaryName(account, setPrimaryName);
+                        }), [accountAddress]);
+                  React.useEffect((function () {
                           if (forceRefresh) {
-                            console.log("account: " + (
-                                  Core__Option.isSome(account) ? account.address : "None"
-                                ));
                             updatePrimaryName(account, setPrimaryName);
                           }
                           return (function () {

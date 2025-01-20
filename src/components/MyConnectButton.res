@@ -62,18 +62,20 @@ let make = () => {
 
       let {account, chain, openAccountModal, openChainModal, openConnectModal, mounted} = props
 
-      // updatePrimaryName if account changes
+      // Get the account address for dependency
+      let accountAddress = React.useMemo1(() => {
+        account->Option.map(acc => acc.address)
+      }, [account])
+
+      // updatePrimaryName if account address changes
       React.useEffect1(() => {
         updatePrimaryName(account, setPrimaryName)->ignore
         None
-      }, [account])
+      }, [accountAddress])
 
       // updatePrimaryName if forceRefresh
       React.useEffect1(() => {
         if forceRefresh {
-          Console.log(
-            `account: ${Option.isSome(account) ? Option.getUnsafe(account).address : "None"}`,
-          )
           updatePrimaryName(account, setPrimaryName)->ignore
         }
         Some(() => setForceRefresh(_ => false))

@@ -469,7 +469,7 @@ let reclaimSubname = async (walletClient, name) => {
 
 let getText = async (name: string, key: string) => {
   let node = namehash(`${name}.${Constants.sld}`)
-  await readContract(
+  let result = await readContract(
     publicClient,
     {
       "address": resolverContract["address"],
@@ -489,4 +489,6 @@ let getText = async (name: string, key: string) => {
       "args": [String(node), String(key)],
     },
   )
+
+  result == "" ? None : Some(result)
 }
