@@ -90,7 +90,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            26,
+            35,
             6
           ],
           Error: new Error()
@@ -111,7 +111,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            36,
+            45,
             6
           ],
           Error: new Error()
@@ -188,155 +188,162 @@ function Profile$ProfileForm(props) {
     }
   };
   return React.createElement("div", {
-              className: "w-full max-w-xl mx-auto relative"
+              className: "p-8"
             }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
-                }, React.createElement("h1", {
-                      className: "text-3xl font-bold mb-8 text-gray-900"
-                    }, "Edit Profile"), React.createElement("form", {
-                      onSubmit: (function (e) {
-                          handleSubmit(e);
-                        })
+                  className: "w-full max-w-xl mx-auto"
+                }, React.createElement("div", {
+                      className: "bg-white rounded-custom shadow-lg overflow-hidden"
                     }, React.createElement("div", {
-                          className: "space-y-6"
-                        }, React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Description"), React.createElement("textarea", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "About yourself...",
-                                  rows: 4,
-                                  value: Core__Option.getOr(description$1, ""),
-                                  onChange: (function ($$event) {
-                                      var value = $$event.target.value;
-                                      setDescription(function (param) {
-                                            if (value === "") {
-                                              return ;
-                                            } else {
-                                              return value;
-                                            }
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Avatar"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "Avatar URL",
-                                  type: "text",
-                                  value: Core__Option.getOr(avatar$1, ""),
-                                  onChange: (function ($$event) {
-                                      setAvatar(function (param) {
-                                            return $$event.target.value;
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Location"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "City, Country",
-                                  type: "text",
-                                  value: Core__Option.getOr($$location$1, ""),
-                                  onChange: (function ($$event) {
-                                      var value = $$event.target.value;
-                                      setLocation(function (param) {
-                                            if (value === "") {
-                                              return ;
-                                            } else {
-                                              return value;
-                                            }
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "X (Twitter)"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "@username",
-                                  type: "text",
-                                  value: Core__Option.getOr(twitter$1, ""),
-                                  onChange: (function ($$event) {
-                                      setTwitter(function (param) {
-                                            return $$event.target.value;
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Telegram"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "@username",
-                                  type: "text",
-                                  value: Core__Option.getOr(telegram$1, ""),
-                                  onChange: (function ($$event) {
-                                      setTelegram(function (param) {
-                                            return $$event.target.value;
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "GitHub"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "username",
-                                  type: "text",
-                                  value: Core__Option.getOr(github$1, ""),
-                                  onChange: (function ($$event) {
-                                      var value = $$event.target.value;
-                                      setGithub(function (param) {
-                                            if (value === "") {
-                                              return ;
-                                            } else {
-                                              return value;
-                                            }
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Website"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "https://",
-                                  type: "url",
-                                  value: Core__Option.getOr(website$1, ""),
-                                  onChange: (function ($$event) {
-                                      var value = $$event.target.value;
-                                      setWebsite(function (param) {
-                                            if (value === "") {
-                                              return ;
-                                            } else {
-                                              return value;
-                                            }
-                                          });
-                                    })
-                                })), React.createElement("div", undefined, React.createElement("label", {
-                                  className: "block text-sm font-medium mb-2 text-gray-700"
-                                }, "Email"), React.createElement("input", {
-                                  className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                  placeholder: "your@email.com",
-                                  type: "email",
-                                  value: Core__Option.getOr(email$1, ""),
-                                  onChange: (function ($$event) {
-                                      var value = $$event.target.value;
-                                      setEmail(function (param) {
-                                            if (value === "") {
-                                              return ;
-                                            } else {
-                                              return value;
-                                            }
-                                          });
-                                    })
-                                })), error !== undefined ? React.createElement("div", {
-                                className: "mt-4 text-sm text-red-600"
-                              }, error) : null, React.createElement("div", {
-                              className: "flex justify-end space-x-4 mt-8"
-                            }, React.createElement("button", {
-                                  className: "px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
-                                  type: "button",
-                                  onClick: (function (param) {
-                                      onCancel();
-                                    })
-                                }, "Cancel"), React.createElement("button", {
-                                  className: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg " + (
-                                    loading ? "opacity-50 cursor-not-allowed" : "hover:bg-blue-700"
-                                  ) + " focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
-                                  disabled: loading,
-                                  type: "submit"
-                                }, loading ? "Saving..." : "Save Profile"))))));
+                          className: "p-8 py-6 border-b border-gray-200 relative"
+                        }, React.createElement("h1", {
+                              className: "text-3xl font-bold text-gray-900"
+                            }, "Edit Profile"), React.createElement("div", {
+                              className: "text-sm text-gray-500"
+                            }, "All fields are optional"), React.createElement("button", {
+                              className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
+                              onClick: (function (param) {
+                                  onCancel();
+                                })
+                            }, React.createElement(Icons.Close.make, {}))), React.createElement("div", {
+                          className: "p-8"
+                        }, React.createElement("form", {
+                              onSubmit: (function (e) {
+                                  handleSubmit(e);
+                                })
+                            }, React.createElement("div", {
+                                  className: "space-y-6"
+                                }, React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Description"), React.createElement("textarea", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "About yourself...",
+                                          rows: 4,
+                                          value: Core__Option.getOr(description$1, ""),
+                                          onChange: (function ($$event) {
+                                              var value = $$event.target.value;
+                                              setDescription(function (param) {
+                                                    if (value === "") {
+                                                      return ;
+                                                    } else {
+                                                      return value;
+                                                    }
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Avatar"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "Avatar URL",
+                                          type: "text",
+                                          value: Core__Option.getOr(avatar$1, ""),
+                                          onChange: (function ($$event) {
+                                              setAvatar(function (param) {
+                                                    return $$event.target.value;
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Location"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "City, Country",
+                                          type: "text",
+                                          value: Core__Option.getOr($$location$1, ""),
+                                          onChange: (function ($$event) {
+                                              var value = $$event.target.value;
+                                              setLocation(function (param) {
+                                                    if (value === "") {
+                                                      return ;
+                                                    } else {
+                                                      return value;
+                                                    }
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "X (Twitter)"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "@username",
+                                          type: "text",
+                                          value: Core__Option.getOr(twitter$1, ""),
+                                          onChange: (function ($$event) {
+                                              setTwitter(function (param) {
+                                                    return $$event.target.value;
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Telegram"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "@username",
+                                          type: "text",
+                                          value: Core__Option.getOr(telegram$1, ""),
+                                          onChange: (function ($$event) {
+                                              setTelegram(function (param) {
+                                                    return $$event.target.value;
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "GitHub"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "username",
+                                          type: "text",
+                                          value: Core__Option.getOr(github$1, ""),
+                                          onChange: (function ($$event) {
+                                              var value = $$event.target.value;
+                                              setGithub(function (param) {
+                                                    if (value === "") {
+                                                      return ;
+                                                    } else {
+                                                      return value;
+                                                    }
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Website"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "https://",
+                                          type: "url",
+                                          value: Core__Option.getOr(website$1, ""),
+                                          onChange: (function ($$event) {
+                                              var value = $$event.target.value;
+                                              setWebsite(function (param) {
+                                                    if (value === "") {
+                                                      return ;
+                                                    } else {
+                                                      return value;
+                                                    }
+                                                  });
+                                            })
+                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "Email"), React.createElement("input", {
+                                          className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
+                                          placeholder: "your@email.com",
+                                          type: "email",
+                                          value: Core__Option.getOr(email$1, ""),
+                                          onChange: (function ($$event) {
+                                              var value = $$event.target.value;
+                                              setEmail(function (param) {
+                                                    if (value === "") {
+                                                      return ;
+                                                    } else {
+                                                      return value;
+                                                    }
+                                                  });
+                                            })
+                                        })), error !== undefined ? React.createElement("div", {
+                                        className: "mt-4 text-sm text-red-600"
+                                      }, error) : null, React.createElement("div", {
+                                      className: "flex justify-end space-x-4 mt-8"
+                                    }, React.createElement("button", {
+                                          className: "rounded-xl bg-zinc-800 px-6 py-3 font-semibold text-white hover:bg-zinc-700 " + (
+                                            loading ? "opacity-50 cursor-not-allowed" : "hover:bg-zinc-500"
+                                          ) + " focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500",
+                                          disabled: loading,
+                                          type: "submit"
+                                        }, loading ? "Saving..." : "Save Profile"))))))));
 }
 
 var ProfileForm = {
@@ -438,9 +445,13 @@ function Profile$ViewProfile(props) {
                                                         return true;
                                                       });
                                                 })
-                                            }, "Edit Profile")))))), React.createElement("div", undefined, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
-                          className: "text-center text-gray-400 leading-relaxed  py-2"
-                        }, description !== undefined ? description : "No description")), React.createElement("div", {
+                                            }, "Edit Profile")))))), React.createElement("div", {
+                          className: "text-xs text-gray-400 mt-1"
+                        }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
+                          className: "text-center leading-relaxed  py-2"
+                        }, description !== undefined ? description : React.createElement("div", {
+                                className: "text-gray-400"
+                              }, "No description"))), React.createElement("div", {
                       className: "grid grid-cols-1 md:grid-cols-2 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
@@ -655,7 +666,7 @@ function Profile(props) {
     return React.createElement(Profile$NotConnected, {});
   }
   return React.createElement("div", {
-              className: "flex justify-center items-center h-screen"
+              className: "flex justify-center items-center"
             }, React.createElement(Icons.Spinner.make, {
                   className: "w-5 h-5 text-zinc-600"
                 }));

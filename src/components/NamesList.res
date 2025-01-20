@@ -170,14 +170,14 @@ let make = () => {
           />
         | None =>
           <div className="bg-white rounded-custom shadow-lg overflow-hidden">
-            <div className="px-6 pt-4 pb-4 border-b border-gray-200 relative">
-              <div className="text-lg"> {React.string("Your Subnames")} </div>
+            <div className="p-8 py-6 border-b border-gray-200 relative">
+              <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
               <div className="text-sm text-gray-500">
                 {React.string("New name may take a while to appear")}
               </div>
               <button
                 onClick={_ => RescriptReactRouter.push("/")}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2">
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
                 <Icons.Close />
               </button>
             </div>
@@ -186,7 +186,7 @@ let make = () => {
                 {React.string("Please connect your wallet to see your names")}
               </div>
             } else if loading {
-              <div className="text-center py-4"> {React.string("Loading...")} </div>
+              <div className="flex justify-center items-center py-4"> <Icons.Spinner className="w-5 h-5 text-zinc-600" /> </div>
             } else if names->Array.length == 0 {
               <div className="text-center py-4 text-gray-500">
                 {React.string("You don't have any subnames yet")}
@@ -196,7 +196,7 @@ let make = () => {
                 {names
                 ->Array.mapWithIndex((subname, index) => {
                   <div key={subname.name}>
-                    <div className="px-6 py-4">
+                    <div className="px-8 py-6">
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">

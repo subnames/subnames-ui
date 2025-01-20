@@ -203,20 +203,22 @@ function NamesList(props) {
                           }) : React.createElement("div", {
                             className: "bg-white rounded-custom shadow-lg overflow-hidden"
                           }, React.createElement("div", {
-                                className: "px-6 pt-4 pb-4 border-b border-gray-200 relative"
-                              }, React.createElement("div", {
-                                    className: "text-lg"
+                                className: "p-8 py-6 border-b border-gray-200 relative"
+                              }, React.createElement("h1", {
+                                    className: "text-3xl font-bold text-gray-900"
                                   }, "Your Subnames"), React.createElement("div", {
                                     className: "text-sm text-gray-500"
                                   }, "New name may take a while to appear"), React.createElement("button", {
-                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-4 top-1/2 -translate-y-1/2",
+                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                     onClick: (function (param) {
                                         RescriptReactRouter.push("/");
                                       })
                                   }, React.createElement(Icons.Close.make, {}))), account.isConnected ? (
                               match$2[0] ? React.createElement("div", {
-                                      className: "text-center py-4"
-                                    }, "Loading...") : (
+                                      className: "flex justify-center items-center py-4"
+                                    }, React.createElement(Icons.Spinner.make, {
+                                          className: "w-5 h-5 text-zinc-600"
+                                        })) : (
                                   names.length === 0 ? React.createElement("div", {
                                           className: "text-center py-4 text-gray-500"
                                         }, "You don't have any subnames yet") : React.createElement("div", {
@@ -274,7 +276,7 @@ function NamesList(props) {
                                               return React.createElement("div", {
                                                           key: subname.name
                                                         }, React.createElement("div", {
-                                                              className: "px-6 py-4"
+                                                              className: "px-8 py-6"
                                                             }, React.createElement("div", {
                                                                   className: "flex items-center justify-between"
                                                                 }, React.createElement("div", undefined, React.createElement("div", {
