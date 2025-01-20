@@ -21,6 +21,7 @@ function Profile$ProfileForm(props) {
   var twitter = profile[2];
   var $$location = profile[1];
   var description = profile[0];
+  var onSave = props.onSave;
   var onCancel = props.onCancel;
   var match = React.useState(function () {
         return description;
@@ -89,7 +90,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            25,
+            26,
             6
           ],
           Error: new Error()
@@ -110,7 +111,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            35,
+            36,
             6
           ],
           Error: new Error()
@@ -169,6 +170,7 @@ function Profile$ProfileForm(props) {
       setLoading(function (param) {
             return false;
           });
+      onSave();
       return onCancel();
     }
     catch (raw_e){
@@ -599,66 +601,64 @@ function Profile(props) {
         return true;
       });
   var setLoading = match$3[1];
-  React.useEffect((function () {
-          console.log("primaryName changed to:", primaryName);
-          if (primaryName !== undefined) {
-            var name = primaryName.name;
-            var loadProfileData = async function () {
-              try {
-                var profileData = await loadProfile(name);
-                setProfile(function (param) {
-                      return profileData;
-                    });
-              }
-              catch (raw_e){
-                var e = Caml_js_exceptions.internalToOCamlException(raw_e);
-                if (e.RE_EXN_ID === Js_exn.$$Error) {
-                  console.error("Failed to load profile: " + Core__Option.getOr(e._1.message, "Unknown error"));
-                } else {
-                  throw e;
-                }
-              }
-              return setLoading(function (param) {
-                          return false;
-                        });
-            };
-            loadProfileData();
-          } else {
-            setLoading(function (param) {
+  var loading = match$3[0];
+  var loadProfileData = async function () {
+    if (primaryName === undefined) {
+      return setLoading(function (param) {
                   return false;
                 });
-          }
-        }), [primaryName]);
-  var handleCancel = function () {
-    setIsEditing(function (param) {
-          return false;
-        });
-  };
-  if (primaryName !== undefined) {
-    if (match$3[0]) {
-      return React.createElement("div", {
-                  className: "w-full max-w-xl mx-auto relative"
-                }, React.createElement("div", {
-                      className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
-                    }, React.createElement("div", {
-                          className: "flex justify-center"
-                        }, React.createElement(Icons.Spinner.make, {
-                              className: "w-5 h-5 text-zinc-600"
-                            }))));
-    } else if (match$1[0]) {
-      return React.createElement(Profile$ProfileForm, {
-                  onCancel: handleCancel,
-                  profile: profile
-                });
-    } else {
-      return React.createElement(Profile$ViewProfile, {
-                  profile: profile,
-                  setIsEditing: setIsEditing
-                });
     }
-  } else {
+    try {
+      var profileData = await loadProfile(primaryName.name);
+      setProfile(function (param) {
+            return profileData;
+          });
+    }
+    catch (raw_e){
+      var e = Caml_js_exceptions.internalToOCamlException(raw_e);
+      if (e.RE_EXN_ID === Js_exn.$$Error) {
+        console.error("Failed to load profile: " + Core__Option.getOr(e._1.message, "Unknown error"));
+      } else {
+        throw e;
+      }
+    }
+    return setLoading(function (param) {
+                return false;
+              });
+  };
+  React.useEffect((function () {
+          loadProfileData();
+        }), [primaryName]);
+  if (primaryName !== undefined) {
+    if (!loading) {
+      if (match$1[0]) {
+        return React.createElement(Profile$ProfileForm, {
+                    onCancel: (function () {
+                        setIsEditing(function (param) {
+                              return false;
+                            });
+                      }),
+                    onSave: (function () {
+                        loadProfileData();
+                      }),
+                    profile: profile
+                  });
+      } else {
+        return React.createElement(Profile$ViewProfile, {
+                    profile: profile,
+                    setIsEditing: setIsEditing
+                  });
+      }
+    }
+    
+  } else if (!loading) {
     return React.createElement(Profile$NotConnected, {});
   }
+  return React.createElement("div", {
+              className: "flex justify-center items-center h-screen"
+            }, React.createElement(Icons.Spinner.make, {
+                  className: "w-5 h-5 text-zinc-600"
+                }));
 }
 
 var make = Profile;

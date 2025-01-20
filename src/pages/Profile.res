@@ -5,6 +5,7 @@ module ProfileForm = {
   @react.component
   let make = (
     ~onCancel: unit => unit,
+    ~onSave: unit => unit,
     ~profile: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>)
   ) => {
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
@@ -93,6 +94,8 @@ module ProfileForm = {
           try {
             let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
             setLoading(_ => false)
+            // Call onSave to trigger profile reload
+            onSave()
             // Return to view mode
             onCancel()
           } catch {
@@ -479,46 +482,36 @@ let make = () => {
   let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
   let (loading, setLoading) = React.useState(() => true)
 
-  React.useEffect1(() => {
-    Console.log2("primaryName changed to:", primaryName)
+  let loadProfileData = async () => {
     switch primaryName {
     | Some({name}) => {
-        let loadProfileData = async () => {
-          try {
-            let profileData = await loadProfile(name)
-            setProfile(_ => profileData)
-          } catch {
-          | Exn.Error(e) => 
-            Console.error(`Failed to load profile: ${Exn.message(e)->Option.getOr("Unknown error")}`)
-          }
-          setLoading(_ => false)
+        try {
+          let profileData = await loadProfile(name)
+          setProfile(_ => profileData)
+        } catch {
+        | Exn.Error(e) => 
+          Console.error(`Failed to load profile: ${Exn.message(e)->Option.getOr("Unknown error")}`)
         }
-        loadProfileData()->ignore
+        setLoading(_ => false)
       }
     | None => setLoading(_ => false)
     }
+  }
+
+  React.useEffect1(() => {
+    loadProfileData()->ignore
     None
   }, [primaryName])
 
-  let handleCancel = () => {
-    setIsEditing(_ => false)
-  }
-
-  switch primaryName {
-  | Some(_) =>
-    if loading {
-      <div className="w-full max-w-xl mx-auto relative">
-        <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
-          <div className="flex justify-center">
-            <Icons.Spinner className="w-5 h-5 text-zinc-600" />
-          </div>
-        </div>
-      </div>
-    } else if isEditing {
-      <ProfileForm onCancel=handleCancel profile />
-    } else {
-      <ViewProfile profile setIsEditing />
-    }
-  | None => <NotConnected />
+  switch (primaryName, loading) {
+  | (None, false) => <NotConnected />
+  | (Some(_), false) =>
+    isEditing
+      ? <ProfileForm onCancel={() => setIsEditing(_ => false)} onSave={() => loadProfileData()->ignore} profile />
+      : <ViewProfile profile setIsEditing />
+  | (_, true) =>
+    <div className="flex justify-center items-center h-screen">
+      <Icons.Spinner className="w-5 h-5 text-zinc-600" />
+    </div>
   }
 }
