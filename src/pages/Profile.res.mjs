@@ -13,47 +13,56 @@ import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.re
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function Profile$ProfileForm(props) {
+  var profile = props.profile;
+  var avatar = profile[7];
+  var email = profile[6];
+  var website = profile[5];
+  var github = profile[4];
+  var telegram = profile[3];
+  var twitter = profile[2];
+  var $$location = profile[1];
+  var description = profile[0];
   var onCancel = props.onCancel;
   var match = React.useState(function () {
-        
+        return description;
       });
   var setDescription = match[1];
-  var description = match[0];
+  var description$1 = match[0];
   var match$1 = React.useState(function () {
-        
+        return $$location;
       });
   var setLocation = match$1[1];
-  var $$location = match$1[0];
+  var $$location$1 = match$1[0];
   var match$2 = React.useState(function () {
-        
+        return twitter;
       });
   var setTwitter = match$2[1];
-  var twitter = match$2[0];
+  var twitter$1 = match$2[0];
   var match$3 = React.useState(function () {
-        
+        return telegram;
       });
   var setTelegram = match$3[1];
-  var telegram = match$3[0];
+  var telegram$1 = match$3[0];
   var match$4 = React.useState(function () {
-        
+        return github;
       });
   var setGithub = match$4[1];
-  var github = match$4[0];
+  var github$1 = match$4[0];
   var match$5 = React.useState(function () {
-        
+        return website;
       });
   var setWebsite = match$5[1];
-  var website = match$5[0];
+  var website$1 = match$5[0];
   var match$6 = React.useState(function () {
-        
+        return email;
       });
   var setEmail = match$6[1];
-  var email = match$6[0];
+  var email$1 = match$6[0];
   var match$7 = React.useState(function () {
-        
+        return avatar;
       });
   var setAvatar = match$7[1];
-  var avatar = match$7[0];
+  var avatar$1 = match$7[0];
   var match$8 = React.useState(function () {
         return false;
       });
@@ -81,7 +90,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            23,
+            25,
             6
           ],
           Error: new Error()
@@ -102,7 +111,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            33,
+            35,
             6
           ],
           Error: new Error()
@@ -110,8 +119,8 @@ function Profile$ProfileForm(props) {
   };
   var handleSubmit = async function ($$event) {
     $$event.preventDefault();
-    var match = validateEmail(email);
-    var match$1 = validateWebsite(website);
+    var match = validateEmail(email$1);
+    var match$1 = validateWebsite(website$1);
     if (!match) {
       return setError(function (param) {
                   return "Please enter a valid email address";
@@ -132,29 +141,29 @@ function Profile$ProfileForm(props) {
     var match$2 = Core__Option.getExn(primaryName, undefined);
     var name = match$2.name;
     var calls = [];
-    if (description !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "description", description));
+    if (description$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
     }
-    if ($$location !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "location", $$location));
+    if ($$location$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
     }
-    if (twitter !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter));
+    if (twitter$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
     }
-    if (telegram !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram));
+    if (telegram$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
     }
-    if (github !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "github", github));
+    if (github$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
     }
-    if (website !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "website", website));
+    if (website$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
     }
-    if (email !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "email", email));
+    if (email$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
     }
-    if (avatar !== undefined) {
-      calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar));
+    if (avatar$1 !== undefined) {
+      calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
     }
     try {
       await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
@@ -195,7 +204,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "About yourself...",
                                   rows: 4,
-                                  value: Core__Option.getOr(description, ""),
+                                  value: Core__Option.getOr(description$1, ""),
                                   onChange: (function ($$event) {
                                       var value = $$event.target.value;
                                       setDescription(function (param) {
@@ -212,7 +221,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "Avatar URL",
                                   type: "text",
-                                  value: Core__Option.getOr(avatar, ""),
+                                  value: Core__Option.getOr(avatar$1, ""),
                                   onChange: (function ($$event) {
                                       setAvatar(function (param) {
                                             return $$event.target.value;
@@ -224,7 +233,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "City, Country",
                                   type: "text",
-                                  value: Core__Option.getOr($$location, ""),
+                                  value: Core__Option.getOr($$location$1, ""),
                                   onChange: (function ($$event) {
                                       var value = $$event.target.value;
                                       setLocation(function (param) {
@@ -241,7 +250,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "@username",
                                   type: "text",
-                                  value: Core__Option.getOr(twitter, ""),
+                                  value: Core__Option.getOr(twitter$1, ""),
                                   onChange: (function ($$event) {
                                       setTwitter(function (param) {
                                             return $$event.target.value;
@@ -253,7 +262,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "@username",
                                   type: "text",
-                                  value: Core__Option.getOr(telegram, ""),
+                                  value: Core__Option.getOr(telegram$1, ""),
                                   onChange: (function ($$event) {
                                       setTelegram(function (param) {
                                             return $$event.target.value;
@@ -265,7 +274,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "username",
                                   type: "text",
-                                  value: Core__Option.getOr(github, ""),
+                                  value: Core__Option.getOr(github$1, ""),
                                   onChange: (function ($$event) {
                                       var value = $$event.target.value;
                                       setGithub(function (param) {
@@ -282,7 +291,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "https://",
                                   type: "url",
-                                  value: Core__Option.getOr(website, ""),
+                                  value: Core__Option.getOr(website$1, ""),
                                   onChange: (function ($$event) {
                                       var value = $$event.target.value;
                                       setWebsite(function (param) {
@@ -299,7 +308,7 @@ function Profile$ProfileForm(props) {
                                   className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                   placeholder: "your@email.com",
                                   type: "email",
-                                  value: Core__Option.getOr(email, ""),
+                                  value: Core__Option.getOr(email$1, ""),
                                   onChange: (function ($$event) {
                                       var value = $$event.target.value;
                                       setEmail(function (param) {
@@ -474,7 +483,8 @@ function Profile$ViewProfile(props) {
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
-                                fill: "currentColor",
+                                fill: "none",
+                                stroke: "currentColor",
                                 viewBox: "0 0 24 24"
                               }, React.createElement("path", {
                                     clipRule: "evenodd",
@@ -532,7 +542,7 @@ function Profile$NotConnected(props) {
                             }, React.createElement("img", {
                                   className: "w-full h-full object-cover",
                                   alt: "Profile Avatar",
-                                  src: "https://placehold.co/128x128?text=Disconnected"
+                                  src: "https://placehold.co/128x128?text="
                                 })))), React.createElement("div", {
                       className: "flex justify-center items-center text-gray-500 w-full text-center"
                     }, "Please connect your wallet to see your profile")));
@@ -585,6 +595,7 @@ function Profile(props) {
               ];
       });
   var setProfile = match$2[1];
+  var profile = match$2[0];
   var match$3 = React.useState(function () {
         return true;
       });
@@ -636,12 +647,12 @@ function Profile(props) {
                             }))));
     } else if (match$1[0]) {
       return React.createElement(Profile$ProfileForm, {
-                  onCancel: handleCancel
+                  onCancel: handleCancel,
+                  profile: profile
                 });
     } else {
       return React.createElement(Profile$ViewProfile, {
-                  profile: match$2[0],
-                  isEditing: false,
+                  profile: profile,
                   setIsEditing: setIsEditing
                 });
     }

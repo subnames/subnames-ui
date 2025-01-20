@@ -4,16 +4,18 @@ open Utils
 module ProfileForm = {
   @react.component
   let make = (
-    ~onCancel: unit => unit
+    ~onCancel: unit => unit,
+    ~profile: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>)
   ) => {
-    let (description, setDescription) = React.useState(() => None)
-    let (location, setLocation) = React.useState(() => None)
-    let (twitter, setTwitter) = React.useState(() => None)
-    let (telegram, setTelegram) = React.useState(() => None)
-    let (github, setGithub) = React.useState(() => None)
-    let (website, setWebsite) = React.useState(() => None)
-    let (email, setEmail) = React.useState(() => None)
-    let (avatar, setAvatar) = React.useState(() => None)
+    let (description, location, twitter, telegram, github, website, email, avatar) = profile
+    let (description, setDescription) = React.useState(() => description)
+    let (location, setLocation) = React.useState(() => location)
+    let (twitter, setTwitter) = React.useState(() => twitter)
+    let (telegram, setTelegram) = React.useState(() => telegram)
+    let (github, setGithub) = React.useState(() => github)
+    let (website, setWebsite) = React.useState(() => website)
+    let (email, setEmail) = React.useState(() => email)
+    let (avatar, setAvatar) = React.useState(() => avatar)
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
 
@@ -262,7 +264,6 @@ module ViewProfile = {
   @react.component
   let make = (
     ~profile: (option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>, option<string>),
-    ~isEditing: bool,
     ~setIsEditing: (bool => bool) => unit,
   ) => {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
@@ -369,7 +370,7 @@ module ViewProfile = {
             value={telegram}
           />
           <ProfileField
-            icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+            icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
                 fillRule="evenodd"
                 d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"
@@ -419,7 +420,7 @@ module NotConnected = {
           <div className="flex justify-center -mt-20 mb-3 relative">
             <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
               <img
-                src=`https://placehold.co/128x128?text=Disconnected`
+                src=`https://placehold.co/128x128?text=`
                 alt="Profile Avatar"
                 className="w-full h-full object-cover"
               />
@@ -485,8 +486,8 @@ let make = () => {
             let profileData = await loadProfile(name)
             setProfile(_ => profileData)
           } catch {
-          | Js.Exn.Error(e) => 
-            Console.error(`Failed to load profile: ${Js.Exn.message(e)->Option.getOr("Unknown error")}`)
+          | Exn.Error(e) => 
+            Console.error(`Failed to load profile: ${Exn.message(e)->Option.getOr("Unknown error")}`)
           }
           setLoading(_ => false)
         }
@@ -512,9 +513,9 @@ let make = () => {
         </div>
       </div>
     } else if isEditing {
-      <ProfileForm onCancel=handleCancel />
+      <ProfileForm onCancel=handleCancel profile />
     } else {
-      <ViewProfile profile isEditing=false setIsEditing />
+      <ViewProfile profile setIsEditing />
     }
   | None => <NotConnected />
   }
