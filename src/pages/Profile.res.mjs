@@ -421,7 +421,7 @@ function Profile$ViewProfile(props) {
                     }, React.createElement("div", {
                           className: "flex justify-center -mt-20 mb-3 relative"
                         }, React.createElement("div", {
-                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100"
+                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100 shadow"
                             }, React.createElement("div", {
                                   className: "flex justify-center items-center absolute inset-0"
                                 }, React.createElement(Icons.Spinner.make, {

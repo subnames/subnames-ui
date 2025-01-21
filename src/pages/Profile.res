@@ -356,7 +356,7 @@ module ViewProfile = {
         <div className="flex flex-col mb-4 items-center">
           // avatar
           <div className="flex justify-center -mt-20 mb-3 relative">
-            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100">
+            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100 shadow">
               <div className="flex justify-center items-center absolute inset-0">
                 <Icons.Spinner className="w-5 h-5 text-zinc-600" />
               </div>
