@@ -427,7 +427,7 @@ function Profile$ViewProfile(props) {
                                 }, React.createElement(Icons.Spinner.make, {
                                       className: "w-5 h-5 text-zinc-600"
                                     })), React.createElement("img", {
-                                  className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300",
+                                  className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full",
                                   alt: "Profile Avatar",
                                   src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name,
                                   onLoad: (function (e) {

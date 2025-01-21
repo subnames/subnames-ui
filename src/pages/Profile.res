@@ -366,7 +366,7 @@ module ViewProfile = {
                 | None => `https://ui-avatars.com/api/?uppercase=false&name=${name}`
                 }}
                 alt="Profile Avatar"
-                className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300"
+                className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full"
                 onLoad={e => {
                   let target = ReactEvent.Image.target(e)
                   target["classList"]["remove"]("opacity-0")
