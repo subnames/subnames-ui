@@ -17,7 +17,8 @@ let make = (
       let walletClient = buildWalletClient()
       setIsWaitingForConfirmation(_ => true)
         if isReclaim {
-          OnChainOperations.reclaimSubname(walletClient->Option.getUnsafe, name)->ignore
+          let tokenId = BigInt.fromString(keccak256(name))
+          OnChainOperations.reclaim(walletClient->Option.getUnsafe, tokenId)->ignore
         } else {
           OnChainOperations.transferSubname(walletClient->Option.getUnsafe, name, recipientAddress)->ignore
         }

@@ -477,34 +477,62 @@ async function renew(walletClient, name, years) {
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
-async function transferSubname(walletClient, name, to) {
-  var tokenId = BigInt(Viem.keccak256(name));
-  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+async function setAddr(walletClient, name, a) {
+  var domain = name + "." + Constants.sld;
+  var node = Ens.namehash(domain);
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
-        account: currentAddress,
-        address: baseRegistrarContract.address,
-        abi: baseRegistrarContract.abi,
-        functionName: "safeTransferFrom",
+        account: OnChainOperationsCommon.currentAddress,
+        address: Constants.resolverContractAddress,
+        abi: [{
+            type: "function",
+            name: "setAddr",
+            inputs: [
+              {
+                name: "node",
+                type: "bytes32"
+              },
+              {
+                name: "a",
+                type: "address"
+              }
+            ],
+            outputs: [],
+            stateMutability: "nonpayable"
+          }],
+        functionName: "setAddr",
         args: [
-          currentAddress,
-          to,
-          tokenId
+          node,
+          a
         ]
       });
   var hash = await walletClient.writeContract(match.request);
   var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
         hash: hash
       });
-  console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+  console.log("setAddr confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
-async function reclaimSubname(walletClient, name) {
-  var tokenId = BigInt(Viem.keccak256(name));
+async function reclaim(walletClient, tokenId) {
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
         account: currentAddress,
-        address: baseRegistrarContract.address,
-        abi: baseRegistrarContract.abi,
+        address: Constants.baseRegistrarContractAddress,
+        abi: [{
+            type: "function",
+            name: "reclaim",
+            inputs: [
+              {
+                name: "id",
+                type: "uint256"
+              },
+              {
+                name: "owner",
+                type: "address"
+              }
+            ],
+            outputs: [],
+            stateMutability: "nonpayable"
+          }],
         functionName: "reclaim",
         args: [
           tokenId,
@@ -516,6 +544,79 @@ async function reclaimSubname(walletClient, name) {
         hash: hash
       });
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+async function setName(walletClient, name) {
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: currentAddress,
+        address: Constants.reverseRegistrarContractAddress,
+        abi: [{
+            type: "function",
+            name: "setName",
+            inputs: [{
+                name: "name",
+                type: "string"
+              }],
+            outputs: [],
+            stateMutability: "nonpayable"
+          }],
+        functionName: "setName",
+        args: [name]
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log("setName confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+async function safeTransferFrom(walletClient, from, to, tokenId) {
+  var match = await OnChainOperationsCommon.publicClient.simulateContract({
+        account: from,
+        address: Constants.baseRegistrarContractAddress,
+        abi: [{
+            type: "function",
+            name: "safeTransferFrom",
+            inputs: [
+              {
+                name: "from",
+                type: "address"
+              },
+              {
+                name: "to",
+                type: "address"
+              },
+              {
+                name: "tokenId",
+                type: "uint256"
+              }
+            ],
+            outputs: [],
+            stateMutability: "nonpayable"
+          }],
+        functionName: "safeTransferFrom",
+        args: [
+          from,
+          to,
+          tokenId
+        ]
+      });
+  var hash = await walletClient.writeContract(match.request);
+  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+        hash: hash
+      });
+  console.log("transfer confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+}
+
+async function transferSubname(walletClient, name, newOwner) {
+  console.log("Transferring " + name + " to " + newOwner);
+  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+  var tokenId = BigInt(Viem.keccak256(name));
+  await setAddr(walletClient, name, newOwner);
+  await setName(walletClient, "");
+  await reclaim(walletClient, tokenId);
+  return await safeTransferFrom(walletClient, currentAddress, newOwner, tokenId);
 }
 
 async function getText(name, key) {
@@ -571,8 +672,11 @@ export {
   encodeSetAddr ,
   register ,
   renew ,
+  setAddr ,
+  reclaim ,
+  setName ,
+  safeTransferFrom ,
   transferSubname ,
-  reclaimSubname ,
   getText ,
 }
 /* controllerContract Not a pure module */

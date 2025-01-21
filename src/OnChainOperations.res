@@ -76,7 +76,7 @@ let resolverContract = {
       ],
       "stateMutability": "nonpayable",
       "type": "function",
-    }
+    },
   ],
 }
 
@@ -294,21 +294,19 @@ let encodeSetText = (name: string, key: string, value: string): string => {
       "type": "function",
       "name": "setText",
       "inputs": [
-        {"name": "node", "type": "bytes32"}, 
-        {"name": "key", "type": "string"}, 
+        {"name": "node", "type": "bytes32"},
+        {"name": "key", "type": "string"},
         {"name": "value", "type": "string"},
       ],
       "outputs": [],
       "stateMutability": "view",
     },
   ]
-  encodeFunctionData(
-    {
-      "abi": abi,
-      "functionName": "setText",
-      "args": [String(node), String(key), String(value)],
-    },
-  )
+  encodeFunctionData({
+    "abi": abi,
+    "functionName": "setText",
+    "args": [String(node), String(key), String(value)],
+  })
 }
 
 let nameExpires: string => promise<int> = async name => {
@@ -428,36 +426,51 @@ let renew: (walletClient, string, int) => promise<unit> = async (walletClient, n
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
 
-let transferSubname = async (walletClient, name, to) => {
-  let tokenId = BigInt.fromString(keccak256(name))
-  let currentAddress = await currentAddress(walletClient)
+let setAddr = async (walletClient, name, a) => {
+  let domain = `${name}.${Constants.sld}`
+  let node = namehash(domain)
 
-  let {request} = await simulateContract(
+  let {request: setAddrRequest} = await simulateContract(
     publicClient,
     {
       "account": currentAddress,
-      "address": baseRegistrarContract["address"],
-      "abi": baseRegistrarContract["abi"],
-      "functionName": "safeTransferFrom",
-      "args": [String(currentAddress), String(to), BigInt(tokenId)],
+      "address": Constants.resolverContractAddress,
+      "abi": [
+        {
+          "type": "function",
+          "name": "setAddr",
+          "inputs": [{"name": "node", "type": "bytes32"}, {"name": "a", "type": "address"}],
+          "outputs": [],
+          "stateMutability": "nonpayable",
+        },
+      ],
+      "functionName": "setAddr",
+      "args": [String(node), String(a)],
     },
   )
-
-  let hash = await writeContract(walletClient, request)
+  let hash = await writeContract(walletClient, setAddrRequest)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
-  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  Console.log(`setAddr confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
 
-let reclaimSubname = async (walletClient, name) => {
-  let tokenId = BigInt.fromString(keccak256(name))
+let reclaim = async (walletClient, tokenId) => {
+  
   let currentAddress = await currentAddress(walletClient)
 
   let {request} = await simulateContract(
     publicClient,
     {
       "account": currentAddress,
-      "address": baseRegistrarContract["address"],
-      "abi": baseRegistrarContract["abi"],
+      "address": Constants.baseRegistrarContractAddress,
+      "abi": [
+        {
+          "type": "function",
+          "name": "reclaim",
+          "inputs": [{"name": "id", "type": "uint256"}, {"name": "owner", "type": "address"}],
+          "outputs": [],
+          "stateMutability": "nonpayable",
+        },
+      ],
       "functionName": "reclaim",
       "args": [BigInt(tokenId), String(currentAddress)],
     },
@@ -465,6 +478,70 @@ let reclaimSubname = async (walletClient, name) => {
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let setName = async (walletClient, name) => {
+  let currentAddress = await currentAddress(walletClient)
+  let {request: setNameRequest} = await simulateContract(
+    publicClient,
+    {
+      "account": currentAddress,
+      "address": Constants.reverseRegistrarContractAddress,
+      "abi": [
+        {
+          "type": "function",
+          "name": "setName",
+          "inputs": [{"name": "name", "type": "string"}],
+          "outputs": [],
+          "stateMutability": "nonpayable",
+        },
+      ],
+      "functionName": "setName",
+      "args": [String(name)],
+    },
+  )
+  let hash = await writeContract(walletClient, setNameRequest)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`setName confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let safeTransferFrom = async (walletClient, from, to, tokenId) => {
+  let {request: transferRequest} = await simulateContract(
+    publicClient,
+    {
+      "account": from,
+      "address": Constants.baseRegistrarContractAddress,
+      "abi": [
+        {
+          "type": "function",
+          "name": "safeTransferFrom",
+          "inputs": [
+            {"name": "from", "type": "address"},
+            {"name": "to", "type": "address"},
+            {"name": "tokenId", "type": "uint256"},
+          ],
+          "outputs": [],
+          "stateMutability": "nonpayable",
+        },
+      ],
+      "functionName": "safeTransferFrom",
+      "args": [String(from), String(to), BigInt(tokenId)],
+    },
+  )
+  let hash = await writeContract(walletClient, transferRequest)
+  let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
+  Console.log(`transfer confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+}
+
+let transferSubname = async (walletClient, name, newOwner) => {
+  Console.log(`Transferring ${name} to ${newOwner}`)
+  let currentAddress = await currentAddress(walletClient)
+  let tokenId = BigInt.fromString(keccak256(name))
+
+  await setAddr(walletClient, name, newOwner)
+  await setName(walletClient, "")
+  await reclaim(walletClient, tokenId)
+  await safeTransferFrom(walletClient, currentAddress, newOwner, tokenId)
 }
 
 let getText = async (name: string, key: string) => {
@@ -477,13 +554,10 @@ let getText = async (name: string, key: string) => {
         {
           "type": "function",
           "name": "text",
-          "inputs": [
-            {"name": "node", "type": "bytes32"},
-            {"name": "key", "type": "string"}
-          ],
+          "inputs": [{"name": "node", "type": "bytes32"}, {"name": "key", "type": "string"}],
           "outputs": [{"name": "", "type": "string"}],
-          "stateMutability": "view"
-        }
+          "stateMutability": "view",
+        },
       ],
       "functionName": "text",
       "args": [String(node), String(key)],
