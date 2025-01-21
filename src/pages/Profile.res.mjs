@@ -15,6 +15,8 @@ import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.re
 import AvatarPng from "../assets/avatar.png";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
+var avatarImage = AvatarPng;
+
 function Profile$ProfileForm(props) {
   var profile = props.profile;
   var avatar = profile[7];
@@ -94,7 +96,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            35,
+            38,
             6
           ],
           Error: new Error()
@@ -115,7 +117,7 @@ function Profile$ProfileForm(props) {
           RE_EXN_ID: "Match_failure",
           _1: [
             "Profile.res",
-            45,
+            48,
             6
           ],
           Error: new Error()
@@ -419,11 +421,19 @@ function Profile$ViewProfile(props) {
                     }, React.createElement("div", {
                           className: "flex justify-center -mt-20 mb-3 relative"
                         }, React.createElement("div", {
-                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden"
-                            }, React.createElement("img", {
-                                  className: "w-full h-full object-cover",
+                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100"
+                            }, React.createElement("div", {
+                                  className: "flex justify-center items-center absolute inset-0"
+                                }, React.createElement(Icons.Spinner.make, {
+                                      className: "w-5 h-5 text-zinc-600"
+                                    })), React.createElement("img", {
+                                  className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300",
                                   alt: "Profile Avatar",
-                                  src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name
+                                  src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name,
+                                  onLoad: (function (e) {
+                                      var target = e.target;
+                                      target.classList.remove("opacity-0");
+                                    })
                                 }))), React.createElement("div", {
                           className: "flex justify-end items-center w-full relative"
                         }, React.createElement("h1", {
@@ -560,8 +570,6 @@ var ViewProfile = {
   make: Profile$ViewProfile
 };
 
-var avatarImage = AvatarPng;
-
 function Profile$NotConnected(props) {
   React.useEffect((function () {
           RescriptReactRouter.push(Router.toUrl("Home"));
@@ -697,10 +705,10 @@ function Profile(props) {
 var make = Profile;
 
 export {
+  avatarImage ,
   ProfileForm ,
   ProfileField ,
   ViewProfile ,
-  avatarImage ,
   NotConnected ,
   UseAccount ,
   loadProfile ,

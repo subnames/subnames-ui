@@ -1,6 +1,9 @@
 open OnChainOperationsCommon
 open Utils
 
+
+@module("../assets/avatar.png") external avatarImage: string = "default"
+
 module ProfileForm = {
   @react.component
   let make = (
@@ -320,6 +323,8 @@ module ProfileField = {
   }
 }
 
+
+
 module ViewProfile = {
   @react.component
   let make = (
@@ -351,14 +356,21 @@ module ViewProfile = {
         <div className="flex flex-col mb-4 items-center">
           // avatar
           <div className="flex justify-center -mt-20 mb-3 relative">
-            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden">
+            <div className="w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100">
+              <div className="flex justify-center items-center absolute inset-0">
+                <Icons.Spinner className="w-5 h-5 text-zinc-600" />
+              </div>
               <img
                 src={switch avatar {
                 | Some(value) => value
                 | None => `https://ui-avatars.com/api/?uppercase=false&name=${name}`
                 }}
                 alt="Profile Avatar"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300"
+                onLoad={e => {
+                  let target = ReactEvent.Image.target(e)
+                  target["classList"]["remove"]("opacity-0")
+                }}
               />
             </div>
           </div>
@@ -490,8 +502,6 @@ module ViewProfile = {
   }
 }
 
-@module("../assets/avatar.png") external avatarImage: string = "default"
-
 module NotConnected = {
   @react.component
   let make = () => {
@@ -585,3 +595,4 @@ let make = () => {
     </div>
   }
 }
+
