@@ -3,12 +3,15 @@
 import * as Icons from "../components/Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
+import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
+import * as Router from "../Router.res.mjs";
 import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
+import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import AvatarPng from "../assets/avatar.png";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
@@ -560,23 +563,10 @@ var ViewProfile = {
 var avatarImage = AvatarPng;
 
 function Profile$NotConnected(props) {
-  return React.createElement("div", {
-              className: "w-full max-w-xl mx-auto relative"
-            }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16"
-                }, React.createElement("div", {
-                      className: "flex flex-col items-center"
-                    }, React.createElement("div", {
-                          className: "flex justify-center items-center -mt-20 mb-3 relative"
-                        }, React.createElement("div", {
-                              className: "w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden flex items-center justify-center"
-                            }, React.createElement("img", {
-                                  className: "w-12 h-12 object-cover",
-                                  alt: "Profile Avatar",
-                                  src: avatarImage
-                                })))), React.createElement("div", {
-                      className: "flex justify-center items-center text-gray-500 w-full text-center"
-                    }, "Please connect your wallet to see your profile")));
+  React.useEffect((function () {
+          RescriptReactRouter.push(Router.toUrl("Home"));
+        }), []);
+  return null;
 }
 
 var NotConnected = {
@@ -609,6 +599,7 @@ async function loadProfile(name) {
 function Profile(props) {
   var match = NameContext.use();
   var primaryName = match.primaryName;
+  var account = Wagmi.useAccount();
   var match$1 = React.useState(function () {
         return false;
       });
@@ -632,6 +623,12 @@ function Profile(props) {
       });
   var setLoading = match$3[1];
   var loading = match$3[0];
+  React.useEffect((function () {
+          if (!account.isConnected) {
+            RescriptReactRouter.push(Router.toUrl("Home"));
+          }
+          
+        }), [account.isConnected]);
   var loadProfileData = async function () {
     if (primaryName === undefined) {
       return setLoading(function (param) {

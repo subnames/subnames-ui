@@ -61,6 +61,14 @@ let make = () => {
     Some(() => doc->removeEventListener("mousedown", handleClickOutside))
   }, [activeDropdown])
 
+  // Redirect to home if disconnected
+  React.useEffect1(() => {
+    if !account.isConnected {
+      RescriptReactRouter.push(Router.toUrl(Router.Home))
+    }
+    None
+  }, [account.isConnected])
+
   let setPrimary = async name => {
     setSettingPrimaryName(_ => true)
 

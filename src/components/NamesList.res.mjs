@@ -5,6 +5,7 @@ import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
+import * as Router from "../Router.res.mjs";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
 import * as Constants from "../Constants.res.mjs";
 import * as Core__Int from "@rescript/core/src/Core__Int.res.mjs";
@@ -67,6 +68,12 @@ function NamesList(props) {
                     document.removeEventListener("mousedown", handleClickOutside);
                   });
         }), [activeDropdown]);
+  React.useEffect((function () {
+          if (!account.isConnected) {
+            RescriptReactRouter.push(Router.toUrl("Home"));
+          }
+          
+        }), [account.isConnected]);
   var setPrimary = async function (name) {
     setSettingPrimaryName(function (param) {
           return true;

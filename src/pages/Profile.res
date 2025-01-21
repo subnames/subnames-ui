@@ -495,25 +495,11 @@ module ViewProfile = {
 module NotConnected = {
   @react.component
   let make = () => {
-    <div className="w-full max-w-xl mx-auto relative">
-      <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
-        <div className="flex flex-col items-center">
-          // avatar
-          <div className="flex justify-center items-center -mt-20 mb-3 relative">
-            <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden flex items-center justify-center">
-              <img
-                src={avatarImage}
-                alt="Profile Avatar"
-                className="w-12 h-12 object-cover"
-              />
-            </div>
-          </div>
-        </div>
-        <div className="flex justify-center items-center text-gray-500 w-full text-center">
-          {React.string("Please connect your wallet to see your profile")}
-        </div>
-      </div>
-    </div>
+    React.useEffect0(() => {
+      RescriptReactRouter.push(Router.toUrl(Router.Home))
+      None
+    })
+    React.null
   }
 }
 
@@ -546,9 +532,18 @@ let loadProfile = async (name: string) => {
 @react.component
 let make = () => {
   let {primaryName} = NameContext.use()
+  let account = UseAccount.use()
   let (isEditing, setIsEditing) = React.useState(() => false)
   let (profile, setProfile) = React.useState(() => (None, None, None, None, None, None, None, None))
   let (loading, setLoading) = React.useState(() => true)
+
+  // Redirect to home if disconnected
+  React.useEffect1(() => {
+    if !account.isConnected {
+      RescriptReactRouter.push(Router.toUrl(Router.Home))
+    }
+    None
+  }, [account.isConnected])
 
   let loadProfileData = async () => {
     switch primaryName {
