@@ -490,6 +490,8 @@ module ViewProfile = {
   }
 }
 
+@module("../assets/avatar.png") external avatarImage: string = "default"
+
 module NotConnected = {
   @react.component
   let make = () => {
@@ -500,7 +502,7 @@ module NotConnected = {
           <div className="flex justify-center items-center -mt-20 mb-3 relative">
             <div className="w-32 h-32 rounded-full border-4 border-white bg-gray-100 overflow-hidden flex items-center justify-center">
               <img
-                src="/src/assets/avatar.png"
+                src={avatarImage}
                 alt="Profile Avatar"
                 className="w-12 h-12 object-cover"
               />

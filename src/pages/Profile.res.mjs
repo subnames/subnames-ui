@@ -9,6 +9,7 @@ import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
+import AvatarPng from "../assets/avatar.png";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function Profile$ProfileForm(props) {
@@ -556,6 +557,8 @@ var ViewProfile = {
   make: Profile$ViewProfile
 };
 
+var avatarImage = AvatarPng;
+
 function Profile$NotConnected(props) {
   return React.createElement("div", {
               className: "w-full max-w-xl mx-auto relative"
@@ -570,7 +573,7 @@ function Profile$NotConnected(props) {
                             }, React.createElement("img", {
                                   className: "w-12 h-12 object-cover",
                                   alt: "Profile Avatar",
-                                  src: "/src/assets/avatar.png"
+                                  src: avatarImage
                                 })))), React.createElement("div", {
                       className: "flex justify-center items-center text-gray-500 w-full text-center"
                     }, "Please connect your wallet to see your profile")));
@@ -700,9 +703,10 @@ export {
   ProfileForm ,
   ProfileField ,
   ViewProfile ,
+  avatarImage ,
   NotConnected ,
   UseAccount ,
   loadProfile ,
   make ,
 }
-/* Icons Not a pure module */
+/* avatarImage Not a pure module */
