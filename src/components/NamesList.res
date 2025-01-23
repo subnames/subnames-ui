@@ -41,6 +41,7 @@ let make = () => {
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
   let (settingPrimaryName, setSettingPrimaryName) = React.useState(() => false)
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
+  let (showTransferPanel, setShowTransferPanel) = React.useState(() => None)
   let dropdownRef = React.useRef(Nullable.null)
 
   // Add effect for handling clicks outside dropdown
@@ -96,6 +97,12 @@ let make = () => {
     setShowExtendPanel(_ => None)
   }
 
+  let handleTransferSuccess = (_: Types.actionResult) => {
+    // Refresh the names list
+    setForceRefresh(_ => true)
+    setShowTransferPanel(_ => None)
+  }
+
   let buildSubname = subnameObj => {
     subnameObj
     ->JSON.Decode.object
@@ -111,6 +118,7 @@ let make = () => {
   }
 
   let buildSubnames = subnameObjs => {
+    Console.log(primaryName)
     let current = primaryName->Option.getExn
     let currentSubname = {
       label: current.name,
@@ -127,7 +135,7 @@ let make = () => {
   }
 
   React.useEffect2(() => {
-    if account.isConnected {
+    if account.isConnected  && primaryName->Option.isSome {
       let fetchNames = async () => {
         let address =
           account.address
@@ -167,8 +175,8 @@ let make = () => {
   <>
     <div className="p-8">
       <div className="w-full max-w-xl mx-auto">
-        {switch showExtendPanel {
-        | Some(name) =>
+        {switch (showExtendPanel, showTransferPanel) {
+        | (Some(name), _) =>
           <RegisterExtendPanel
             name
             isWalletConnected=account.isConnected
@@ -176,7 +184,14 @@ let make = () => {
             onSuccess=handleExtendSuccess
             action={Types.Extend}
           />
-        | None =>
+        | (_, Some(name)) =>
+          <TransferPanel
+            name
+            isWalletConnected=account.isConnected
+            onBack={() => setShowTransferPanel(_ => None)}
+            onSuccess=handleTransferSuccess
+          />
+        | (None, None) =>
           <div className="bg-white rounded-custom shadow-lg overflow-hidden">
             <div className="p-8 py-6 border-b border-gray-200 relative">
               <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
@@ -266,7 +281,10 @@ let make = () => {
                                 }}
                                 <button
                                   type_="button"
-                                  onClick={_ => setActiveDropdown(_ => None)}
+                                  onClick={_ => {
+                                    setShowTransferPanel(_ => Some(subname.name))
+                                    setActiveDropdown(_ => None)
+                                  }}
                                   className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                   {React.string("Transfer")}
                                 </button>

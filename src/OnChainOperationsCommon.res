@@ -4,6 +4,7 @@
 type publicClient
 type walletClient
 
+@module("viem") external getAddress: string => string = "getAddress"
 @module("viem") external createPublicClient: 'a => publicClient = "createPublicClient"
 @module("viem") external createWalletClient: 'a => walletClient = "createWalletClient"
 @module("viem") external http: string => 'transport = "http"
@@ -22,9 +23,17 @@ type transaction = {
   blockNumber: bigint,
   status: string,
 }
+// type standaloneParams = {
+//   account: string,
+//   address: string,
+//   abi: array<argType>,
+//   functionName: string,
+//   args: array<argType>
+// }
 @send external readContract: (publicClient, 'readContractParams) => promise<'result> = "readContract"
 @send external simulateContract: (publicClient, 'simulateContractParams) => promise<requestResult> = "simulateContract"
 @send external writeContract: (walletClient, request) => promise<'result> = "writeContract"
+@send external writeContractStandalone: (walletClient, 'standaloneParams) => promise<'result> = "writeContract"
 @send external requestAddresses: walletClient => promise<array<string>> = "requestAddresses"
 @send external getAddresses: walletClient => promise<array<string>> = "getAddresses"
 @send external waitForTransactionReceipt: (publicClient, 'a) => promise<transaction> = "waitForTransactionReceipt"

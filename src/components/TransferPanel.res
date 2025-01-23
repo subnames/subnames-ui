@@ -16,12 +16,17 @@ let make = (
     if isWalletConnected {
       let walletClient = buildWalletClient()
       setIsWaitingForConfirmation(_ => true)
-        if isReclaim {
-          let tokenId = BigInt.fromString(keccak256(name))
-          OnChainOperations.reclaim(walletClient->Option.getUnsafe, tokenId)->ignore
-        } else {
-          OnChainOperations.transferSubname(walletClient->Option.getUnsafe, name, recipientAddress)->ignore
-        }
+      if isReclaim {
+        let tokenId = BigInt.fromString(keccak256(name))
+        OnChainOperations.reclaim(walletClient->Option.getUnsafe, tokenId)->ignore
+      } else {
+        Console.log(`Transferring ${name} to ${recipientAddress}`)
+        OnChainOperations.transferSubname(
+          walletClient->Option.getUnsafe,
+          name,
+          recipientAddress,
+        )->ignore
+      }
       setIsWaitingForConfirmation(_ => false)
       onSuccess({
         action: Types.Transfer,
@@ -36,15 +41,17 @@ let make = (
         <div className="flex items-center gap-3">
           <button
             onClick={_ => onBack()}
-            className="text-gray-400 hover:text-gray-500">
-            <Icons.Back />
+            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+            type_="button">
+            <div className="w-6 h-6 text-gray-600">
+              <Icons.Back />
+            </div>
           </button>
           <h2 className="text-xl font-semibold text-gray-900">
             {React.string(isReclaim ? "Reclaim Subname" : "Transfer Subname")}
           </h2>
         </div>
       </div>
-
       {if !isReclaim {
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -63,20 +70,14 @@ let make = (
           {React.string("Click Reclaim to sync the Registry ownership with your NFT ownership.")}
         </div>
       }}
-
       <button
         onClick={_ => handleTransfer()}
         disabled={isWaitingForConfirmation || (!isReclaim && recipientAddress == "")}
         className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
         {React.string(
-          isWaitingForConfirmation
-            ? "Processing..."
-            : isReclaim
-            ? "Reclaim"
-            : "Transfer",
+          isWaitingForConfirmation ? "Processing..." : isReclaim ? "Reclaim" : "Transfer",
         )}
       </button>
-
     </div>
   </div>
 }

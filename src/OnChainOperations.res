@@ -355,6 +355,23 @@ let encodeSetAddr: (string, string) => string = (name, owner) => {
   })
 }
 
+let encodeSetName: string => string = name => {
+  let abi = [
+    {
+      "type": "function",
+      "name": "setName",
+      "inputs": [{"name": "name", "type": "string"}],
+      "outputs": [],
+      "stateMutability": "view",
+    },
+  ]
+  encodeFunctionData({
+    "abi": abi,
+    "functionName": "setName",
+    "args": [String(name)],
+  })
+}
+
 type transactionStatus =
   | Simulating
   | WaitingForSignature
@@ -430,10 +447,13 @@ let setAddr = async (walletClient, name, a) => {
   let domain = `${name}.${Constants.sld}`
   let node = namehash(domain)
 
+  let address = getAddress(a)
+
+  let currentAddr = await currentAddress(walletClient)
   let {request: setAddrRequest} = await simulateContract(
     publicClient,
     {
-      "account": currentAddress,
+      "account": currentAddr,
       "address": Constants.resolverContractAddress,
       "abi": [
         {
@@ -445,7 +465,7 @@ let setAddr = async (walletClient, name, a) => {
         },
       ],
       "functionName": "setAddr",
-      "args": [String(node), String(a)],
+      "args": [String(node), String(address)],
     },
   )
   let hash = await writeContract(walletClient, setAddrRequest)
@@ -454,7 +474,6 @@ let setAddr = async (walletClient, name, a) => {
 }
 
 let reclaim = async (walletClient, tokenId) => {
-  
   let currentAddress = await currentAddress(walletClient)
 
   let {request} = await simulateContract(
@@ -482,25 +501,23 @@ let reclaim = async (walletClient, tokenId) => {
 
 let setName = async (walletClient, name) => {
   let currentAddress = await currentAddress(walletClient)
-  let {request: setNameRequest} = await simulateContract(
-    publicClient,
-    {
-      "account": currentAddress,
-      "address": Constants.reverseRegistrarContractAddress,
-      "abi": [
-        {
-          "type": "function",
-          "name": "setName",
-          "inputs": [{"name": "name", "type": "string"}],
-          "outputs": [],
-          "stateMutability": "nonpayable",
-        },
-      ],
-      "functionName": "setName",
-      "args": [String(name)],
-    },
-  )
-  let hash = await writeContract(walletClient, setNameRequest)
+
+  let hash = await writeContractStandalone(walletClient, {
+    "address": Constants.reverseRegistrarContractAddress,
+    "abi": [
+      {
+        "type": "function",
+        "name": "setName",
+        "inputs": [{"name": "name", "type": "string"}],
+        "outputs": [],
+        "stateMutability": "nonpayable",
+      },
+    ],
+    "functionName": "setName",
+    "account": currentAddress,
+    "args": [String(name)],
+  })
+
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`setName confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
@@ -541,7 +558,7 @@ let transferSubname = async (walletClient, name, newOwner) => {
   await setAddr(walletClient, name, newOwner)
   await setName(walletClient, "")
   await reclaim(walletClient, tokenId)
-  await safeTransferFrom(walletClient, currentAddress, newOwner, tokenId)
+  await safeTransferFrom(walletClient, currentAddress, getAddress(newOwner), tokenId)
 }
 
 let getText = async (name: string, key: string) => {

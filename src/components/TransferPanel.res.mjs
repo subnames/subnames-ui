@@ -40,6 +40,7 @@ function TransferPanel(props) {
       var tokenId = BigInt(Viem.keccak256(name));
       OnChainOperations.reclaim(walletClient, tokenId);
     } else {
+      console.log("Transferring " + name + " to " + recipientAddress);
       OnChainOperations.transferSubname(walletClient, name, recipientAddress);
     }
     setIsWaitingForConfirmation(function (param) {
@@ -59,11 +60,14 @@ function TransferPanel(props) {
                     }, React.createElement("div", {
                           className: "flex items-center gap-3"
                         }, React.createElement("button", {
-                              className: "text-gray-400 hover:text-gray-500",
+                              className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                              type: "button",
                               onClick: (function (param) {
                                   onBack();
                                 })
-                            }, React.createElement(Icons.Back.make, {})), React.createElement("h2", {
+                            }, React.createElement("div", {
+                                  className: "w-6 h-6 text-gray-600"
+                                }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
                               className: "text-xl font-semibold text-gray-900"
                             }, isReclaim ? "Reclaim Subname" : "Transfer Subname"))), isReclaim ? React.createElement("div", {
                         className: "mb-6 text-gray-700"

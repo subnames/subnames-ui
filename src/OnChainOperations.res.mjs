@@ -423,6 +423,24 @@ function encodeSetAddr(name, owner) {
             });
 }
 
+function encodeSetName(name) {
+  var abi = [{
+      type: "function",
+      name: "setName",
+      inputs: [{
+          name: "name",
+          type: "string"
+        }],
+      outputs: [],
+      stateMutability: "view"
+    }];
+  return Viem.encodeFunctionData({
+              abi: abi,
+              functionName: "setName",
+              args: [name]
+            });
+}
+
 async function register(walletClient, name, years, owner, onStatusChange) {
   console.log("Registering " + name);
   onStatusChange("Simulating");
@@ -480,8 +498,10 @@ async function renew(walletClient, name, years) {
 async function setAddr(walletClient, name, a) {
   var domain = name + "." + Constants.sld;
   var node = Ens.namehash(domain);
+  var address = Viem.getAddress(a);
+  var currentAddr = await OnChainOperationsCommon.currentAddress(walletClient);
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
-        account: OnChainOperationsCommon.currentAddress,
+        account: currentAddr,
         address: Constants.resolverContractAddress,
         abi: [{
             type: "function",
@@ -502,7 +522,7 @@ async function setAddr(walletClient, name, a) {
         functionName: "setAddr",
         args: [
           node,
-          a
+          address
         ]
       });
   var hash = await walletClient.writeContract(match.request);
@@ -548,8 +568,7 @@ async function reclaim(walletClient, tokenId) {
 
 async function setName(walletClient, name) {
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
-  var match = await OnChainOperationsCommon.publicClient.simulateContract({
-        account: currentAddress,
+  var hash = await walletClient.writeContract({
         address: Constants.reverseRegistrarContractAddress,
         abi: [{
             type: "function",
@@ -562,13 +581,13 @@ async function setName(walletClient, name) {
             stateMutability: "nonpayable"
           }],
         functionName: "setName",
+        account: currentAddress,
         args: [name]
       });
-  var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
+  var match = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
         hash: hash
       });
-  console.log("setName confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+  console.log("setName confirmed in block " + match.blockNumber.toString() + ", status: " + match.status);
 }
 
 async function safeTransferFrom(walletClient, from, to, tokenId) {
@@ -616,7 +635,7 @@ async function transferSubname(walletClient, name, newOwner) {
   await setAddr(walletClient, name, newOwner);
   await setName(walletClient, "");
   await reclaim(walletClient, tokenId);
-  return await safeTransferFrom(walletClient, currentAddress, newOwner, tokenId);
+  return await safeTransferFrom(walletClient, currentAddress, Viem.getAddress(newOwner), tokenId);
 }
 
 async function getText(name, key) {
@@ -670,6 +689,7 @@ export {
   nameExpires ,
   owner ,
   encodeSetAddr ,
+  encodeSetName ,
   register ,
   renew ,
   setAddr ,

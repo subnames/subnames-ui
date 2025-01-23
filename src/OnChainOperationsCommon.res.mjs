@@ -33,7 +33,7 @@ async function currentAddress(walletClient) {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperationsCommon.res",
-            48,
+            57,
             2
           ],
           Error: new Error()
