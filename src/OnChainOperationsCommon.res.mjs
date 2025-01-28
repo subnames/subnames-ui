@@ -11,7 +11,7 @@ function sha3HexAddress(prim) {
 }
 
 var publicClient = Viem.createPublicClient({
-      chain: Chains.koi,
+      chain: Chains.crab,
       transport: Viem.http(Constants.rpcUrl)
     });
 
@@ -19,7 +19,7 @@ function buildWalletClient() {
   var ethereum = window.ethereum;
   if (ethereum !== undefined) {
     return Caml_option.some(Viem.createWalletClient({
-                    chain: Chains.koi,
+                    chain: Chains.crab,
                     transport: Viem.custom(Caml_option.valFromOption(ethereum))
                   }));
   }

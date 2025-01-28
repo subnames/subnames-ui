@@ -24,9 +24,6 @@ module WagmiProvider = {
   external make: (~config: 'config, ~children: React.element) => React.element = "WagmiProvider"
 }
 
-@module("wagmi/chains")
-external koi: chain = "koi"
-
 module QueryClientProvider = {
   @module("@tanstack/react-query") @react.component
   external make: (~client: 'client, ~children: React.element) => React.element =
@@ -50,11 +47,11 @@ external lightTheme: themeParams => 'theme = "lightTheme"
 let queryClient = makeQueryClient()
 
 let transports = Map.make()
-transports->Map.set(koi.id, http())
+transports->Map.set(targetChain.id, http())
 let config = getDefaultConfig({
   "appName": "Subnames App",
   "projectId": "873f70fa626990b1ee3c14d55130a573",
-  "chains": [koi],
+  "chains": [targetChain],
   "transports": transports,
   "ssr": false,
 })

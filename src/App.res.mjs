@@ -7,8 +7,8 @@ import * as Profile from "./pages/Profile.res.mjs";
 import * as Constants from "./Constants.res.mjs";
 import * as NamesList from "./components/NamesList.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
+import * as Chains from "viem/chains";
 import * as SubnameInput from "./SubnameInput.res.mjs";
-import * as Chains from "wagmi/chains";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
@@ -19,12 +19,12 @@ var queryClient = new ReactQuery.QueryClient();
 
 var transports = new Map();
 
-transports.set(Chains.koi.id, Wagmi.http());
+transports.set(Chains.crab.id, Wagmi.http());
 
 var config = Rainbowkit.getDefaultConfig({
       appName: "Subnames App",
       projectId: "873f70fa626990b1ee3c14d55130a573",
-      chains: [Chains.koi],
+      chains: [Chains.crab],
       transports: transports,
       ssr: false
     });

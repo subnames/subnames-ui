@@ -12,7 +12,7 @@ type walletClient
 @module("viem") external encodePacked: (array<string>, array<string>) => string = "encodePacked"
 @module("viem") external custom: 'a => 'b = "custom"
 @module("viem") external encodeFunctionData: 'a => string = "encodeFunctionData"
-@module("viem/chains") external koi: 'chain = "koi"
+@module("viem/chains") external targetChain: 'chain = "crab"
 @module("viem/ens") external namehash: string => string = "namehash"
 
 @unboxed type argType = String(string) | Int(int) | BigInt(bigint) | Array(array<string>)
@@ -41,13 +41,13 @@ type transaction = {
 @module("./sha3.mjs") external sha3HexAddress: string => string = "default"
 
 let publicClient = createPublicClient({
-  "chain": koi,
+  "chain": targetChain,
   "transport": http(Constants.rpcUrl),
 })
 
 let buildWalletClient = () => {
   switch ethereum {
-  | Some(ethereum) => Some(createWalletClient({"chain": koi, "transport": custom(ethereum)}))
+  | Some(ethereum) => Some(createWalletClient({"chain": targetChain, "transport": custom(ethereum)}))
   | None => None
   }
 }
