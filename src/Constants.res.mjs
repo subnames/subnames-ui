@@ -3,15 +3,15 @@
 
 var sld = "darwinia.eth";
 
-var registryContractAddress = "0xE669D751d2C79EA11a947aDE15eFb2720D7a6F94";
+var registryContractAddress = "0xBe695aD687677B939ceE5dAf1B63f140698ea1E8";
 
-var controllerContractAddress = "0x93D6861691E658d0797a982E652Fc3015314913d";
+var controllerContractAddress = "0x017D8C573a54cc43e2D23EC8Fa756D92777c3217";
 
-var resolverContractAddress = "0x8669BC1898283A5fBa18BBe1dD86D96d6B6E6aEe";
+var resolverContractAddress = "0x4b74a4a9b88eF4cE5F9BB42e28e358974251BE63";
 
-var baseRegistrarContractAddress = "0xae6538b36E50c98bf776626ec845e2128486b7A3";
+var baseRegistrarContractAddress = "0xAFb5F12C5F379431253159fae464572999E78485";
 
-var reverseRegistrarContractAddress = "0x3173c3e608125226A0069ba75f8feb73b221974a";
+var reverseRegistrarContractAddress = "0xc4848453278116613F6CC1660BffAD5a4ac2182E";
 
 var rpcUrl = "https://crab-rpc.darwinia.network";
 

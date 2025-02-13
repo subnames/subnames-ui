@@ -343,7 +343,6 @@ module ViewProfile = {
     let (showDropdown, setShowDropdown) = React.useState(() => false)
     let (description, location, twitter, telegram, github, website, email, avatar) = profile
     let {primaryName} = NameContext.use()
-    Console.log2("avatar: ", avatar)
 
     let {name, expires} = switch primaryName {
     | Some(pn) => pn

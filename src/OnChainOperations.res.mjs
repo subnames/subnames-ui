@@ -532,7 +532,7 @@ async function setAddr(walletClient, name, a) {
   console.log("setAddr confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
-async function reclaim(walletClient, tokenId) {
+async function reclaim(walletClient, tokenId, newOwner) {
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
   var match = await OnChainOperationsCommon.publicClient.simulateContract({
         account: currentAddress,
@@ -556,7 +556,7 @@ async function reclaim(walletClient, tokenId) {
         functionName: "reclaim",
         args: [
           tokenId,
-          currentAddress
+          newOwner
         ]
       });
   var hash = await walletClient.writeContract(match.request);
@@ -612,7 +612,7 @@ async function safeTransferFrom(walletClient, from, to, tokenId) {
               }
             ],
             outputs: [],
-            stateMutability: "nonpayable"
+            stateMutability: "payable"
           }],
         functionName: "safeTransferFrom",
         args: [
@@ -632,9 +632,6 @@ async function transferSubname(walletClient, name, newOwner) {
   console.log("Transferring " + name + " to " + newOwner);
   var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
   var tokenId = BigInt(Viem.keccak256(name));
-  await setAddr(walletClient, name, newOwner);
-  await setName(walletClient, "");
-  await reclaim(walletClient, tokenId);
   return await safeTransferFrom(walletClient, currentAddress, Viem.getAddress(newOwner), tokenId);
 }
 

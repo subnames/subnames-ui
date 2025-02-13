@@ -118,24 +118,32 @@ let make = () => {
   }
 
   let buildSubnames = subnameObjs => {
-    Console.log(primaryName)
-    let current = primaryName->Option.getExn
-    let currentSubname = {
-      label: current.name,
-      name: current.name,
-      expires: current.expires,
-      owner: {id: account.address->Option.getExn},
-    }
     let result = subnameObjs->Array.map(buildSubname)
-    if result->Array.findIndex(subname => subname.name == current.name) == -1 {
-      result->Array.push(currentSubname)
-    }
+
+    primaryName
+    ->Option.map(c => {
+      {
+        label: c.name,
+        name: c.name,
+        expires: c.expires,
+        owner: {id: account.address->Option.getExn},
+      }
+    })
+    ->Option.map(current => {
+      if result->Array.findIndex(subname => subname.name == current.name) == -1 {
+        result->Array.push(current)
+      }
+      result
+    })
+    ->ignore
+
     result->Array.sort((a, b) => float(a.expires - b.expires))
+
     result
   }
 
-  React.useEffect2(() => {
-    if account.isConnected  && primaryName->Option.isSome {
+  React.useEffect1(() => {
+    if account.isConnected {
       let fetchNames = async () => {
         let address =
           account.address
@@ -155,6 +163,7 @@ let make = () => {
           }
         `
 
+        Console.log(query)
         let result = await GraphQLClient.makeRequest(~endpoint=Constants.indexerUrl, ~query, ())
 
         switch result {
@@ -170,7 +179,7 @@ let make = () => {
       fetchNames()->ignore
     }
     None
-  }, (account.isConnected, primaryName))
+  }, [account.isConnected])
 
   <>
     <div className="p-8">

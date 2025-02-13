@@ -406,7 +406,6 @@ function Profile$ViewProfile(props) {
   var setShowDropdown = match[1];
   var match$1 = NameContext.use();
   var primaryName = match$1.primaryName;
-  console.log("avatar: ", avatar);
   var match$2 = primaryName !== undefined ? primaryName : ({
         name: "",
         expires: 0

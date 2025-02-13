@@ -146,38 +146,37 @@ function NamesList(props) {
                     })), undefined);
   };
   var buildSubnames = function (subnameObjs) {
-    console.log(primaryName);
-    var current = Core__Option.getExn(primaryName, undefined);
-    var currentSubname_label = current.name;
-    var currentSubname_name = current.name;
-    var currentSubname_expires = current.expires;
-    var currentSubname_owner = {
-      id: Core__Option.getExn(account.address, undefined)
-    };
-    var currentSubname = {
-      label: currentSubname_label,
-      name: currentSubname_name,
-      expires: currentSubname_expires,
-      owner: currentSubname_owner
-    };
     var result = subnameObjs.map(buildSubname);
-    if (result.findIndex(function (subname) {
-            return subname.name === current.name;
-          }) === -1) {
-      result.push(currentSubname);
-    }
+    Core__Option.map(Core__Option.map(primaryName, (function (c) {
+                return {
+                        label: c.name,
+                        name: c.name,
+                        expires: c.expires,
+                        owner: {
+                          id: Core__Option.getExn(account.address, undefined)
+                        }
+                      };
+              })), (function (current) {
+            if (result.findIndex(function (subname) {
+                    return subname.name === current.name;
+                  }) === -1) {
+              result.push(current);
+            }
+            return result;
+          }));
     result.sort(function (a, b) {
           return a.expires - b.expires | 0;
         });
     return result;
   };
   React.useEffect((function () {
-          if (account.isConnected && Core__Option.isSome(primaryName)) {
+          if (account.isConnected) {
             var fetchNames = async function () {
               var address = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
                           return prim.toLowerCase();
                         })), "No address found");
               var query = "\n          query {\n            subnames(limit: 20, where: {owner: {id_eq: \"" + address + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
+              console.log(query);
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
               var exit = 0;
@@ -204,10 +203,7 @@ function NamesList(props) {
             fetchNames();
           }
           
-        }), [
-        account.isConnected,
-        primaryName
-      ]);
+        }), [account.isConnected]);
   return React.createElement(React.Fragment, {}, React.createElement("div", {
                   className: "p-8"
                 }, React.createElement("div", {

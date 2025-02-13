@@ -473,7 +473,7 @@ let setAddr = async (walletClient, name, a) => {
   Console.log(`setAddr confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
 
-let reclaim = async (walletClient, tokenId) => {
+let reclaim = async (walletClient, tokenId, newOwner) => {
   let currentAddress = await currentAddress(walletClient)
 
   let {request} = await simulateContract(
@@ -491,7 +491,7 @@ let reclaim = async (walletClient, tokenId) => {
         },
       ],
       "functionName": "reclaim",
-      "args": [BigInt(tokenId), String(currentAddress)],
+      "args": [BigInt(tokenId), String(newOwner)],
     },
   )
   let hash = await writeContract(walletClient, request)
@@ -538,7 +538,7 @@ let safeTransferFrom = async (walletClient, from, to, tokenId) => {
             {"name": "tokenId", "type": "uint256"},
           ],
           "outputs": [],
-          "stateMutability": "nonpayable",
+          "stateMutability": "payable",
         },
       ],
       "functionName": "safeTransferFrom",
@@ -555,9 +555,9 @@ let transferSubname = async (walletClient, name, newOwner) => {
   let currentAddress = await currentAddress(walletClient)
   let tokenId = BigInt.fromString(keccak256(name))
 
-  await setAddr(walletClient, name, newOwner)
-  await setName(walletClient, "")
-  await reclaim(walletClient, tokenId)
+  // await setAddr(walletClient, name, newOwner) // 
+  // await setName(walletClient, "")
+  // await reclaim(walletClient, tokenId, newOwner)
   await safeTransferFrom(walletClient, currentAddress, getAddress(newOwner), tokenId)
 }
 
