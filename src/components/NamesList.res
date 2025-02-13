@@ -152,7 +152,7 @@ let make = () => {
 
         let query = `
           query {
-            subnames(limit: 20, where: {owner: {id_eq: "${address}"}}) {
+            subnames(limit: 20, where: {reverseResolvedFrom: {id_eq: "${address}"}}) {
               label
               name
               expires
@@ -163,7 +163,7 @@ let make = () => {
           }
         `
 
-        Console.log(query)
+        // Console.log(query)
         let result = await GraphQLClient.makeRequest(~endpoint=Constants.indexerUrl, ~query, ())
 
         switch result {
@@ -201,7 +201,7 @@ let make = () => {
             onSuccess=handleTransferSuccess
           />
         | (None, None) =>
-          <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+          <div className="bg-white rounded-custom shadow-lg">
             <div className="p-8 py-6 border-b border-gray-200 relative">
               <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
               <div className="text-sm text-gray-500">
@@ -288,15 +288,19 @@ let make = () => {
                                     {React.string("Set primary")}
                                   </button>
                                 }}
-                                <button
-                                  type_="button"
-                                  onClick={_ => {
-                                    setShowTransferPanel(_ => Some(subname.name))
-                                    setActiveDropdown(_ => None)
-                                  }}
-                                  className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                  {React.string("Transfer")}
-                                </button>
+                                {switch primaryName {
+                                | Some({name}) if name == subname.name => React.null
+                                | _ =>
+                                  <button
+                                    type_="button"
+                                    onClick={_ => {
+                                      setShowTransferPanel(_ => Some(subname.name))
+                                      setActiveDropdown(_ => None)
+                                    }}
+                                    className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
+                                    {React.string("Transfer")}
+                                  </button>
+                                }}
                                 <button
                                   type_="button"
                                   onClick={_ => {

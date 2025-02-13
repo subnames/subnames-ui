@@ -175,8 +175,7 @@ function NamesList(props) {
               var address = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
                           return prim.toLowerCase();
                         })), "No address found");
-              var query = "\n          query {\n            subnames(limit: 20, where: {owner: {id_eq: \"" + address + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
-              console.log(query);
+              var query = "\n          query {\n            subnames(limit: 20, where: {reverseResolvedFrom: {id_eq: \"" + address + "\"}}) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n            }\n          }\n        ";
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
               var exit = 0;
@@ -229,7 +228,7 @@ function NamesList(props) {
                                   }),
                                 onSuccess: handleTransferSuccess
                               }) : React.createElement("div", {
-                                className: "bg-white rounded-custom shadow-lg overflow-hidden"
+                                className: "bg-white rounded-custom shadow-lg"
                               }, React.createElement("div", {
                                     className: "p-8 py-6 border-b border-gray-200 relative"
                                   }, React.createElement("h1", {
@@ -273,23 +272,33 @@ function NamesList(props) {
                                                               })
                                                           }, "Set primary");
                                                     }
+                                                    var tmp$2;
+                                                    var exit$1 = 0;
+                                                    if (primaryName !== undefined && primaryName.name === subname.name) {
+                                                      tmp$2 = null;
+                                                    } else {
+                                                      exit$1 = 1;
+                                                    }
+                                                    if (exit$1 === 1) {
+                                                      tmp$2 = React.createElement("button", {
+                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                            type: "button",
+                                                            onClick: (function (param) {
+                                                                setShowTransferPanel(function (param) {
+                                                                      return subname.name;
+                                                                    });
+                                                                setActiveDropdown(function (param) {
+                                                                      
+                                                                    });
+                                                              })
+                                                          }, "Transfer");
+                                                    }
                                                     tmp = React.createElement("div", {
                                                           ref: Caml_option.some(dropdownRef),
                                                           className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
                                                         }, React.createElement("div", {
                                                               className: "py-1"
-                                                            }, tmp$1, React.createElement("button", {
-                                                                  className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                  type: "button",
-                                                                  onClick: (function (param) {
-                                                                      setShowTransferPanel(function (param) {
-                                                                            return subname.name;
-                                                                          });
-                                                                      setActiveDropdown(function (param) {
-                                                                            
-                                                                          });
-                                                                    })
-                                                                }, "Transfer"), React.createElement("button", {
+                                                            }, tmp$1, tmp$2, React.createElement("button", {
                                                                   className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
                                                                   type: "button",
                                                                   onClick: (function (param) {
