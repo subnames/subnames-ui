@@ -75,6 +75,12 @@ function TransferPanel(props) {
       return ;
     }
     var walletClient = OnChainOperationsCommon.buildWalletClient();
+    var currentAddr = await OnChainOperationsCommon.currentAddress(walletClient);
+    var primaryName = await OnChainOperations.name(currentAddr);
+    if (primaryName === "") {
+      window.alert("You must set a primary subname before transferring.");
+      return ;
+    }
     setIsWaitingForConfirmation(function (param) {
           return true;
         });
@@ -92,8 +98,8 @@ function TransferPanel(props) {
               return 1;
             });
         updateStepStatus(1, "InProgress");
-        var primaryName = await OnChainOperations.name(currentAddress);
-        await OnChainOperations.setName(walletClient, primaryName);
+        var primaryName$1 = await OnChainOperations.name(currentAddress);
+        await OnChainOperations.setName(walletClient, primaryName$1);
         updateStepStatus(1, "Completed");
         setCurrentStep(function (param) {
               return 2;

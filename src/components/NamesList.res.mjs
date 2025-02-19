@@ -236,7 +236,7 @@ function NamesList(props) {
                                         className: "text-3xl font-bold text-gray-900"
                                       }, "Your Subnames"), React.createElement("div", {
                                         className: "text-sm text-gray-500"
-                                      }, "New name may take a while to appear"), React.createElement("button", {
+                                      }, "It may take a while to sync your subnames. "), React.createElement("button", {
                                         className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                         onClick: (function (param) {
                                             RescriptReactRouter.push("/");

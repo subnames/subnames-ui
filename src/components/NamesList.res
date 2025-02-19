@@ -211,7 +211,7 @@ let make = () => {
             <div className="p-8 py-6 border-b border-gray-200 relative">
               <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
               <div className="text-sm text-gray-500">
-                {React.string("New name may take a while to appear")}
+                {React.string("It may take a while to sync your subnames. ")}
               </div>
               <button
                 onClick={_ => RescriptReactRouter.push("/")}
