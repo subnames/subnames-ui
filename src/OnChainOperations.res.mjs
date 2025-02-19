@@ -628,13 +628,6 @@ async function safeTransferFrom(walletClient, from, to, tokenId) {
   console.log("transfer confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
-async function transferSubname(walletClient, name, newOwner) {
-  console.log("Transferring " + name + " to " + newOwner);
-  var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
-  var tokenId = BigInt(Viem.keccak256(name));
-  return await safeTransferFrom(walletClient, currentAddress, Viem.getAddress(newOwner), tokenId);
-}
-
 async function getText(name, key) {
   var node = Ens.namehash(name + "." + Constants.sld);
   var result = await OnChainOperationsCommon.publicClient.readContract({
@@ -693,7 +686,6 @@ export {
   reclaim ,
   setName ,
   safeTransferFrom ,
-  transferSubname ,
   getText ,
 }
 /* controllerContract Not a pure module */

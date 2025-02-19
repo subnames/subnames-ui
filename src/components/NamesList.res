@@ -152,18 +152,24 @@ let make = () => {
 
         let query = `
           query {
-            subnames(limit: 20, where: {reverseResolvedFrom: {id_eq: "${address}"}}) {
+            subnames(limit: 20, where: {
+              owner: {id_eq: "${address}"}
+              resolvedTo: {id_eq: "${address}"}
+            }) {
               label
               name
               expires
               owner {
                 id
               }
+              reverseResolvedFrom {
+                id
+              }
             }
           }
         `
 
-        // Console.log(query)
+        Console.log(query)
         let result = await GraphQLClient.makeRequest(~endpoint=Constants.indexerUrl, ~query, ())
 
         switch result {

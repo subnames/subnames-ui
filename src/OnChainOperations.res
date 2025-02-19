@@ -550,17 +550,6 @@ let safeTransferFrom = async (walletClient, from, to, tokenId) => {
   Console.log(`transfer confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
 }
 
-let transferSubname = async (walletClient, name, newOwner) => {
-  Console.log(`Transferring ${name} to ${newOwner}`)
-  let currentAddress = await currentAddress(walletClient)
-  let tokenId = BigInt.fromString(keccak256(name))
-
-  // await setAddr(walletClient, name, newOwner) // 
-  // await setName(walletClient, "")
-  // await reclaim(walletClient, tokenId, newOwner)
-  await safeTransferFrom(walletClient, currentAddress, getAddress(newOwner), tokenId)
-}
-
 let getText = async (name: string, key: string) => {
   let node = namehash(`${name}.${Constants.sld}`)
   let result = await readContract(

@@ -1,5 +1,10 @@
 open OnChainOperationsCommon
 
+type transferStep = {
+  label: string,
+  status: [#NotStarted | #InProgress | #Completed | #Failed]
+}
+
 @react.component
 let make = (
   ~name: string,
@@ -11,8 +16,28 @@ let make = (
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
   let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
   let (isReclaim, setIsReclaim) = React.useState(_ => false)
+  
+  let (currentStep, setCurrentStep) = React.useState(() => 0)
+  let (stepStatuses, setStepStatuses) = React.useState(() => [
+    {label: "Set Address", status: #NotStarted},
+    {label: "Set Name", status: #NotStarted},
+    {label: "Reclaim Token", status: #NotStarted},
+    {label: "Transfer Token", status: #NotStarted}
+  ])
 
-  let handleTransfer = () => {
+  let updateStepStatus = (index, status) => {
+    setStepStatuses(prev =>
+      prev->Belt.Array.mapWithIndex((i, step) =>
+        if i == index {
+          {...step, status}
+        } else {
+          step
+        }
+      )
+    )
+  }
+
+  let handleTransfer = async () => {
     if isWalletConnected {
       let walletClient = buildWalletClient()
       setIsWaitingForConfirmation(_ => true)
@@ -22,17 +47,44 @@ let make = (
         // OnChainOperations.reclaim(walletClient->Option.getUnsafe, tokenId)->ignore
       } else {
         Console.log(`Transferring ${name} to ${recipientAddress}`)
-        OnChainOperations.transferSubname(
-          walletClient->Option.getUnsafe,
-          name,
-          recipientAddress,
-        )->ignore
+        try {
+          let walletClient = walletClient->Option.getUnsafe
+          let currentAddress = await currentAddress(walletClient)
+          let tokenId = BigInt.fromString(keccak256(name))
+
+          updateStepStatus(0, #InProgress)
+          await OnChainOperations.setAddr(walletClient, name, recipientAddress)
+          updateStepStatus(0, #Completed)
+          setCurrentStep(_ => 1)
+
+          updateStepStatus(1, #InProgress)
+          let primaryName = await OnChainOperations.name(currentAddress)
+          await OnChainOperations.setName(walletClient, primaryName)
+          updateStepStatus(1, #Completed)
+          setCurrentStep(_ => 2)
+
+          updateStepStatus(2, #InProgress)
+          await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
+          updateStepStatus(2, #Completed)
+          setCurrentStep(_ => 3)
+
+          updateStepStatus(3, #InProgress)
+          await OnChainOperations.safeTransferFrom(walletClient, currentAddress, getAddress(recipientAddress), tokenId)
+          updateStepStatus(3, #Completed)
+          setCurrentStep(_ => 4)
+
+          onSuccess({
+            action: Types.Transfer,
+            newExpiryDate: None,
+          })
+        } catch {
+        | error => {
+            updateStepStatus(currentStep, #Failed)
+            Js.Console.error(error)
+          }
+        }
       }
       setIsWaitingForConfirmation(_ => false)
-      onSuccess({
-        action: Types.Transfer,
-        newExpiryDate: None,
-      })
     }
   }
 
@@ -72,7 +124,7 @@ let make = (
         </div>
       }}
       <button
-        onClick={_ => handleTransfer()}
+        onClick={_ => handleTransfer()->ignore}
         disabled={isWaitingForConfirmation || (!isReclaim && recipientAddress == "")}
         className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
         {React.string(
