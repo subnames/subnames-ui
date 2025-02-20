@@ -19,15 +19,8 @@ function ResultPanel(props) {
         break;
     case "Transfer" :
     case "Reclaim" :
-        throw {
-              RE_EXN_ID: "Match_failure",
-              _1: [
-                "ResultPanel.res",
-                10,
-                11
-              ],
-              Error: new Error()
-            };
+        tmp = null;
+        break;
     
   }
   return React.createElement("div", {

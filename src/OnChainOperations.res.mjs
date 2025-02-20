@@ -530,6 +530,7 @@ async function setAddr(walletClient, name, a) {
         hash: hash
       });
   console.log("setAddr confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+  return hash;
 }
 
 async function reclaim(walletClient, tokenId, newOwner) {
@@ -564,6 +565,7 @@ async function reclaim(walletClient, tokenId, newOwner) {
         hash: hash
       });
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+  return hash;
 }
 
 async function setName(walletClient, name) {
@@ -588,6 +590,7 @@ async function setName(walletClient, name) {
         hash: hash
       });
   console.log("setName confirmed in block " + match.blockNumber.toString() + ", status: " + match.status);
+  return hash;
 }
 
 async function safeTransferFrom(walletClient, from, to, tokenId) {
@@ -626,6 +629,7 @@ async function safeTransferFrom(walletClient, from, to, tokenId) {
         hash: hash
       });
   console.log("transfer confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
+  return hash;
 }
 
 async function getText(name, key) {

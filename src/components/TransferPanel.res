@@ -6,6 +6,52 @@ type window
 type transferStep = {
   label: string,
   status: [#NotStarted | #InProgress | #Completed | #Failed],
+  txHash: option<string>,
+}
+
+module StepProgress = {
+  @react.component
+  let make = (~steps: array<transferStep>, ~currentStep: int) => {
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white p-6 rounded-lg shadow-xl w-96">
+        <h3 className="text-lg font-semibold mb-4"> {React.string("Transfer Progress")} </h3>
+        <div className="space-y-4">
+          {steps
+          ->Belt.Array.mapWithIndex((index, step) => {
+            let statusColor = switch step.status {
+            | #NotStarted => "text-gray-400"
+            | #InProgress => "text-blue-500"
+            | #Completed => "text-green-500"
+            | #Failed => "text-red-500"
+            }
+            let statusIcon = switch step.status {
+            | #NotStarted => "⚪"
+            | #InProgress => "🔄"
+            | #Completed => "✅"
+            | #Failed => "❌"
+            }
+            <div key={Belt.Int.toString(index)} className="flex items-center gap-3">
+              <div className={`${statusColor}`}> {React.string(statusIcon)} </div>
+              <div className="flex-1 space-y-1">
+                <div className={`font-medium ${statusColor}`}> {React.string(step.label)} </div>
+                {switch (step.status, step.txHash) {
+                | (#Completed, Some(hash)) =>
+                  <a
+                    href={`https://sepolia.etherscan.io/tx/${hash}`}
+                    target="_blank"
+                    className="text-xs text-blue-500 hover:text-blue-700 truncate block">
+                    {React.string(hash)}
+                  </a>
+                | _ => React.null
+                }}
+              </div>
+            </div>
+          })
+          ->React.array}
+        </div>
+      </div>
+    </div>
+  }
 }
 
 @react.component
@@ -22,17 +68,17 @@ let make = (
 
   let (currentStep, setCurrentStep) = React.useState(() => 0)
   let (stepStatuses, setStepStatuses) = React.useState(() => [
-    {label: "Set Address", status: #NotStarted},
-    {label: "Set Name", status: #NotStarted},
-    {label: "Reclaim Token", status: #NotStarted},
-    {label: "Transfer Token", status: #NotStarted},
+    {label: "Set Address", status: #NotStarted, txHash: None},
+    {label: "Set Name", status: #NotStarted, txHash: None},
+    {label: "Reclaim Token", status: #NotStarted, txHash: None},
+    {label: "Transfer Token", status: #NotStarted, txHash: None},
   ])
 
-  let updateStepStatus = (index, status) => {
+  let updateStepStatus = (index, status, ~txHash=None) => {
     setStepStatuses(prev =>
       prev->Belt.Array.mapWithIndex((i, step) =>
         if i == index {
-          {...step, status}
+          {...step, status, txHash}
         } else {
           step
         }
@@ -63,29 +109,29 @@ let make = (
             let tokenId = BigInt.fromString(keccak256(name))
 
             updateStepStatus(0, #InProgress)
-            await OnChainOperations.setAddr(walletClient, name, recipientAddress)
-            updateStepStatus(0, #Completed)
+            let hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress)
+            updateStepStatus(0, #Completed, ~txHash=Some(hash))
             setCurrentStep(_ => 1)
 
             updateStepStatus(1, #InProgress)
             let primaryName = await OnChainOperations.name(currentAddress)
-            await OnChainOperations.setName(walletClient, primaryName)
-            updateStepStatus(1, #Completed)
+            let hash2 = await OnChainOperations.setName(walletClient, primaryName)
+            updateStepStatus(1, #Completed, ~txHash=Some(hash2))
             setCurrentStep(_ => 2)
 
             updateStepStatus(2, #InProgress)
-            await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
-            updateStepStatus(2, #Completed)
+            let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
+            updateStepStatus(2, #Completed, ~txHash=Some(hash3))
             setCurrentStep(_ => 3)
 
             updateStepStatus(3, #InProgress)
-            await OnChainOperations.safeTransferFrom(
+            let hash4 = await OnChainOperations.safeTransferFrom(
               walletClient,
               currentAddress,
               getAddress(recipientAddress),
               tokenId,
             )
-            updateStepStatus(3, #Completed)
+            updateStepStatus(3, #Completed, ~txHash=Some(hash4))
             setCurrentStep(_ => 4)
 
             onSuccess({
@@ -104,7 +150,13 @@ let make = (
     }
   }
 
-  <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+  <>
+    {if isWaitingForConfirmation {
+      <StepProgress steps=stepStatuses currentStep />
+    } else {
+      React.null
+    }}
+    <div className="bg-white rounded-custom shadow-lg overflow-hidden">
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center gap-3">
@@ -149,4 +201,5 @@ let make = (
       </button>
     </div>
   </div>
+  </>
 }

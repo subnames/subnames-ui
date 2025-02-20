@@ -10,6 +10,7 @@ let make = (~name: string, ~onRegisterAnother: unit => unit, ~actionResult: Type
           {switch actionResult.action {
           | Types.Register => React.string("Registration Successful!")
           | Types.Extend => React.string("Extension Successful!")
+          | _ => React.null
           }}
         </h2>
         <div className="text-lg text-gray-700 mb-6">

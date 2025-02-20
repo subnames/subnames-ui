@@ -471,6 +471,7 @@ let setAddr = async (walletClient, name, a) => {
   let hash = await writeContract(walletClient, setAddrRequest)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`setAddr confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  hash
 }
 
 let reclaim = async (walletClient, tokenId, newOwner) => {
@@ -497,6 +498,7 @@ let reclaim = async (walletClient, tokenId, newOwner) => {
   let hash = await writeContract(walletClient, request)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  hash
 }
 
 let setName = async (walletClient, name) => {
@@ -520,6 +522,7 @@ let setName = async (walletClient, name) => {
 
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`setName confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  hash
 }
 
 let safeTransferFrom = async (walletClient, from, to, tokenId) => {
@@ -548,6 +551,7 @@ let safeTransferFrom = async (walletClient, from, to, tokenId) => {
   let hash = await writeContract(walletClient, transferRequest)
   let {blockNumber, status} = await waitForTransactionReceipt(publicClient, {"hash": hash})
   Console.log(`transfer confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  hash
 }
 
 let getText = async (name: string, key: string) => {
