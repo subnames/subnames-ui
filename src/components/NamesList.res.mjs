@@ -249,115 +249,131 @@ function NamesList(props) {
                                             })) : (
                                       names.length === 0 ? React.createElement("div", {
                                               className: "text-center py-4 text-gray-500"
-                                            }, "You don't have any subnames yet") : React.createElement("div", {
-                                              className: "py-1"
-                                            }, names.map(function (subname, index) {
-                                                  var tmp;
-                                                  if (Caml_obj.equal(activeDropdown, subname.name)) {
-                                                    var tmp$1;
-                                                    var exit = 0;
-                                                    if (primaryName !== undefined && primaryName.name === subname.name) {
-                                                      tmp$1 = null;
-                                                    } else {
-                                                      exit = 1;
-                                                    }
-                                                    if (exit === 1) {
-                                                      tmp$1 = React.createElement("button", {
-                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                            type: "button",
-                                                            onClick: (function (param) {
-                                                                setPrimary(subname.name);
-                                                                setActiveDropdown(function (param) {
-                                                                      
-                                                                    });
-                                                              })
-                                                          }, "Set primary");
-                                                    }
-                                                    var tmp$2;
-                                                    var exit$1 = 0;
-                                                    if (primaryName !== undefined && primaryName.name === subname.name) {
-                                                      tmp$2 = null;
-                                                    } else {
-                                                      exit$1 = 1;
-                                                    }
-                                                    if (exit$1 === 1) {
-                                                      tmp$2 = React.createElement("button", {
-                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                            type: "button",
-                                                            onClick: (function (param) {
-                                                                setShowTransferPanel(function (param) {
-                                                                      return subname.name;
-                                                                    });
-                                                                setActiveDropdown(function (param) {
-                                                                      
-                                                                    });
-                                                              })
-                                                          }, "Transfer");
-                                                    }
-                                                    tmp = React.createElement("div", {
-                                                          ref: Caml_option.some(dropdownRef),
-                                                          className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
-                                                        }, React.createElement("div", {
-                                                              className: "py-1"
-                                                            }, tmp$1, tmp$2, React.createElement("button", {
-                                                                  className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                  type: "button",
-                                                                  onClick: (function (param) {
-                                                                      setShowExtendPanel(function (param) {
-                                                                            return subname.name;
-                                                                          });
-                                                                      setActiveDropdown(function (param) {
-                                                                            
-                                                                          });
-                                                                    })
-                                                                }, "Extend")));
-                                                  } else {
-                                                    tmp = null;
-                                                  }
-                                                  return React.createElement("div", {
-                                                              key: subname.name
+                                            }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
+                                                  className: "border-b border-gray-200"
+                                                }, primaryName !== undefined ? null : React.createElement("div", {
+                                                        className: "px-8 py-4 bg-yellow-50"
+                                                      }, React.createElement("div", {
+                                                            className: "flex items-center gap-3"
+                                                          }, React.createElement("div", {
+                                                                className: "text-yellow-700"
+                                                              }, React.createElement("svg", {
+                                                                    className: "w-5 h-5",
+                                                                    fill: "currentColor",
+                                                                    viewBox: "0 0 24 24",
+                                                                    xmlns: "http://www.w3.org/2000/svg"
+                                                                  }, React.createElement("path", {
+                                                                        clipRule: "evenodd",
+                                                                        d: "M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z",
+                                                                        fillRule: "evenodd"
+                                                                      }))), React.createElement("div", {
+                                                                className: "text-sm text-yellow-700"
+                                                              }, "You need to set a primary subname to enable transfers. Click 'Set primary' in the dropdown menu of any subname.")))), React.createElement("div", {
+                                                  className: "py-1"
+                                                }, names.map(function (subname, index) {
+                                                      var tmp;
+                                                      if (Caml_obj.equal(activeDropdown, subname.name)) {
+                                                        var tmp$1;
+                                                        var exit = 0;
+                                                        if (primaryName !== undefined && primaryName.name === subname.name) {
+                                                          tmp$1 = null;
+                                                        } else {
+                                                          exit = 1;
+                                                        }
+                                                        if (exit === 1) {
+                                                          tmp$1 = React.createElement("button", {
+                                                                className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                type: "button",
+                                                                onClick: (function (param) {
+                                                                    setPrimary(subname.name);
+                                                                    setActiveDropdown(function (param) {
+                                                                          
+                                                                        });
+                                                                  })
+                                                              }, "Set primary");
+                                                        }
+                                                        tmp = React.createElement("div", {
+                                                              ref: Caml_option.some(dropdownRef),
+                                                              className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
                                                             }, React.createElement("div", {
-                                                                  className: "px-8 py-6"
+                                                                  className: "py-1"
+                                                                }, tmp$1, primaryName !== undefined ? (
+                                                                    primaryName.name === subname.name ? null : React.createElement("button", {
+                                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                            type: "button",
+                                                                            onClick: (function (param) {
+                                                                                setShowTransferPanel(function (param) {
+                                                                                      return subname.name;
+                                                                                    });
+                                                                                setActiveDropdown(function (param) {
+                                                                                      
+                                                                                    });
+                                                                              })
+                                                                          }, "Transfer")
+                                                                  ) : React.createElement("button", {
+                                                                        className: "block w-full px-4 py-2.5 text-sm text-gray-400 cursor-not-allowed text-left",
+                                                                        title: "Set a primary subname first",
+                                                                        disabled: true,
+                                                                        type: "button"
+                                                                      }, "Transfer"), React.createElement("button", {
+                                                                      className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                      type: "button",
+                                                                      onClick: (function (param) {
+                                                                          setShowExtendPanel(function (param) {
+                                                                                return subname.name;
+                                                                              });
+                                                                          setActiveDropdown(function (param) {
+                                                                                
+                                                                              });
+                                                                        })
+                                                                    }, "Extend")));
+                                                      } else {
+                                                        tmp = null;
+                                                      }
+                                                      return React.createElement("div", {
+                                                                  key: subname.name
                                                                 }, React.createElement("div", {
-                                                                      className: "flex items-center justify-between"
-                                                                    }, React.createElement("div", undefined, React.createElement("div", {
-                                                                              className: "flex items-center gap-2"
-                                                                            }, React.createElement("p", {
-                                                                                  className: "text-gray-800"
-                                                                                }, React.createElement(React.Fragment, {}, React.createElement("span", {
-                                                                                          className: "font-bold"
-                                                                                        }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName.name === subname.name ? React.createElement("span", {
-                                                                                    className: "px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium"
-                                                                                  }, "Primary") : null), React.createElement("p", {
-                                                                              className: "text-xs text-gray-400 mt-1"
-                                                                            }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
-                                                                          className: "relative"
-                                                                        }, React.createElement("button", {
-                                                                              className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
-                                                                              type: "button",
-                                                                              onClick: (function (param) {
-                                                                                  setActiveDropdown(function (current) {
-                                                                                        if (Caml_obj.equal(current, subname.name)) {
-                                                                                          return ;
-                                                                                        } else {
-                                                                                          return subname.name;
-                                                                                        }
-                                                                                      });
-                                                                                })
-                                                                            }, React.createElement("svg", {
-                                                                                  className: "w-5 h-5",
-                                                                                  fill: "none",
-                                                                                  stroke: "currentColor",
-                                                                                  viewBox: "0 0 24 24"
-                                                                                }, React.createElement("path", {
-                                                                                      d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
-                                                                                      strokeLinecap: "round",
-                                                                                      strokeLinejoin: "round",
-                                                                                      strokeWidth: "2"
-                                                                                    }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
-                                                                    className: "border-b border-gray-200 mx-6"
-                                                                  }) : null);
-                                                }))
+                                                                      className: "px-8 py-6"
+                                                                    }, React.createElement("div", {
+                                                                          className: "flex items-center justify-between"
+                                                                        }, React.createElement("div", undefined, React.createElement("div", {
+                                                                                  className: "flex items-center gap-2"
+                                                                                }, React.createElement("p", {
+                                                                                      className: "text-gray-800"
+                                                                                    }, React.createElement(React.Fragment, {}, React.createElement("span", {
+                                                                                              className: "font-bold"
+                                                                                            }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName.name === subname.name ? React.createElement("span", {
+                                                                                        className: "px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium"
+                                                                                      }, "Primary") : null), React.createElement("p", {
+                                                                                  className: "text-xs text-gray-400 mt-1"
+                                                                                }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
+                                                                              className: "relative"
+                                                                            }, React.createElement("button", {
+                                                                                  className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
+                                                                                  type: "button",
+                                                                                  onClick: (function (param) {
+                                                                                      setActiveDropdown(function (current) {
+                                                                                            if (Caml_obj.equal(current, subname.name)) {
+                                                                                              return ;
+                                                                                            } else {
+                                                                                              return subname.name;
+                                                                                            }
+                                                                                          });
+                                                                                    })
+                                                                                }, React.createElement("svg", {
+                                                                                      className: "w-5 h-5",
+                                                                                      fill: "none",
+                                                                                      stroke: "currentColor",
+                                                                                      viewBox: "0 0 24 24"
+                                                                                    }, React.createElement("path", {
+                                                                                          d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
+                                                                                          strokeLinecap: "round",
+                                                                                          strokeLinejoin: "round",
+                                                                                          strokeWidth: "2"
+                                                                                        }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
+                                                                        className: "border-b border-gray-200 mx-6"
+                                                                      }) : null);
+                                                    })))
                                     )
                                 ) : React.createElement("div", {
                                       className: "text-center py-4 text-gray-500"
