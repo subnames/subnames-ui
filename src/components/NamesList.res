@@ -235,10 +235,10 @@ let make = () => {
               </div>
             } else {
               <div>
-                <div className="border-b border-gray-200">
+                <div>
                   {switch primaryName {
                   | None =>
-                    <div className="px-8 py-4 bg-yellow-50">
+                    <div className="px-8 py-4 bg-yellow-50 border-b border-gray-200">
                       <div className="flex items-center gap-3">
                         <div className="text-yellow-700">
                           <svg

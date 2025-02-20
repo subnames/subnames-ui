@@ -249,10 +249,8 @@ function NamesList(props) {
                                             })) : (
                                       names.length === 0 ? React.createElement("div", {
                                               className: "text-center py-4 text-gray-500"
-                                            }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
-                                                  className: "border-b border-gray-200"
-                                                }, primaryName !== undefined ? null : React.createElement("div", {
-                                                        className: "px-8 py-4 bg-yellow-50"
+                                            }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", undefined, primaryName !== undefined ? null : React.createElement("div", {
+                                                        className: "px-8 py-4 bg-yellow-50 border-b border-gray-200"
                                                       }, React.createElement("div", {
                                                             className: "flex items-center gap-3"
                                                           }, React.createElement("div", {
