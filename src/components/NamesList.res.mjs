@@ -175,7 +175,7 @@ function NamesList(props) {
               var address = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
                           return prim.toLowerCase();
                         })), "No address found");
-              var query = "\n          query {\n            subnames(limit: 20, where: {\n              owner: {id_eq: \"" + address + "\"}\n              resolvedTo: {id_eq: \"" + address + "\"}\n            }) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n              reverseResolvedFrom {\n                id\n              }\n            }\n          }\n        ";
+              var query = "\n          query {\n            subnames(where: {\n              owner: {id_eq: \"" + address + "\"}, \n              OR: {\n                resolvedTo: {id_eq: \"" + address + "\"}, \n                OR: {\n                  reverseResolvedFrom: {id_eq: \"" + address + "\"}\n                }\n              }\n            }) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n              resolvedTo {\n                id\n              }\n              reverseResolvedFrom {\n                id\n              }\n            }\n          }\n        ";
               console.log(query);
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
@@ -249,24 +249,7 @@ function NamesList(props) {
                                             })) : (
                                       names.length === 0 ? React.createElement("div", {
                                               className: "text-center py-4 text-gray-500"
-                                            }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", undefined, primaryName !== undefined ? null : React.createElement("div", {
-                                                        className: "px-8 py-4 bg-yellow-50 border-b border-gray-200"
-                                                      }, React.createElement("div", {
-                                                            className: "flex items-center gap-3"
-                                                          }, React.createElement("div", {
-                                                                className: "text-yellow-700"
-                                                              }, React.createElement("svg", {
-                                                                    className: "w-5 h-5",
-                                                                    fill: "currentColor",
-                                                                    viewBox: "0 0 24 24",
-                                                                    xmlns: "http://www.w3.org/2000/svg"
-                                                                  }, React.createElement("path", {
-                                                                        clipRule: "evenodd",
-                                                                        d: "M9.401 3.003c1.155-2 4.043-2 5.197 0l7.355 12.748c1.154 2-.29 4.5-2.599 4.5H4.645c-2.309 0-3.752-2.5-2.598-4.5L9.4 3.003zM12 8.25a.75.75 0 01.75.75v3.75a.75.75 0 01-1.5 0V9a.75.75 0 01.75-.75zm0 8.25a.75.75 0 100-1.5.75.75 0 000 1.5z",
-                                                                        fillRule: "evenodd"
-                                                                      }))), React.createElement("div", {
-                                                                className: "text-sm text-yellow-700"
-                                                              }, "You need to set a primary subname to enable transfers. Click 'Set primary' in the dropdown menu of any subname.")))), React.createElement("div", {
+                                            }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
                                                   className: "py-1"
                                                 }, names.map(function (subname, index) {
                                                       var tmp;

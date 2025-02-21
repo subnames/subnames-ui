@@ -114,8 +114,8 @@ let make = (
             setCurrentStep(_ => 1)
 
             updateStepStatus(1, #InProgress)
-            let primaryName = await OnChainOperations.name(currentAddress)
-            let hash2 = await OnChainOperations.setName(walletClient, primaryName)
+            // let primaryName = await OnChainOperations.name(currentAddress)
+            let hash2 = await OnChainOperations.setName(walletClient, "")
             updateStepStatus(1, #Completed, ~txHash=Some(hash2))
             setCurrentStep(_ => 2)
 

@@ -150,8 +150,7 @@ function TransferPanel(props) {
               return 1;
             });
         updateStepStatus(1, "InProgress", undefined);
-        var primaryName$1 = await OnChainOperations.name(currentAddress);
-        var hash2 = await OnChainOperations.setName(walletClient, primaryName$1);
+        var hash2 = await OnChainOperations.setName(walletClient, "");
         updateStepStatus(1, "Completed", Caml_option.some(hash2));
         setCurrentStep(function (param) {
               return 2;
