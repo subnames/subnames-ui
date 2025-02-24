@@ -131,7 +131,8 @@ let make = () => {
       let owner: owner = getObjectExn(obj, "owner", o => {id: getStringExn(o, "id")})
       let reverseResolvedFrom: option<owner> = getObject(obj, "reverseResolvedFrom", o => {id: getStringExn(o, "id")})
 
-      {label, name, expires, owner, resolvedTo, reverseResolvedFrom, underTransfer: resolvedTo.id !== currentAddress->Option.getExn}
+      let currentAddressLowercase = currentAddress->Option.map(String.toLowerCase)->Option.getExn
+      {label, name, expires, owner, resolvedTo, reverseResolvedFrom, underTransfer: resolvedTo.id !== currentAddressLowercase}
     })
     ->Option.getExn
   }
@@ -298,29 +299,43 @@ let make = () => {
                                 ref={ReactDOM.Ref.domRef(dropdownRef)}
                                 className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50">
                                 <div className="py-1">
-                                  {switch primaryName {
-                                  | Some({name}) if name == subname.name => React.null
-                                  | _ =>
-                                    <button
-                                      type_="button"
-                                      onClick={_ => {
-                                        setPrimary(subname.name)->ignore
-                                        setActiveDropdown(_ => None)
+                                  {
+                                    if !subname.underTransfer {
+                                      <>
+                                      // Set primary
+                                      {switch primaryName {
+                                      | Some({name}) if name == subname.name => React.null
+                                      | _ =>
+                                        <button
+                                          type_="button"
+                                          onClick={_ => {
+                                            setPrimary(subname.name)->ignore
+                                            setActiveDropdown(_ => None)
+                                          }}
+                                          className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
+                                          {React.string("Set primary")}
+                                        </button>
                                       }}
-                                      className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                      {React.string("Set primary")}
-                                    </button>
-                                  }}
+
+                                      // Extend
+                                      <button
+                                        type_="button"
+                                        onClick={_ => {
+                                          setShowExtendPanel(_ => Some(subname.name))
+                                          setActiveDropdown(_ => None)
+                                        }}
+                                        className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
+                                        {React.string("Extend")}
+                                      </button>
+                                      </>
+                                    } else {
+                                      React.null
+                                    }
+                                  }
+
+                                  // Transfer
                                   {switch primaryName {
                                   | Some({name}) if name == subname.name => React.null
-                                  | None =>
-                                    <button
-                                      type_="button"
-                                      disabled=true
-                                      className="block w-full px-4 py-2.5 text-sm text-gray-400 cursor-not-allowed text-left"
-                                      title="Set a primary subname first">
-                                      {React.string("Transfer")}
-                                    </button>
                                   | Some(_) =>
                                     <button
                                       type_="button"
@@ -331,16 +346,9 @@ let make = () => {
                                       className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                       {React.string("Transfer")}
                                     </button>
+                                  | None => React.null
                                   }}
-                                  <button
-                                    type_="button"
-                                    onClick={_ => {
-                                      setShowExtendPanel(_ => Some(subname.name))
-                                      setActiveDropdown(_ => None)
-                                    }}
-                                    className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                    {React.string("Extend")}
-                                  </button>
+
                                 </div>
                               </div>
                             } else {

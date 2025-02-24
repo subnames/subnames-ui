@@ -163,6 +163,9 @@ function NamesList(props) {
                                       id: Utils.getStringExn(o, "id")
                                     };
                             }));
+                      var currentAddressLowercase = Core__Option.getExn(Core__Option.map(currentAddress, (function (prim) {
+                                  return prim.toLowerCase();
+                                })), undefined);
                       return {
                               label: label,
                               name: name,
@@ -170,7 +173,7 @@ function NamesList(props) {
                               resolvedTo: resolvedTo,
                               owner: owner,
                               reverseResolvedFrom: reverseResolvedFrom,
-                              underTransfer: resolvedTo.id !== Core__Option.getExn(currentAddress, undefined)
+                              underTransfer: resolvedTo.id !== currentAddressLowercase
                             };
                     })), undefined);
   };
@@ -266,59 +269,58 @@ function NamesList(props) {
                                                       var tmp;
                                                       if (Caml_obj.equal(activeDropdown, subname.name)) {
                                                         var tmp$1;
-                                                        var exit = 0;
-                                                        if (primaryName !== undefined && primaryName.name === subname.name) {
+                                                        if (subname.underTransfer) {
                                                           tmp$1 = null;
                                                         } else {
-                                                          exit = 1;
-                                                        }
-                                                        if (exit === 1) {
-                                                          tmp$1 = React.createElement("button", {
-                                                                className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                type: "button",
-                                                                onClick: (function (param) {
-                                                                    setPrimary(subname.name);
-                                                                    setActiveDropdown(function (param) {
-                                                                          
-                                                                        });
-                                                                  })
-                                                              }, "Set primary");
+                                                          var tmp$2;
+                                                          var exit = 0;
+                                                          if (primaryName !== undefined && primaryName.name === subname.name) {
+                                                            tmp$2 = null;
+                                                          } else {
+                                                            exit = 1;
+                                                          }
+                                                          if (exit === 1) {
+                                                            tmp$2 = React.createElement("button", {
+                                                                  className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                  type: "button",
+                                                                  onClick: (function (param) {
+                                                                      setPrimary(subname.name);
+                                                                      setActiveDropdown(function (param) {
+                                                                            
+                                                                          });
+                                                                    })
+                                                                }, "Set primary");
+                                                          }
+                                                          tmp$1 = React.createElement(React.Fragment, {}, tmp$2, React.createElement("button", {
+                                                                    className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                    type: "button",
+                                                                    onClick: (function (param) {
+                                                                        setShowExtendPanel(function (param) {
+                                                                              return subname.name;
+                                                                            });
+                                                                        setActiveDropdown(function (param) {
+                                                                              
+                                                                            });
+                                                                      })
+                                                                  }, "Extend"));
                                                         }
                                                         tmp = React.createElement("div", {
                                                               ref: Caml_option.some(dropdownRef),
                                                               className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
                                                             }, React.createElement("div", {
                                                                   className: "py-1"
-                                                                }, tmp$1, primaryName !== undefined ? (
-                                                                    primaryName.name === subname.name ? null : React.createElement("button", {
-                                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                            type: "button",
-                                                                            onClick: (function (param) {
-                                                                                setShowTransferPanel(function (param) {
-                                                                                      return subname.name;
-                                                                                    });
-                                                                                setActiveDropdown(function (param) {
-                                                                                      
-                                                                                    });
-                                                                              })
-                                                                          }, "Transfer")
-                                                                  ) : React.createElement("button", {
-                                                                        className: "block w-full px-4 py-2.5 text-sm text-gray-400 cursor-not-allowed text-left",
-                                                                        title: "Set a primary subname first",
-                                                                        disabled: true,
-                                                                        type: "button"
-                                                                      }, "Transfer"), React.createElement("button", {
-                                                                      className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                      type: "button",
-                                                                      onClick: (function (param) {
-                                                                          setShowExtendPanel(function (param) {
-                                                                                return subname.name;
-                                                                              });
-                                                                          setActiveDropdown(function (param) {
-                                                                                
-                                                                              });
-                                                                        })
-                                                                    }, "Extend")));
+                                                                }, tmp$1, primaryName !== undefined && primaryName.name !== subname.name ? React.createElement("button", {
+                                                                        className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                                        type: "button",
+                                                                        onClick: (function (param) {
+                                                                            setShowTransferPanel(function (param) {
+                                                                                  return subname.name;
+                                                                                });
+                                                                            setActiveDropdown(function (param) {
+                                                                                  
+                                                                                });
+                                                                          })
+                                                                      }, "Transfer") : null));
                                                       } else {
                                                         tmp = null;
                                                       }
