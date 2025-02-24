@@ -373,7 +373,7 @@ let make = () => {
     </div>
     {if settingPrimaryName || Option.isSome(showTransferPanel) || Option.isSome(showExtendPanel) {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-lg shadow-xl">
+        <div className="bg-white rounded-custom shadow-xl">
           {if settingPrimaryName {
             <div className="flex items-center gap-3">
               <div

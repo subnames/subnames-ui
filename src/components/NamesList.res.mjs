@@ -261,7 +261,7 @@ function NamesList(props) {
     tmp = React.createElement("div", {
           className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         }, React.createElement("div", {
-              className: "bg-white rounded-lg shadow-xl"
+              className: "bg-white rounded-custom shadow-xl"
             }, tmp$1));
   } else {
     tmp = null;
