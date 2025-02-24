@@ -370,34 +370,37 @@ let make = () => {
           }}
         </div>
       </div>
-      {switch (showExtendPanel, showTransferPanel) {
-      | (Some(name), _) =>
-        <RegisterExtendPanel
-          name
-          isWalletConnected=account.isConnected
-          onBack={() => setShowExtendPanel(_ => None)}
-          onSuccess=handleExtendSuccess
-          action={Types.Extend}
-        />
-      | (_, Some(name)) =>
-        <TransferPanel
-          name
-          isWalletConnected=account.isConnected
-          onBack={() => setShowTransferPanel(_ => None)}
-          onSuccess=handleTransferSuccess
-        />
-      | (None, None) => React.null
-      }}
     </div>
-    {if settingPrimaryName {
+    {if settingPrimaryName || Option.isSome(showTransferPanel) || Option.isSome(showExtendPanel) {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white p-6 rounded-lg shadow-xl">
-          <div className="flex items-center gap-3">
-            <div
-              className="animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
+        <div className="bg-white rounded-lg shadow-xl">
+          {if settingPrimaryName {
+            <div className="flex items-center gap-3">
+              <div
+                className="animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
+              />
+              <p className="text-gray-900"> {React.string("Setting primary name...")} </p>
+            </div>
+          } else if Option.isSome(showTransferPanel) {
+            let name = showTransferPanel->Option.getExn
+            <TransferPanel
+              name
+              isWalletConnected=account.isConnected
+              onBack={() => setShowTransferPanel(_ => None)}
+              onSuccess=handleTransferSuccess
             />
-            <p className="text-gray-900"> {React.string("Setting primary name...")} </p>
-          </div>
+          } else if Option.isSome(showExtendPanel) {
+            let name = showExtendPanel->Option.getExn
+            <RegisterExtendPanel
+              name
+              isWalletConnected=account.isConnected
+              onBack={() => setShowExtendPanel(_ => None)}
+              onSuccess=handleExtendSuccess
+              action={Types.Extend}
+            />
+          } else {
+            React.null
+          }}
         </div>
       </div>
     } else {

@@ -152,16 +152,12 @@ let make = (
 
   <>
     <div className="fixed inset-0 flex items-center justify-center z-40">
-      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={_ => onBack()} />
+      <div className="fixed inset-0 bg-black bg-opacity-50" />
       {if isWaitingForConfirmation {
-        <div className="fixed inset-0 flex items-center justify-center z-50">
-          <StepProgress steps=stepStatuses currentStep />
-        </div>
+        <StepProgress steps=stepStatuses currentStep />
       } else {
-        React.null
-      }}
-    </div>
-      <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4 mt-8">
+        <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
+
         <div className="p-4 sm:p-6 max-w-2xl mx-auto">
           <div className="flex justify-between items-center mb-8">
             <div className="flex items-center gap-3">
@@ -206,5 +202,7 @@ let make = (
       </button>
     </div>
   </div>
+      }}
+    </div>
   </>
 }

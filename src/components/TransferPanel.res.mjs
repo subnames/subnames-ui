@@ -182,59 +182,56 @@ function TransferPanel(props) {
                 return false;
               });
   };
-  return React.createElement(React.Fragment, {}, React.createElement("div", {
-                  className: "fixed inset-0 flex items-center justify-center z-40"
-                }, React.createElement("div", {
-                      className: "fixed inset-0 bg-black bg-opacity-50",
-                      onClick: (function (param) {
-                          onBack();
-                        })
-                    }), isWaitingForConfirmation ? React.createElement("div", {
-                        className: "fixed inset-0 flex items-center justify-center z-50"
-                      }, React.createElement(TransferPanel$StepProgress, {
-                            steps: match$4[0],
-                            currentStep: currentStep
-                          })) : null), React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4 mt-8"
-                }, React.createElement("div", {
-                      className: "p-4 sm:p-6 max-w-2xl mx-auto"
-                    }, React.createElement("div", {
-                          className: "flex justify-between items-center mb-8"
-                        }, React.createElement("div", {
-                              className: "flex items-center gap-3"
-                            }, React.createElement("button", {
-                                  className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
-                                  type: "button",
-                                  onClick: (function (param) {
-                                      onBack();
-                                    })
+  return React.createElement(React.Fragment, {
+              children: Caml_option.some(React.createElement("div", {
+                        className: "fixed inset-0 flex items-center justify-center z-40"
+                      }, React.createElement("div", {
+                            className: "fixed inset-0 bg-black bg-opacity-50"
+                          }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
+                              steps: match$4[0],
+                              currentStep: currentStep
+                            }) : React.createElement("div", {
+                              className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
+                            }, React.createElement("div", {
+                                  className: "p-4 sm:p-6 max-w-2xl mx-auto"
                                 }, React.createElement("div", {
-                                      className: "w-6 h-6 text-gray-600"
-                                    }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
-                                  className: "text-xl font-semibold text-gray-900"
-                                }, isReclaim ? "Reclaim Subname" : "Transfer Subname"))), isReclaim ? React.createElement("div", {
-                            className: "mb-6 text-gray-700"
-                          }, "Click Reclaim to sync the Registry ownership with your NFT ownership.") : React.createElement("div", {
-                            className: "mb-6"
-                          }, React.createElement("label", {
-                                className: "block text-sm font-medium text-gray-700 mb-2"
-                              }, "Recipient Address"), React.createElement("input", {
-                                className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-                                placeholder: "0x...",
-                                type: "text",
-                                value: recipientAddress,
-                                onChange: (function (e) {
-                                    setRecipientAddress(e.target.value);
-                                  })
-                              })), React.createElement("button", {
-                          className: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400",
-                          disabled: isWaitingForConfirmation || !isReclaim && recipientAddress === "",
-                          onClick: (function (param) {
-                              handleTransfer();
-                            })
-                        }, isWaitingForConfirmation ? "Processing..." : (
-                            isReclaim ? "Reclaim" : "Transfer"
-                          )))));
+                                      className: "flex justify-between items-center mb-8"
+                                    }, React.createElement("div", {
+                                          className: "flex items-center gap-3"
+                                        }, React.createElement("button", {
+                                              className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                                              type: "button",
+                                              onClick: (function (param) {
+                                                  onBack();
+                                                })
+                                            }, React.createElement("div", {
+                                                  className: "w-6 h-6 text-gray-600"
+                                                }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
+                                              className: "text-xl font-semibold text-gray-900"
+                                            }, isReclaim ? "Reclaim Subname" : "Transfer Subname"))), isReclaim ? React.createElement("div", {
+                                        className: "mb-6 text-gray-700"
+                                      }, "Click Reclaim to sync the Registry ownership with your NFT ownership.") : React.createElement("div", {
+                                        className: "mb-6"
+                                      }, React.createElement("label", {
+                                            className: "block text-sm font-medium text-gray-700 mb-2"
+                                          }, "Recipient Address"), React.createElement("input", {
+                                            className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+                                            placeholder: "0x...",
+                                            type: "text",
+                                            value: recipientAddress,
+                                            onChange: (function (e) {
+                                                setRecipientAddress(e.target.value);
+                                              })
+                                          })), React.createElement("button", {
+                                      className: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400",
+                                      disabled: isWaitingForConfirmation || !isReclaim && recipientAddress === "",
+                                      onClick: (function (param) {
+                                          handleTransfer();
+                                        })
+                                    }, isWaitingForConfirmation ? "Processing..." : (
+                                        isReclaim ? "Reclaim" : "Transfer"
+                                      ))))))
+            });
 }
 
 var make = TransferPanel;

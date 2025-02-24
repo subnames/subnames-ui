@@ -46,6 +46,7 @@ function NamesList(props) {
         return false;
       });
   var setSettingPrimaryName = match$4[1];
+  var settingPrimaryName = match$4[0];
   var match$5 = React.useState(function () {
         
       });
@@ -218,6 +219,53 @@ function NamesList(props) {
         account,
         currentAddress
       ]);
+  var tmp;
+  if (settingPrimaryName || Core__Option.isSome(showTransferPanel) || Core__Option.isSome(showExtendPanel)) {
+    var tmp$1;
+    if (settingPrimaryName) {
+      tmp$1 = React.createElement("div", {
+            className: "flex items-center gap-3"
+          }, React.createElement("div", {
+                className: "animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
+              }), React.createElement("p", {
+                className: "text-gray-900"
+              }, "Setting primary name..."));
+    } else if (Core__Option.isSome(showTransferPanel)) {
+      var name = Core__Option.getExn(showTransferPanel, undefined);
+      tmp$1 = React.createElement(TransferPanel.make, {
+            name: name,
+            isWalletConnected: account.isConnected,
+            onBack: (function () {
+                setShowTransferPanel(function (param) {
+                      
+                    });
+              }),
+            onSuccess: handleTransferSuccess
+          });
+    } else if (Core__Option.isSome(showExtendPanel)) {
+      var name$1 = Core__Option.getExn(showExtendPanel, undefined);
+      tmp$1 = React.createElement(RegisterExtendPanel.make, {
+            name: name$1,
+            isWalletConnected: account.isConnected,
+            onBack: (function () {
+                setShowExtendPanel(function (param) {
+                      
+                    });
+              }),
+            onSuccess: handleExtendSuccess,
+            action: "Extend"
+          });
+    } else {
+      tmp$1 = null;
+    }
+    tmp = React.createElement("div", {
+          className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        }, React.createElement("div", {
+              className: "bg-white rounded-lg shadow-xl"
+            }, tmp$1));
+  } else {
+    tmp = null;
+  }
   return React.createElement(React.Fragment, {}, React.createElement("div", {
                   className: "p-8"
                 }, React.createElement("div", {
@@ -357,38 +405,7 @@ function NamesList(props) {
                               )
                           ) : React.createElement("div", {
                                 className: "text-center py-4 text-gray-500"
-                              }, "Please connect your wallet to see your names"))), showExtendPanel !== undefined ? React.createElement(RegisterExtendPanel.make, {
-                        name: showExtendPanel,
-                        isWalletConnected: account.isConnected,
-                        onBack: (function () {
-                            setShowExtendPanel(function (param) {
-                                  
-                                });
-                          }),
-                        onSuccess: handleExtendSuccess,
-                        action: "Extend"
-                      }) : (
-                    showTransferPanel !== undefined ? React.createElement(TransferPanel.make, {
-                            name: showTransferPanel,
-                            isWalletConnected: account.isConnected,
-                            onBack: (function () {
-                                setShowTransferPanel(function (param) {
-                                      
-                                    });
-                              }),
-                            onSuccess: handleTransferSuccess
-                          }) : null
-                  )), match$4[0] ? React.createElement("div", {
-                    className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-                  }, React.createElement("div", {
-                        className: "bg-white p-6 rounded-lg shadow-xl"
-                      }, React.createElement("div", {
-                            className: "flex items-center gap-3"
-                          }, React.createElement("div", {
-                                className: "animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
-                              }), React.createElement("p", {
-                                className: "text-gray-900"
-                              }, "Setting primary name...")))) : null);
+                              }, "Please connect your wallet to see your names")))), tmp);
 }
 
 var make = NamesList;
