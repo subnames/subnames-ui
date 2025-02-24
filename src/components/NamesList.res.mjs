@@ -334,13 +334,19 @@ function NamesList(props) {
                                                                                   className: "flex items-center gap-2"
                                                                                 }, React.createElement("p", {
                                                                                       className: "text-gray-800"
-                                                                                    }, React.createElement(React.Fragment, {}, React.createElement("span", {
-                                                                                              className: "font-bold"
-                                                                                            }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName.name === subname.name ? React.createElement("span", {
+                                                                                    }, subname.underTransfer ? React.createElement("span", {
+                                                                                            className: "text-gray-400"
+                                                                                          }, React.createElement("span", {
+                                                                                                className: "font-bold"
+                                                                                              }, subname.name), "." + Constants.sld) : React.createElement(React.Fragment, {}, React.createElement("span", {
+                                                                                                className: "font-bold"
+                                                                                              }, subname.name), "." + Constants.sld)), primaryName !== undefined && primaryName.name === subname.name ? React.createElement("span", {
                                                                                         className: "px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium"
-                                                                                      }, "Primary") : null), React.createElement("p", {
-                                                                                  className: "text-xs text-gray-400 mt-1"
-                                                                                }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
+                                                                                      }, "Primary") : null), subname.underTransfer ? React.createElement("p", {
+                                                                                    className: "text-xs text-gray-300 mt-1"
+                                                                                  }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires))) : React.createElement("p", {
+                                                                                    className: "text-xs text-gray-400 mt-1"
+                                                                                  }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
                                                                               className: "relative"
                                                                             }, React.createElement("button", {
                                                                                   className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",

@@ -248,10 +248,17 @@ let make = () => {
                           <div>
                             <div className="flex items-center gap-2">
                               <p className="text-gray-800">
-                                {<>
-                                  <span className="font-bold"> {React.string(subname.name)} </span>
-                                  {React.string(`.${Constants.sld}`)}
-                                </>}
+                                {
+                                  if subname.underTransfer {
+                                    <span className="text-gray-400">
+                                      <span className="font-bold"> {React.string(subname.name)} </span> {React.string(`.${Constants.sld}`)}
+                                    </span>
+                                  } else {
+                                    <>
+                                      <span className="font-bold"> {React.string(subname.name)} </span> {React.string(`.${Constants.sld}`)}
+                                    </>
+                                  }
+                                }
                               </p>
                               {switch primaryName {
                               | Some({name}) if name == subname.name =>
@@ -262,11 +269,21 @@ let make = () => {
                               | _ => React.null
                               }}
                             </div>
-                            <p className="text-xs text-gray-400 mt-1">
-                              {React.string(
-                                `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
-                              )}
-                            </p>
+                            {
+                              if subname.underTransfer {
+                                <p className="text-xs text-gray-300 mt-1">
+                                  {React.string(
+                                    `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
+                                  )}
+                                </p>
+                              } else {
+                                <p className="text-xs text-gray-400 mt-1">
+                                  {React.string(
+                                    `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
+                                  )}
+                                </p>
+                              }
+                            }
                           </div>
                           <div className="relative">
                             <button
