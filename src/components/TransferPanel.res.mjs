@@ -183,14 +183,19 @@ function TransferPanel(props) {
               });
   };
   return React.createElement(React.Fragment, {}, React.createElement("div", {
-                  className: "fixed inset-0 bg-black bg-opacity-50 z-40"
-                }), isWaitingForConfirmation ? React.createElement("div", {
-                    className: "fixed inset-0 flex items-center justify-center z-50"
-                  }, React.createElement(TransferPanel$StepProgress, {
-                        steps: match$4[0],
-                        currentStep: currentStep
-                      })) : null, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50"
+                  className: "fixed inset-0 flex items-center justify-center z-40"
+                }, React.createElement("div", {
+                      className: "fixed inset-0 bg-black bg-opacity-50",
+                      onClick: (function (param) {
+                          onBack();
+                        })
+                    }), isWaitingForConfirmation ? React.createElement("div", {
+                        className: "fixed inset-0 flex items-center justify-center z-50"
+                      }, React.createElement(TransferPanel$StepProgress, {
+                            steps: match$4[0],
+                            currentStep: currentStep
+                          })) : null), React.createElement("div", {
+                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4 mt-8"
                 }, React.createElement("div", {
                       className: "p-4 sm:p-6 max-w-2xl mx-auto"
                     }, React.createElement("div", {

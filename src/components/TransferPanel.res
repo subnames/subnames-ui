@@ -151,19 +151,21 @@ let make = (
   }
 
   <>
-    <div className="fixed inset-0 bg-black bg-opacity-50 z-40" />
-    {if isWaitingForConfirmation {
-      <div className="fixed inset-0 flex items-center justify-center z-50">
-        <StepProgress steps=stepStatuses currentStep />
-      </div>
-    } else {
-      React.null
-    }}
-    <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50">
-    <div className="p-4 sm:p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center gap-3">
-          <button
+    <div className="fixed inset-0 flex items-center justify-center z-40">
+      <div className="fixed inset-0 bg-black bg-opacity-50" onClick={_ => onBack()} />
+      {if isWaitingForConfirmation {
+        <div className="fixed inset-0 flex items-center justify-center z-50">
+          <StepProgress steps=stepStatuses currentStep />
+        </div>
+      } else {
+        React.null
+      }}
+    </div>
+      <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4 mt-8">
+        <div className="p-4 sm:p-6 max-w-2xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <div className="flex items-center gap-3">
+              <button
             onClick={_ => onBack()}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             type_="button">

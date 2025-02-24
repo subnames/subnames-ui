@@ -30,7 +30,6 @@ type subname = {
   resolvedTo: owner,
   owner: owner,
   reverseResolvedFrom: option<owner>,
-
   underTransfer: bool, // true if resolvedTo.id is not current account
 }
 type queryResponse = {subnames: array<subname>}
@@ -129,10 +128,20 @@ let make = () => {
       let expires = getStringExn(obj, "expires")->Int.fromString->Option.getExn
       let resolvedTo: owner = getObjectExn(obj, "resolvedTo", o => {id: getStringExn(o, "id")})
       let owner: owner = getObjectExn(obj, "owner", o => {id: getStringExn(o, "id")})
-      let reverseResolvedFrom: option<owner> = getObject(obj, "reverseResolvedFrom", o => {id: getStringExn(o, "id")})
+      let reverseResolvedFrom: option<owner> = getObject(obj, "reverseResolvedFrom", o => {
+        id: getStringExn(o, "id"),
+      })
 
       let currentAddressLowercase = currentAddress->Option.map(String.toLowerCase)->Option.getExn
-      {label, name, expires, owner, resolvedTo, reverseResolvedFrom, underTransfer: resolvedTo.id !== currentAddressLowercase}
+      {
+        label,
+        name,
+        expires,
+        owner,
+        resolvedTo,
+        reverseResolvedFrom,
+        underTransfer: resolvedTo.id !== currentAddressLowercase,
+      }
     })
     ->Option.getExn
   }
@@ -194,200 +203,191 @@ let make = () => {
   <>
     <div className="p-8">
       <div className="w-full max-w-xl mx-auto">
-        {switch (showExtendPanel, showTransferPanel) {
-        | (Some(name), _) =>
-          <RegisterExtendPanel
-            name
-            isWalletConnected=account.isConnected
-            onBack={() => setShowExtendPanel(_ => None)}
-            onSuccess=handleExtendSuccess
-            action={Types.Extend}
-          />
-        | (_, Some(name)) =>
-          <TransferPanel
-            name
-            isWalletConnected=account.isConnected
-            onBack={() => setShowTransferPanel(_ => None)}
-            onSuccess=handleTransferSuccess
-          />
-        | (None, None) =>
-          <div className="bg-white rounded-custom shadow-lg">
-            <div className="p-8 py-6 border-b border-gray-200 relative">
-              <h1 className="text-3xl font-bold text-gray-900">
-                {React.string("Your Subnames")}
-              </h1>
-              <div className="text-sm text-gray-500">
-                {React.string("It may take a while to sync your subnames. ")}
-              </div>
-              <button
-                onClick={_ => RescriptReactRouter.push("/")}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
-                <Icons.Close />
-              </button>
+        <div className="bg-white rounded-custom shadow-lg">
+          <div className="p-8 py-6 border-b border-gray-200 relative">
+            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
+            <div className="text-sm text-gray-500">
+              {React.string("It may take a while to sync your subnames. ")}
             </div>
-            {if !account.isConnected {
-              <div className="text-center py-4 text-gray-500">
-                {React.string("Please connect your wallet to see your names")}
-              </div>
-            } else if loading {
-              <div className="flex justify-center items-center py-4">
-                <Icons.Spinner className="w-5 h-5 text-zinc-600" />
-              </div>
-            } else if names->Array.length == 0 {
-              <div className="text-center py-4 text-gray-500">
-                {React.string("You don't have any subnames yet")}
-              </div>
-            } else {
-              <div>
-                <div className="py-1">
-                  {names
-                  ->Array.mapWithIndex((subname, index) => {
-                    <div key={subname.name}>
-                      <div className="px-8 py-6">
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="flex items-center gap-2">
-                              <p className="text-gray-800">
-                                {
-                                  if subname.underTransfer {
-                                    <span className="text-gray-400">
-                                      <span className="font-bold"> {React.string(subname.name)} </span> {React.string(`.${Constants.sld}`)}
-                                    </span>
-                                  } else {
-                                    <>
-                                      <span className="font-bold"> {React.string(subname.name)} </span> {React.string(`.${Constants.sld}`)}
-                                    </>
-                                  }
-                                }
-                              </p>
-                              {switch primaryName {
-                              | Some({name}) if name == subname.name =>
-                                <span
-                                  className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
-                                  {React.string("Primary")}
+            <button
+              onClick={_ => RescriptReactRouter.push("/")}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
+              <Icons.Close />
+            </button>
+          </div>
+          {if !account.isConnected {
+            <div className="text-center py-4 text-gray-500">
+              {React.string("Please connect your wallet to see your names")}
+            </div>
+          } else if loading {
+            <div className="flex justify-center items-center py-4">
+              <Icons.Spinner className="w-5 h-5 text-zinc-600" />
+            </div>
+          } else if names->Array.length == 0 {
+            <div className="text-center py-4 text-gray-500">
+              {React.string("You don't have any subnames yet")}
+            </div>
+          } else {
+            <div>
+              <div className="py-1">
+                {names
+                ->Array.mapWithIndex((subname, index) => {
+                  <div key={subname.name}>
+                    <div className="px-8 py-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <p className="text-gray-800">
+                              {if subname.underTransfer {
+                                <span className="text-gray-400">
+                                  <span className="font-bold"> {React.string(subname.name)} </span>
+                                  {React.string(`.${Constants.sld}`)}
                                 </span>
-                              | _ => React.null
-                              }}
-                            </div>
-                            {
-                              if subname.underTransfer {
-                                <p className="text-xs text-gray-300 mt-1">
-                                  {React.string(
-                                    `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
-                                  )}
-                                </p>
                               } else {
-                                <p className="text-xs text-gray-400 mt-1">
-                                  {React.string(
-                                    `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
-                                  )}
-                                </p>
-                              }
-                            }
-                          </div>
-                          <div className="relative">
-                            <button
-                              type_="button"
-                              onClick={_ => {
-                                setActiveDropdown(current =>
-                                  if current == Some(subname.name) {
-                                    None
-                                  } else {
-                                    Some(subname.name)
-                                  }
-                                )
+                                <>
+                                  <span className="font-bold"> {React.string(subname.name)} </span>
+                                  {React.string(`.${Constants.sld}`)}
+                                </>
                               }}
-                              className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
-                              <svg
-                                className="w-5 h-5"
-                                fill="none"
-                                stroke="currentColor"
-                                viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth="2"
-                                  d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
-                                />
-                              </svg>
-                            </button>
-                            {if activeDropdown == Some(subname.name) {
-                              <div
-                                ref={ReactDOM.Ref.domRef(dropdownRef)}
-                                className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50">
-                                <div className="py-1">
-                                  {
-                                    if !subname.underTransfer {
-                                      <>
-                                      // Set primary
-                                      {switch primaryName {
-                                      | Some({name}) if name == subname.name => React.null
-                                      | _ =>
-                                        <button
-                                          type_="button"
-                                          onClick={_ => {
-                                            setPrimary(subname.name)->ignore
-                                            setActiveDropdown(_ => None)
-                                          }}
-                                          className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                          {React.string("Set primary")}
-                                        </button>
-                                      }}
-
-                                      // Extend
+                            </p>
+                            {switch primaryName {
+                            | Some({name}) if name == subname.name =>
+                              <span
+                                className="px-2 py-0.5 text-xs bg-blue-100 text-blue-800 rounded-full font-medium">
+                                {React.string("Primary")}
+                              </span>
+                            | _ => React.null
+                            }}
+                          </div>
+                          {if subname.underTransfer {
+                            <p className="text-xs text-gray-300 mt-1">
+                              {React.string(
+                                `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
+                              )}
+                            </p>
+                          } else {
+                            <p className="text-xs text-gray-400 mt-1">
+                              {React.string(
+                                `Expires ${distanceToExpiry(timestampToDate(subname.expires))}`,
+                              )}
+                            </p>
+                          }}
+                        </div>
+                        <div className="relative">
+                          <button
+                            type_="button"
+                            onClick={_ => {
+                              setActiveDropdown(current =>
+                                if current == Some(subname.name) {
+                                  None
+                                } else {
+                                  Some(subname.name)
+                                }
+                              )
+                            }}
+                            className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                            <svg
+                              className="w-5 h-5"
+                              fill="none"
+                              stroke="currentColor"
+                              viewBox="0 0 24 24">
+                              <path
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                                strokeWidth="2"
+                                d="M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+                              />
+                            </svg>
+                          </button>
+                          {if activeDropdown == Some(subname.name) {
+                            <div
+                              ref={ReactDOM.Ref.domRef(dropdownRef)}
+                              className="absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50">
+                              <div className="py-1">
+                                {if !subname.underTransfer {
+                                  <>
+                                    // Set primary
+                                    {switch primaryName {
+                                    | Some({name}) if name == subname.name => React.null
+                                    | _ =>
                                       <button
                                         type_="button"
                                         onClick={_ => {
-                                          setShowExtendPanel(_ => Some(subname.name))
+                                          setPrimary(subname.name)->ignore
                                           setActiveDropdown(_ => None)
                                         }}
                                         className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                        {React.string("Extend")}
+                                        {React.string("Set primary")}
                                       </button>
-                                      </>
-                                    } else {
-                                      React.null
-                                    }
-                                  }
-
-                                  // Transfer
-                                  {switch primaryName {
-                                  | Some({name}) if name == subname.name => React.null
-                                  | Some(_) =>
+                                    }}
+                                    // Extend
                                     <button
                                       type_="button"
                                       onClick={_ => {
-                                        setShowTransferPanel(_ => Some(subname.name))
+                                        setShowExtendPanel(_ => Some(subname.name))
                                         setActiveDropdown(_ => None)
                                       }}
                                       className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
-                                      {React.string("Transfer")}
+                                      {React.string("Extend")}
                                     </button>
-                                  | None => React.null
-                                  }}
-
-                                </div>
+                                  </>
+                                } else {
+                                  React.null
+                                }}
+                                // Transfer
+                                {switch primaryName {
+                                | Some({name}) if name == subname.name => React.null
+                                | Some(_) =>
+                                  <button
+                                    type_="button"
+                                    onClick={_ => {
+                                      setShowTransferPanel(_ => Some(subname.name))
+                                      setActiveDropdown(_ => None)
+                                    }}
+                                    className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
+                                    {React.string("Transfer")}
+                                  </button>
+                                | None => React.null
+                                }}
                               </div>
-                            } else {
-                              React.null
-                            }}
-                          </div>
+                            </div>
+                          } else {
+                            React.null
+                          }}
                         </div>
                       </div>
-                      {if index < names->Array.length - 1 {
-                        <div className="border-b border-gray-200 mx-6" />
-                      } else {
-                        React.null
-                      }}
                     </div>
-                  })
-                  ->React.array}
-                </div>
+                    {if index < names->Array.length - 1 {
+                      <div className="border-b border-gray-200 mx-6" />
+                    } else {
+                      React.null
+                    }}
+                  </div>
+                })
+                ->React.array}
               </div>
-            }}
-          </div>
-        }}
+            </div>
+          }}
+        </div>
       </div>
+      {switch (showExtendPanel, showTransferPanel) {
+      | (Some(name), _) =>
+        <RegisterExtendPanel
+          name
+          isWalletConnected=account.isConnected
+          onBack={() => setShowExtendPanel(_ => None)}
+          onSuccess=handleExtendSuccess
+          action={Types.Extend}
+        />
+      | (_, Some(name)) =>
+        <TransferPanel
+          name
+          isWalletConnected=account.isConnected
+          onBack={() => setShowTransferPanel(_ => None)}
+          onSuccess=handleTransferSuccess
+        />
+      | (None, None) => React.null
+      }}
     </div>
     {if settingPrimaryName {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
