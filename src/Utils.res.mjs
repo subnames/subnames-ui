@@ -37,15 +37,29 @@ function timestampStringToDate(timestamp) {
 }
 
 function getString(jsonObj, fieldName) {
-  return Core__Option.getExn(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.string), "Failed to decode ${fieldName}");
+  return Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.string);
+}
+
+function getStringExn(jsonObj, fieldName) {
+  return Core__Option.getExn(getString(jsonObj, fieldName), "Failed to get ${fieldName}");
 }
 
 function getObject(jsonObj, fieldName, f) {
-  return Core__Option.getExn(Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.object), f), "Failed to decode ${fieldName}");
+  return Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.object), f);
+}
+
+function getObjectExn(jsonObj, fieldName, f) {
+  return Core__Option.getExn(getObject(jsonObj, fieldName, f), "Failed to get ${fieldName}");
 }
 
 function getArray(jsonObj, fieldName, f) {
-  return Core__Option.getExn(Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.array), f), "Failed to decode ${fieldName}");
+  return Core__Option.map(Core__Option.flatMap(jsonObj[fieldName], Core__JSON.Decode.array), (function (arr) {
+                return arr.map(f);
+              }));
+}
+
+function getArrayExn(jsonObj, fieldName, f) {
+  return Core__Option.getExn(getArray(jsonObj, fieldName, f), "Failed to get ${fieldName}");
 }
 
 export {
@@ -54,7 +68,10 @@ export {
   timestampToDate ,
   timestampStringToDate ,
   getString ,
+  getStringExn ,
   getObject ,
+  getObjectExn ,
   getArray ,
+  getArrayExn ,
 }
 /* react Not a pure module */

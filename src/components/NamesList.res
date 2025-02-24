@@ -22,13 +22,16 @@ module UseAccount = {
   external use: unit => account = "useAccount"
 }
 
-// Define the types for our GraphQL response
 type owner = {id: string}
 type subname = {
   label: string,
   name: string,
   expires: int,
+  resolvedTo: owner,
   owner: owner,
+  reverseResolvedFrom: option<owner>,
+
+  underTransfer: bool, // true if resolvedTo.id is not current account
 }
 type queryResponse = {subnames: array<subname>}
 
@@ -43,6 +46,7 @@ let make = () => {
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
   let (showTransferPanel, setShowTransferPanel) = React.useState(() => None)
   let dropdownRef = React.useRef(Nullable.null)
+  let (currentAddress, setCurrentAddress) = React.useState(() => None)
 
   // Add effect for handling clicks outside dropdown
   React.useEffect1(() => {
@@ -67,6 +71,19 @@ let make = () => {
     if !account.isConnected {
       RescriptReactRouter.push(Router.toUrl(Router.Home))
     }
+    None
+  }, [account.isConnected])
+
+  React.useEffect1(() => {
+    if account.isConnected {
+      getCurrentAddress()
+      ->Promise.then(currentAddress => {
+        setCurrentAddress(_ => currentAddress)
+        Promise.resolve()
+      })
+      ->ignore
+    }
+
     None
   }, [account.isConnected])
 
@@ -107,42 +124,19 @@ let make = () => {
     subnameObj
     ->JSON.Decode.object
     ->Option.map(obj => {
-      let label = getString(obj, "label")
-      let name = getString(obj, "name")
-      let expires = getString(obj, "expires")->Int.fromString->Option.getExn
-      let owner: owner = getObject(obj, "owner", ownerObj => {id: getString(ownerObj, "id")})
+      let label = getStringExn(obj, "label")
+      let name = getStringExn(obj, "name")
+      let expires = getStringExn(obj, "expires")->Int.fromString->Option.getExn
+      let resolvedTo: owner = getObjectExn(obj, "resolvedTo", o => {id: getStringExn(o, "id")})
+      let owner: owner = getObjectExn(obj, "owner", o => {id: getStringExn(o, "id")})
+      let reverseResolvedFrom: option<owner> = getObject(obj, "reverseResolvedFrom", o => {id: getStringExn(o, "id")})
 
-      {label, name, expires, owner}
+      {label, name, expires, owner, resolvedTo, reverseResolvedFrom, underTransfer: resolvedTo.id !== currentAddress->Option.getExn}
     })
     ->Option.getExn
   }
 
-  let buildSubnames = subnameObjs => {
-    let result = subnameObjs->Array.map(buildSubname)
-
-    primaryName
-    ->Option.map(c => {
-      {
-        label: c.name,
-        name: c.name,
-        expires: c.expires,
-        owner: {id: account.address->Option.getExn},
-      }
-    })
-    ->Option.map(current => {
-      if result->Array.findIndex(subname => subname.name == current.name) == -1 {
-        result->Array.push(current)
-      }
-      result
-    })
-    ->ignore
-
-    result->Array.sort((a, b) => float(a.expires - b.expires))
-
-    result
-  }
-
-  React.useEffect1(() => {
+  React.useEffect2(() => {
     if account.isConnected {
       let fetchNames = async () => {
         let address =
@@ -182,7 +176,8 @@ let make = () => {
 
         switch result {
         | {data: Some(data), errors: None} => {
-            let subnames: array<subname> = getArray(data, "subnames", buildSubnames)
+            let subnames: array<subname> = getArrayExn(data, "subnames", buildSubname)
+            subnames->Array.sort((a, b) => float(a.expires - b.expires))
             setNames(_ => subnames)
           }
         | {errors: Some(errors)} => Console.log2("Errors:", errors)
@@ -193,7 +188,7 @@ let make = () => {
       fetchNames()->ignore
     }
     None
-  }, [account.isConnected])
+  }, (account, currentAddress))
 
   <>
     <div className="p-8">

@@ -42,10 +42,19 @@ async function currentAddress(walletClient) {
   return result[0];
 }
 
+async function getCurrentAddress() {
+  var walletClient = buildWalletClient();
+  if (walletClient !== undefined) {
+    return await currentAddress(Caml_option.valFromOption(walletClient));
+  }
+  
+}
+
 export {
   sha3HexAddress ,
   publicClient ,
   buildWalletClient ,
   currentAddress ,
+  getCurrentAddress ,
 }
 /* publicClient Not a pure module */

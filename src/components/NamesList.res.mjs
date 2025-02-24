@@ -57,6 +57,11 @@ function NamesList(props) {
   var setShowTransferPanel = match$6[1];
   var showTransferPanel = match$6[0];
   var dropdownRef = React.useRef(null);
+  var match$7 = React.useState(function () {
+        
+      });
+  var setCurrentAddress = match$7[1];
+  var currentAddress = match$7[0];
   React.useEffect((function () {
           var handleClickOutside = function ($$event) {
             Core__Option.map(Caml_option.nullable_to_opt(dropdownRef.current), (function (dropdownEl) {
@@ -77,6 +82,17 @@ function NamesList(props) {
   React.useEffect((function () {
           if (!account.isConnected) {
             RescriptReactRouter.push(Router.toUrl("Home"));
+          }
+          
+        }), [account.isConnected]);
+  React.useEffect((function () {
+          if (account.isConnected) {
+            OnChainOperationsCommon.getCurrentAddress().then(function (currentAddress) {
+                  setCurrentAddress(function (param) {
+                        return currentAddress;
+                      });
+                  return Promise.resolve();
+                });
           }
           
         }), [account.isConnected]);
@@ -129,45 +145,34 @@ function NamesList(props) {
   };
   var buildSubname = function (subnameObj) {
     return Core__Option.getExn(Core__Option.map(Core__JSON.Decode.object(subnameObj), (function (obj) {
-                      var label = Utils.getString(obj, "label");
-                      var name = Utils.getString(obj, "name");
-                      var expires = Core__Option.getExn(Core__Int.fromString(Utils.getString(obj, "expires"), undefined), undefined);
-                      var owner = Utils.getObject(obj, "owner", (function (ownerObj) {
+                      var label = Utils.getStringExn(obj, "label");
+                      var name = Utils.getStringExn(obj, "name");
+                      var expires = Core__Option.getExn(Core__Int.fromString(Utils.getStringExn(obj, "expires"), undefined), undefined);
+                      var resolvedTo = Utils.getObjectExn(obj, "resolvedTo", (function (o) {
                               return {
-                                      id: Utils.getString(ownerObj, "id")
+                                      id: Utils.getStringExn(o, "id")
+                                    };
+                            }));
+                      var owner = Utils.getObjectExn(obj, "owner", (function (o) {
+                              return {
+                                      id: Utils.getStringExn(o, "id")
+                                    };
+                            }));
+                      var reverseResolvedFrom = Utils.getObject(obj, "reverseResolvedFrom", (function (o) {
+                              return {
+                                      id: Utils.getStringExn(o, "id")
                                     };
                             }));
                       return {
                               label: label,
                               name: name,
                               expires: expires,
-                              owner: owner
+                              resolvedTo: resolvedTo,
+                              owner: owner,
+                              reverseResolvedFrom: reverseResolvedFrom,
+                              underTransfer: resolvedTo.id !== Core__Option.getExn(currentAddress, undefined)
                             };
                     })), undefined);
-  };
-  var buildSubnames = function (subnameObjs) {
-    var result = subnameObjs.map(buildSubname);
-    Core__Option.map(Core__Option.map(primaryName, (function (c) {
-                return {
-                        label: c.name,
-                        name: c.name,
-                        expires: c.expires,
-                        owner: {
-                          id: Core__Option.getExn(account.address, undefined)
-                        }
-                      };
-              })), (function (current) {
-            if (result.findIndex(function (subname) {
-                    return subname.name === current.name;
-                  }) === -1) {
-              result.push(current);
-            }
-            return result;
-          }));
-    result.sort(function (a, b) {
-          return a.expires - b.expires | 0;
-        });
-    return result;
   };
   React.useEffect((function () {
           if (account.isConnected) {
@@ -181,7 +186,10 @@ function NamesList(props) {
               var data = result.data;
               var exit = 0;
               if (data !== undefined && result.errors === undefined) {
-                var subnames = Utils.getArray(data, "subnames", buildSubnames);
+                var subnames = Utils.getArrayExn(data, "subnames", buildSubname);
+                subnames.sort(function (a, b) {
+                      return a.expires - b.expires | 0;
+                    });
                 setNames(function (param) {
                       return subnames;
                     });
@@ -203,7 +211,10 @@ function NamesList(props) {
             fetchNames();
           }
           
-        }), [account.isConnected]);
+        }), [
+        account,
+        currentAddress
+      ]);
   return React.createElement(React.Fragment, {}, React.createElement("div", {
                   className: "p-8"
                 }, React.createElement("div", {

@@ -58,3 +58,13 @@ let currentAddress = async walletClient => {
 
   result->Array.get(0)->Option.getUnsafe
 }
+
+let getCurrentAddress = async () => {
+  let walletClient = buildWalletClient()
+  switch walletClient {
+  | Some(client) => {
+      Some(await currentAddress(client))
+    }
+  | None => None
+  }
+}

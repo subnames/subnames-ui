@@ -41,7 +41,12 @@ let getString = (jsonObj, fieldName) => {
   jsonObj
   ->Dict.get(fieldName)
   ->Option.flatMap(JSON.Decode.string)
-  ->Option.getExn(~message="Failed to decode ${fieldName}")
+}
+
+let getStringExn = (jsonObj, fieldName) => {
+  jsonObj
+  ->getString(fieldName)
+  ->Option.getExn(~message="Failed to get ${fieldName}")
 }
 
 let getObject = (jsonObj, fieldName, f) => {
@@ -49,13 +54,24 @@ let getObject = (jsonObj, fieldName, f) => {
   ->Dict.get(fieldName)
   ->Option.flatMap(JSON.Decode.object)
   ->Option.map(f)
-  ->Option.getExn(~message="Failed to decode ${fieldName}")
+}
+
+let getObjectExn = (jsonObj, fieldName, f) => {
+  jsonObj
+  ->getObject(fieldName, f)
+  ->Option.getExn(~message="Failed to get ${fieldName}")
 }
 
 let getArray = (jsonObj, fieldName, f) => {
   jsonObj
   ->Dict.get(fieldName)
   ->Option.flatMap(JSON.Decode.array)
-  ->Option.map(f)
-  ->Option.getExn(~message="Failed to decode ${fieldName}")
+  ->Option.map(arr => Array.map(arr, f))
+}
+
+
+let getArrayExn = (jsonObj, fieldName, f) => {
+  jsonObj
+  ->getArray(fieldName, f)
+  ->Option.getExn(~message="Failed to get ${fieldName}")
 }
