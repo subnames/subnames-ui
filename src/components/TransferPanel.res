@@ -192,7 +192,7 @@ let make = (
       }}
       <button
         onClick={_ => handleTransfer()->ignore}
-        disabled={isWaitingForConfirmation || (!isReclaim && recipientAddress == "")}
+        disabled={isWaitingForConfirmation || (!isReclaim && recipientAddress == "" && receiver->Option.isNone)}
         className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
         {React.string(
           isWaitingForConfirmation ? "Processing..." : isReclaim ? "Reclaim" : "Transfer",
