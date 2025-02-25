@@ -58,11 +58,6 @@ function NamesList(props) {
   var setShowTransferPanel = match$6[1];
   var showTransferPanel = match$6[0];
   var dropdownRef = React.useRef(null);
-  var match$7 = React.useState(function () {
-        
-      });
-  var setCurrentAddress = match$7[1];
-  var currentAddress = match$7[0];
   React.useEffect((function () {
           var handleClickOutside = function ($$event) {
             Core__Option.map(Caml_option.nullable_to_opt(dropdownRef.current), (function (dropdownEl) {
@@ -83,17 +78,6 @@ function NamesList(props) {
   React.useEffect((function () {
           if (!account.isConnected) {
             RescriptReactRouter.push(Router.toUrl("Home"));
-          }
-          
-        }), [account.isConnected]);
-  React.useEffect((function () {
-          if (account.isConnected) {
-            OnChainOperationsCommon.getCurrentAddress().then(function (currentAddress) {
-                  setCurrentAddress(function (param) {
-                        return currentAddress;
-                      });
-                  return Promise.resolve();
-                });
           }
           
         }), [account.isConnected]);
@@ -164,7 +148,7 @@ function NamesList(props) {
                                       id: Utils.getStringExn(o, "id")
                                     };
                             }));
-                      var currentAddressLowercase = Core__Option.getExn(Core__Option.map(currentAddress, (function (prim) {
+                      var currentAddressLowercase = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
                                   return prim.toLowerCase();
                                 })), undefined);
                       return {
@@ -174,7 +158,8 @@ function NamesList(props) {
                               resolvedTo: resolvedTo,
                               owner: owner,
                               reverseResolvedFrom: reverseResolvedFrom,
-                              underTransfer: resolvedTo.id !== currentAddressLowercase
+                              underTransfer: resolvedTo.id !== currentAddressLowercase,
+                              receiver: resolvedTo.id !== currentAddressLowercase ? resolvedTo.id : undefined
                             };
                     })), undefined);
   };
@@ -217,7 +202,7 @@ function NamesList(props) {
           
         }), [
         account,
-        currentAddress
+        OnChainOperationsCommon.currentAddress
       ]);
   var tmp;
   if (settingPrimaryName || Core__Option.isSome(showTransferPanel) || Core__Option.isSome(showExtendPanel)) {
@@ -231,9 +216,10 @@ function NamesList(props) {
                 className: "text-gray-900"
               }, "Setting primary name..."));
     } else if (Core__Option.isSome(showTransferPanel)) {
-      var name = Core__Option.getExn(showTransferPanel, undefined);
+      var match$7 = Core__Option.getExn(showTransferPanel, undefined);
       tmp$1 = React.createElement(TransferPanel.make, {
-            name: name,
+            name: match$7[0],
+            receiver: match$7[1],
             isWalletConnected: account.isConnected,
             onBack: (function () {
                 setShowTransferPanel(function (param) {
@@ -243,9 +229,9 @@ function NamesList(props) {
             onSuccess: handleTransferSuccess
           });
     } else if (Core__Option.isSome(showExtendPanel)) {
-      var name$1 = Core__Option.getExn(showExtendPanel, undefined);
+      var name = Core__Option.getExn(showExtendPanel, undefined);
       tmp$1 = React.createElement(RegisterExtendPanel.make, {
-            name: name$1,
+            name: name,
             isWalletConnected: account.isConnected,
             onBack: (function () {
                 setShowExtendPanel(function (param) {
@@ -342,7 +328,10 @@ function NamesList(props) {
                                                                   type: "button",
                                                                   onClick: (function (param) {
                                                                       setShowTransferPanel(function (param) {
-                                                                            return subname.name;
+                                                                            return [
+                                                                                    subname.name,
+                                                                                    subname.receiver
+                                                                                  ];
                                                                           });
                                                                       setActiveDropdown(function (param) {
                                                                             

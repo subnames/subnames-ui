@@ -5,6 +5,7 @@ import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -208,17 +209,15 @@ function TransferPanel(props) {
                                                   className: "w-6 h-6 text-gray-600"
                                                 }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
                                               className: "text-xl font-semibold text-gray-900"
-                                            }, isReclaim ? "Reclaim Subname" : "Transfer Subname"))), isReclaim ? React.createElement("div", {
+                                            }, isReclaim ? "Reclaim Subname" : "Transfer \"" + name + "\" to"))), isReclaim ? React.createElement("div", {
                                         className: "mb-6 text-gray-700"
                                       }, "Click Reclaim to sync the Registry ownership with your NFT ownership.") : React.createElement("div", {
                                         className: "mb-6"
-                                      }, React.createElement("label", {
-                                            className: "block text-sm font-medium text-gray-700 mb-2"
-                                          }, "Recipient Address"), React.createElement("input", {
+                                      }, React.createElement("input", {
                                             className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
                                             placeholder: "0x...",
                                             type: "text",
-                                            value: recipientAddress,
+                                            value: Core__Option.getOr(props.receiver, ""),
                                             onChange: (function (e) {
                                                 setRecipientAddress(e.target.value);
                                               })

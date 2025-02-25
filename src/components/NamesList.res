@@ -30,7 +30,9 @@ type subname = {
   resolvedTo: owner,
   owner: owner,
   reverseResolvedFrom: option<owner>,
+
   underTransfer: bool, // true if resolvedTo.id is not current account
+  receiver: option<string>,
 }
 type queryResponse = {subnames: array<subname>}
 
@@ -43,9 +45,9 @@ let make = () => {
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
   let (settingPrimaryName, setSettingPrimaryName) = React.useState(() => false)
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
-  let (showTransferPanel, setShowTransferPanel) = React.useState(() => None)
+  let (showTransferPanel: option<(string, option<string>)>, setShowTransferPanel) = React.useState(() => None) // (name, receiver)
   let dropdownRef = React.useRef(Nullable.null)
-  let (currentAddress, setCurrentAddress) = React.useState(() => None)
+  // let (currentAddress, setCurrentAddress) = React.useState(() => None)
 
   // Add effect for handling clicks outside dropdown
   React.useEffect1(() => {
@@ -70,19 +72,6 @@ let make = () => {
     if !account.isConnected {
       RescriptReactRouter.push(Router.toUrl(Router.Home))
     }
-    None
-  }, [account.isConnected])
-
-  React.useEffect1(() => {
-    if account.isConnected {
-      getCurrentAddress()
-      ->Promise.then(currentAddress => {
-        setCurrentAddress(_ => currentAddress)
-        Promise.resolve()
-      })
-      ->ignore
-    }
-
     None
   }, [account.isConnected])
 
@@ -132,7 +121,7 @@ let make = () => {
         id: getStringExn(o, "id"),
       })
 
-      let currentAddressLowercase = currentAddress->Option.map(String.toLowerCase)->Option.getExn
+      let currentAddressLowercase = account.address->Option.map(String.toLowerCase)->Option.getExn
       {
         label,
         name,
@@ -141,6 +130,7 @@ let make = () => {
         resolvedTo,
         reverseResolvedFrom,
         underTransfer: resolvedTo.id !== currentAddressLowercase,
+        receiver: resolvedTo.id !== currentAddressLowercase ? Some(resolvedTo.id) : None,
       }
     })
     ->Option.getExn
@@ -341,7 +331,7 @@ let make = () => {
                                   <button
                                     type_="button"
                                     onClick={_ => {
-                                      setShowTransferPanel(_ => Some(subname.name))
+                                      setShowTransferPanel(_ => Some(subname.name, subname.receiver))
                                       setActiveDropdown(_ => None)
                                     }}
                                     className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
@@ -382,9 +372,10 @@ let make = () => {
               <p className="text-gray-900"> {React.string("Setting primary name...")} </p>
             </div>
           } else if Option.isSome(showTransferPanel) {
-            let name = showTransferPanel->Option.getExn
+            let (name, receiver) = showTransferPanel->Option.getExn
             <TransferPanel
               name
+              receiver
               isWalletConnected=account.isConnected
               onBack={() => setShowTransferPanel(_ => None)}
               onSuccess=handleTransferSuccess
