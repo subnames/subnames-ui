@@ -668,6 +668,34 @@ async function getText(name, key) {
   }
 }
 
+async function getAddr(name) {
+  var domain = name + "." + Constants.sld;
+  var node = Ens.namehash(domain);
+  try {
+    return Caml_option.some(await OnChainOperationsCommon.publicClient.readContract({
+                    address: resolverContract.address,
+                    abi: [{
+                        type: "function",
+                        name: "addr",
+                        inputs: [{
+                            name: "node",
+                            type: "bytes32"
+                          }],
+                        outputs: [{
+                            name: "",
+                            type: "address"
+                          }],
+                        stateMutability: "view"
+                      }],
+                    functionName: "addr",
+                    args: [node]
+                  }));
+  }
+  catch (exn){
+    return ;
+  }
+}
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -691,5 +719,6 @@ export {
   setName ,
   safeTransferFrom ,
   getText ,
+  getAddr ,
 }
 /* controllerContract Not a pure module */

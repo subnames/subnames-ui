@@ -131,12 +131,25 @@ function TransferPanel(props) {
       var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
       var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
       var tokenId = BigInt(Viem.keccak256(name));
-      updateStepStatus(0, "InProgress", undefined);
-      var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
-      updateStepStatus(0, "Completed", Caml_option.some(hash));
-      setCurrentStep(function (param) {
-            return 1;
-          });
+      var currentAddrOnChain = await OnChainOperations.getAddr(name);
+      var exit = 0;
+      if (currentAddrOnChain !== undefined && Caml_option.valFromOption(currentAddrOnChain) === Viem.getAddress(recipientAddress)) {
+        console.log("Address for " + name + " is already set to " + recipientAddress + ", skipping setAddr step");
+        updateStepStatus(0, "Completed", Caml_option.some(undefined));
+        setCurrentStep(function (param) {
+              return 1;
+            });
+      } else {
+        exit = 1;
+      }
+      if (exit === 1) {
+        updateStepStatus(0, "InProgress", undefined);
+        var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
+        updateStepStatus(0, "Completed", Caml_option.some(hash));
+        setCurrentStep(function (param) {
+              return 1;
+            });
+      }
       updateStepStatus(1, "InProgress", undefined);
       var hash2 = await OnChainOperations.setName(walletClient, "");
       updateStepStatus(1, "Completed", Caml_option.some(hash2));
@@ -148,6 +161,12 @@ function TransferPanel(props) {
       updateStepStatus(2, "Completed", Caml_option.some(hash3));
       setCurrentStep(function (param) {
             return 3;
+          });
+      updateStepStatus(3, "InProgress", undefined);
+      var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
+      updateStepStatus(3, "Completed", Caml_option.some(hash4));
+      setCurrentStep(function (param) {
+            return 4;
           });
       onSuccess({
             action: "Transfer",

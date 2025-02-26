@@ -576,3 +576,32 @@ let getText = async (name: string, key: string) => {
 
   result == "" ? None : Some(result)
 }
+
+let getAddr = async (name: string) => {
+  let domain = `${name}.${Constants.sld}`
+  let node = namehash(domain)
+  
+  try {
+    let result = await readContract(
+      publicClient,
+      {
+        "address": resolverContract["address"],
+        "abi": [
+          {
+            "type": "function",
+            "name": "addr",
+            "inputs": [{"name": "node", "type": "bytes32"}],
+            "outputs": [{"name": "", "type": "address"}],
+            "stateMutability": "view",
+          },
+        ],
+        "functionName": "addr",
+        "args": [String(node)],
+      },
+    )
+    
+    Some(result)
+  } catch {
+  | _ => None
+  }
+}

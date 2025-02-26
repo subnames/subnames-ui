@@ -101,10 +101,24 @@ let make = (
       let currentAddress = await currentAddress(walletClient)
       let tokenId = BigInt.fromString(keccak256(name))
 
-      updateStepStatus(0, #InProgress)
-      let hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress)
-      updateStepStatus(0, #Completed, ~txHash=Some(hash))
-      setCurrentStep(_ => 1)
+      // Check if the current address is already set to the recipient address
+      let currentAddrOnChain = await OnChainOperations.getAddr(name)
+      
+      switch currentAddrOnChain {
+      | Some(addr) if addr == getAddress(recipientAddress) => {
+          // Skip setAddr step if the address is already set correctly
+          Console.log(`Address for ${name} is already set to ${recipientAddress}, skipping setAddr step`)
+          updateStepStatus(0, #Completed, ~txHash=None)
+          setCurrentStep(_ => 1)
+        }
+      | _ => {
+          // Address needs to be updated
+          updateStepStatus(0, #InProgress)
+          let hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress)
+          updateStepStatus(0, #Completed, ~txHash=Some(hash))
+          setCurrentStep(_ => 1)
+        }
+      }
 
       updateStepStatus(1, #InProgress)
       // let primaryName = await OnChainOperations.name(currentAddress)
@@ -121,6 +135,16 @@ let make = (
       )
       updateStepStatus(2, #Completed, ~txHash=Some(hash3))
       setCurrentStep(_ => 3)
+
+      updateStepStatus(3, #InProgress)
+      let hash4 = await OnChainOperations.safeTransferFrom(
+        walletClient,
+        currentAddress,
+        getAddress(recipientAddress),
+        tokenId,
+      )
+      updateStepStatus(3, #Completed, ~txHash=Some(hash4))
+      setCurrentStep(_ => 4)
 
       onSuccess({
         action: Types.Transfer,
