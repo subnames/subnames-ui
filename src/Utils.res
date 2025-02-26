@@ -1,3 +1,12 @@
+module UseAccount = {
+  type account = {
+    address: option<string>,
+    isConnected: bool,
+  }
+  @module("wagmi")
+  external use: unit => account = "useAccount"
+}
+
 let useDebounce = (callback, delay) => {
   let timeoutRef = React.useRef(None)
 

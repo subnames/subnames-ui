@@ -13,15 +13,6 @@ external removeEventListener: (document, string, event => unit) => unit = "remov
 @get external target: ReactEvent.Mouse.t => Dom.element = "target"
 @send external contains: (Dom.element, Dom.element) => bool = "contains"
 
-module UseAccount = {
-  type account = {
-    address: option<string>,
-    isConnected: bool,
-  }
-  @module("wagmi")
-  external use: unit => account = "useAccount"
-}
-
 type owner = {id: string}
 type subname = {
   label: string,
@@ -376,7 +367,6 @@ let make = () => {
             <TransferPanel
               name
               receiver
-              isWalletConnected=account.isConnected
               onBack={() => setShowTransferPanel(_ => None)}
               onSuccess=handleTransferSuccess
             />

@@ -7,6 +7,8 @@ import * as Core__JSON from "@rescript/core/src/Core__JSON.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 
+var UseAccount = {};
+
 function useDebounce(callback, delay) {
   var timeoutRef = React.useRef(undefined);
   return function (value) {
@@ -63,6 +65,7 @@ function getArrayExn(jsonObj, fieldName, f) {
 }
 
 export {
+  UseAccount ,
   useDebounce ,
   distanceToExpiry ,
   timestampToDate ,

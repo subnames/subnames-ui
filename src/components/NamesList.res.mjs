@@ -21,8 +21,6 @@ import * as RegisterExtendPanel from "./RegisterExtendPanel.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
-var UseAccount = {};
-
 function NamesList(props) {
   var account = Wagmi.useAccount();
   var match = NameContext.use();
@@ -220,7 +218,6 @@ function NamesList(props) {
       tmp$1 = React.createElement(TransferPanel.make, {
             name: match$7[0],
             receiver: match$7[1],
-            isWalletConnected: account.isConnected,
             onBack: (function () {
                 setShowTransferPanel(function (param) {
                       
@@ -400,7 +397,6 @@ function NamesList(props) {
 var make = NamesList;
 
 export {
-  UseAccount ,
   make ,
 }
 /* Icons Not a pure module */

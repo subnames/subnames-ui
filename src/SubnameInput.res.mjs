@@ -129,7 +129,6 @@ function SubnameInput(props) {
         tmp = React.createElement(TransferPanel.make, {
               name: state.name,
               receiver: undefined,
-              isWalletConnected: isWalletConnected,
               onBack: (function () {
                   setState(function (prev) {
                         return {

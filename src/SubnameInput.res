@@ -62,7 +62,6 @@ let make = (~isWalletConnected: bool) => {
       <TransferPanel
         name={state.name}
         receiver={None}
-        isWalletConnected
         onBack={() => setState(prev => {...prev, panel: "input"})}
         onSuccess={onSuccess}
       />

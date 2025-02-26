@@ -58,11 +58,10 @@ var StepProgress = {
 function TransferPanel(props) {
   var onSuccess = props.onSuccess;
   var onBack = props.onBack;
-  var isWalletConnected = props.isWalletConnected;
   var receiver = props.receiver;
   var name = props.name;
   var match = React.useState(function () {
-        return "";
+        return Core__Option.getOr(receiver, "");
       });
   var setRecipientAddress = match[1];
   var recipientAddress = match[0];
@@ -75,15 +74,11 @@ function TransferPanel(props) {
         return "Simulating";
       });
   var match$2 = React.useState(function () {
-        return false;
-      });
-  var isReclaim = match$2[0];
-  var match$3 = React.useState(function () {
         return 0;
       });
-  var setCurrentStep = match$3[1];
-  var currentStep = match$3[0];
-  var match$4 = React.useState(function () {
+  var setCurrentStep = match$2[1];
+  var currentStep = match$2[0];
+  var match$3 = React.useState(function () {
         return [
                 {
                   label: "Set Address",
@@ -96,18 +91,21 @@ function TransferPanel(props) {
                   txHash: undefined
                 },
                 {
-                  label: "Reclaim Token",
-                  status: "NotStarted",
-                  txHash: undefined
-                },
-                {
                   label: "Transfer Token",
                   status: "NotStarted",
                   txHash: undefined
                 }
               ];
       });
-  var setStepStatuses = match$4[1];
+  var setStepStatuses = match$3[1];
+  React.useEffect((function () {
+          if (receiver !== undefined) {
+            setRecipientAddress(function (param) {
+                  return receiver;
+                });
+          }
+          
+        }), [receiver]);
   var updateStepStatus = function (index, status, txHashOpt) {
     var txHash = txHashOpt !== undefined ? Caml_option.valFromOption(txHashOpt) : undefined;
     setStepStatuses(function (prev) {
@@ -125,60 +123,41 @@ function TransferPanel(props) {
         });
   };
   var handleTransfer = async function () {
-    if (!isWalletConnected) {
-      return ;
-    }
-    var walletClient = OnChainOperationsCommon.buildWalletClient();
-    var currentAddr = await OnChainOperationsCommon.currentAddress(walletClient);
-    var primaryName = await OnChainOperations.name(currentAddr);
-    if (primaryName === "") {
-      window.alert("You must set a primary subname before transferring.");
-      return ;
-    }
     setIsWaitingForConfirmation(function (param) {
           return true;
         });
-    if (isReclaim) {
-      console.log("Reclaiming " + name);
-    } else {
-      console.log("Transferring " + name + " to " + recipientAddress);
-      try {
-        var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
-        var tokenId = BigInt(Viem.keccak256(name));
-        updateStepStatus(0, "InProgress", undefined);
-        var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
-        updateStepStatus(0, "Completed", Caml_option.some(hash));
-        setCurrentStep(function (param) {
-              return 1;
-            });
-        updateStepStatus(1, "InProgress", undefined);
-        var hash2 = await OnChainOperations.setName(walletClient, "");
-        updateStepStatus(1, "Completed", Caml_option.some(hash2));
-        setCurrentStep(function (param) {
-              return 2;
-            });
-        updateStepStatus(2, "InProgress", undefined);
-        var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
-        updateStepStatus(2, "Completed", Caml_option.some(hash3));
-        setCurrentStep(function (param) {
-              return 3;
-            });
-        updateStepStatus(3, "InProgress", undefined);
-        var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
-        updateStepStatus(3, "Completed", Caml_option.some(hash4));
-        setCurrentStep(function (param) {
-              return 4;
-            });
-        onSuccess({
-              action: "Transfer",
-              newExpiryDate: undefined
-            });
-      }
-      catch (raw_error){
-        var error = Caml_js_exceptions.internalToOCamlException(raw_error);
-        updateStepStatus(currentStep, "Failed", undefined);
-        console.error(error);
-      }
+    console.log("Transferring " + name + " to " + recipientAddress);
+    try {
+      var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
+      var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+      var tokenId = BigInt(Viem.keccak256(name));
+      updateStepStatus(0, "InProgress", undefined);
+      var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
+      updateStepStatus(0, "Completed", Caml_option.some(hash));
+      setCurrentStep(function (param) {
+            return 1;
+          });
+      updateStepStatus(1, "InProgress", undefined);
+      var hash2 = await OnChainOperations.setName(walletClient, "");
+      updateStepStatus(1, "Completed", Caml_option.some(hash2));
+      setCurrentStep(function (param) {
+            return 2;
+          });
+      updateStepStatus(2, "InProgress", undefined);
+      var hash3 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
+      updateStepStatus(2, "Completed", Caml_option.some(hash3));
+      setCurrentStep(function (param) {
+            return 3;
+          });
+      onSuccess({
+            action: "Transfer",
+            newExpiryDate: undefined
+          });
+    }
+    catch (raw_error){
+      var error = Caml_js_exceptions.internalToOCamlException(raw_error);
+      updateStepStatus(currentStep, "Failed", undefined);
+      console.error(error);
     }
     return setIsWaitingForConfirmation(function (param) {
                 return false;
@@ -190,7 +169,7 @@ function TransferPanel(props) {
                       }, React.createElement("div", {
                             className: "fixed inset-0 bg-black bg-opacity-50"
                           }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
-                              steps: match$4[0],
+                              steps: match$3[0],
                               currentStep: currentStep
                             }) : React.createElement("div", {
                               className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
@@ -210,27 +189,23 @@ function TransferPanel(props) {
                                                   className: "w-6 h-6 text-gray-600"
                                                 }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
                                               className: "text-xl font-semibold text-gray-900"
-                                            }, isReclaim ? "Reclaim Subname" : "Transfer \"" + name + "\" to"))), isReclaim ? React.createElement("div", {
-                                        className: "mb-6 text-gray-700"
-                                      }, "Click Reclaim to sync the Registry ownership with your NFT ownership.") : React.createElement("div", {
-                                        className: "mb-6"
-                                      }, React.createElement("input", {
-                                            className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-                                            placeholder: "0x...",
-                                            type: "text",
-                                            value: Core__Option.getOr(receiver, ""),
-                                            onChange: (function (e) {
-                                                setRecipientAddress(e.target.value);
-                                              })
-                                          })), React.createElement("button", {
+                                            }, "Transfer \"" + name + "\" to"))), React.createElement("div", {
+                                      className: "mb-6"
+                                    }, React.createElement("input", {
+                                          className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+                                          placeholder: "0x...",
+                                          type: "text",
+                                          value: recipientAddress,
+                                          onChange: (function (e) {
+                                              setRecipientAddress(e.target.value);
+                                            })
+                                        })), React.createElement("button", {
                                       className: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400",
-                                      disabled: isWaitingForConfirmation || !isReclaim && recipientAddress === "" && Core__Option.isNone(receiver),
+                                      disabled: isWaitingForConfirmation || recipientAddress === "",
                                       onClick: (function (param) {
                                           handleTransfer();
                                         })
-                                    }, isWaitingForConfirmation ? "Processing..." : (
-                                        isReclaim ? "Reclaim" : "Transfer"
-                                      ))))))
+                                    }, isWaitingForConfirmation ? "Processing..." : "Transfer")))))
             });
 }
 
