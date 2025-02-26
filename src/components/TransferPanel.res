@@ -69,7 +69,8 @@ let make = (
   let (currentStep, setCurrentStep) = React.useState(() => 0)
   let (stepStatuses, setStepStatuses) = React.useState(() => [
     {label: "Set Address", status: #NotStarted, txHash: None},
-    {label: "Set Name", status: #NotStarted, txHash: None},
+    {label: "Clear Name", status: #NotStarted, txHash: None},
+    {label: "Reclaim Token", status: #NotStarted, txHash: None},
     {label: "Transfer Token", status: #NotStarted, txHash: None},
   ])
 
@@ -127,12 +128,7 @@ let make = (
       setCurrentStep(_ => 2)
 
       updateStepStatus(2, #InProgress)
-      let hash3 = await OnChainOperations.safeTransferFrom(
-        walletClient,
-        currentAddress,
-        getAddress(recipientAddress),
-        tokenId,
-      )
+      let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
       updateStepStatus(2, #Completed, ~txHash=Some(hash3))
       setCurrentStep(_ => 3)
 

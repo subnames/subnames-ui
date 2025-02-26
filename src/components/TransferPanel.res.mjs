@@ -86,7 +86,12 @@ function TransferPanel(props) {
                   txHash: undefined
                 },
                 {
-                  label: "Set Name",
+                  label: "Clear Name",
+                  status: "NotStarted",
+                  txHash: undefined
+                },
+                {
+                  label: "Reclaim Token",
                   status: "NotStarted",
                   txHash: undefined
                 },
@@ -157,7 +162,7 @@ function TransferPanel(props) {
             return 2;
           });
       updateStepStatus(2, "InProgress", undefined);
-      var hash3 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
+      var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
       updateStepStatus(2, "Completed", Caml_option.some(hash3));
       setCurrentStep(function (param) {
             return 3;
