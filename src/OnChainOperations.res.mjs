@@ -696,6 +696,23 @@ async function getAddr(name) {
   }
 }
 
+async function getOwner(tokenId) {
+  var label = "0x" + tokenId.toString(16).padStart(64, "0");
+  var node = Viem.keccak256(Viem.encodePacked([
+            "bytes32",
+            "bytes32"
+          ], [
+            Constants.parentNode,
+            label
+          ]));
+  return await OnChainOperationsCommon.publicClient.readContract({
+              address: registryContract.address,
+              abi: registryContract.abi,
+              functionName: "owner",
+              args: [node]
+            });
+}
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -720,5 +737,6 @@ export {
   safeTransferFrom ,
   getText ,
   getAddr ,
+  getOwner ,
 }
 /* controllerContract Not a pure module */

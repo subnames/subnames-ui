@@ -141,9 +141,20 @@ let make = (
 
       // reclaim name
       updateStepStatus(2, #InProgress)
-      let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
-      updateStepStatus(2, #Completed, ~txHash=Some(hash3))
-      setCurrentStep(_ => 3)
+      
+      // Verify that the reclaim operation was successful by checking the new owner
+      let newOwner = await OnChainOperations.getOwner(tokenId)
+      let normalizedNewOwner = getAddress(newOwner)
+      let normalizedRecipient = getAddress(recipientAddress)
+      
+      if (normalizedNewOwner !== normalizedRecipient) { // has not been reclaimed
+        let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
+        updateStepStatus(2, #Completed, ~txHash=Some(hash3))
+        setCurrentStep(_ => 3)
+      } else {
+        updateStepStatus(2, #Completed, ~txHash=None)
+        setCurrentStep(_ => 3)
+      }
 
       // transfer name
       updateStepStatus(3, #InProgress)

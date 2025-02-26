@@ -171,11 +171,21 @@ function TransferPanel(props) {
             });
       }
       updateStepStatus(2, "InProgress", undefined);
-      var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
-      updateStepStatus(2, "Completed", Caml_option.some(hash3));
-      setCurrentStep(function (param) {
-            return 3;
-          });
+      var newOwner = await OnChainOperations.getOwner(tokenId);
+      var normalizedNewOwner = Viem.getAddress(newOwner);
+      var normalizedRecipient = Viem.getAddress(recipientAddress);
+      if (normalizedNewOwner !== normalizedRecipient) {
+        var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
+        updateStepStatus(2, "Completed", Caml_option.some(hash3));
+        setCurrentStep(function (param) {
+              return 3;
+            });
+      } else {
+        updateStepStatus(2, "Completed", Caml_option.some(undefined));
+        setCurrentStep(function (param) {
+              return 3;
+            });
+      }
       updateStepStatus(3, "InProgress", undefined);
       var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
       updateStepStatus(3, "Completed", Caml_option.some(hash4));

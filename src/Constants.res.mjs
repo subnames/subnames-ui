@@ -13,6 +13,8 @@ var baseRegistrarContractAddress = "0xAFb5F12C5F379431253159fae464572999E78485";
 
 var reverseRegistrarContractAddress = "0xc4848453278116613F6CC1660BffAD5a4ac2182E";
 
+var parentNode = "0xa00b30653aa21de4caea57dc656dcab595a7f3a936e0564ffc5dd8448b945581";
+
 var rpcUrl = "https://crab-rpc.darwinia.network";
 
 var indexerUrl = "https://g2d.site/graphql";
@@ -24,6 +26,7 @@ export {
   resolverContractAddress ,
   baseRegistrarContractAddress ,
   reverseRegistrarContractAddress ,
+  parentNode ,
   rpcUrl ,
   indexerUrl ,
 }

@@ -605,3 +605,26 @@ let getAddr = async (name: string) => {
   | _ => None
   }
 }
+
+let getOwner = async tokenId => {
+  let label = `0x${tokenId->BigInt.toString(~radix=16)->String.padStart(64, "0")}`;
+
+  // Compute the node for the subdomain
+  let node = keccak256(
+    encodePacked(
+      ["bytes32", "bytes32"],
+      [Constants.parentNode, label],
+    ),
+  )
+  
+  // Get the owner from the registry contract
+  await readContract(
+    publicClient,
+    {
+      "address": registryContract["address"],
+      "abi": registryContract["abi"],
+      "functionName": "owner",
+      "args": [String(node)],
+    },
+  )
+}
