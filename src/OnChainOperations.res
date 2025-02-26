@@ -28,6 +28,13 @@ let baseRegistrarContract = {
       "outputs": [],
       "stateMutability": "nonpayable",
     },
+    {
+      "type": "function",
+      "name": "ownerOf",
+      "inputs": [{"name": "id", "type": "uint256"}],
+      "outputs": [{"name": "result", "type": "address"}],
+      "stateMutability": "view",
+    },
   ],
 }
 
@@ -321,6 +328,19 @@ let nameExpires: string => promise<int> = async name => {
     },
   )
   BigInt.toInt(result)
+}
+
+let getTokenOwner: string => promise<string> = async name => {
+  let tokenId = BigInt.fromString(keccak256(name))
+  await readContract(
+    publicClient,
+    {
+      "address": baseRegistrarContract["address"],
+      "abi": baseRegistrarContract["abi"],
+      "functionName": "ownerOf",
+      "args": [BigInt(tokenId)],
+    },
+  )
 }
 
 let owner: string => promise<string> = async name => {

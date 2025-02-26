@@ -150,21 +150,35 @@ let make = (
       if (normalizedNewOwner !== normalizedRecipient) { // has not been reclaimed
         let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
         updateStepStatus(2, #Completed, ~txHash=Some(hash3))
-        setCurrentStep(_ => 3)
       } else {
+        // Skip reclaim step if the token is already owned by the recipient
+        Console.log(`Token for ${name} is already owned by ${recipientAddress}, skipping reclaim step`)
         updateStepStatus(2, #Completed, ~txHash=None)
-        setCurrentStep(_ => 3)
       }
+      setCurrentStep(_ => 3)
 
-      // transfer name
+      // transfer name token
       updateStepStatus(3, #InProgress)
-      let hash4 = await OnChainOperations.safeTransferFrom(
-        walletClient,
-        currentAddress,
-        getAddress(recipientAddress),
-        tokenId,
-      )
-      updateStepStatus(3, #Completed, ~txHash=Some(hash4))
+      
+      // Check if the token already belongs to the recipient
+      let currentTokenOwner = await OnChainOperations.getTokenOwner(name)
+      let normalizedCurrentTokenOwner = getAddress(currentTokenOwner)
+      Console.log(`Current token owner: ${normalizedCurrentTokenOwner}`)
+      
+      if (normalizedCurrentTokenOwner !== normalizedRecipient) {
+        // Only transfer if the token is not already owned by the recipient
+        let hash4 = await OnChainOperations.safeTransferFrom(
+          walletClient,
+          currentAddress,
+          normalizedRecipient,
+          tokenId,
+        )
+        updateStepStatus(3, #Completed, ~txHash=Some(hash4))
+      } else {
+        // Skip transfer if the token is already owned by the recipient
+        Console.log(`Token for ${name} is already owned by ${recipientAddress}, skipping transfer step`)
+        updateStepStatus(3, #Completed, ~txHash=None)
+      }
       setCurrentStep(_ => 4)
 
       onSuccess({

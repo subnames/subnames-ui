@@ -177,18 +177,24 @@ function TransferPanel(props) {
       if (normalizedNewOwner !== normalizedRecipient) {
         var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
         updateStepStatus(2, "Completed", Caml_option.some(hash3));
-        setCurrentStep(function (param) {
-              return 3;
-            });
       } else {
+        console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping reclaim step");
         updateStepStatus(2, "Completed", Caml_option.some(undefined));
-        setCurrentStep(function (param) {
-              return 3;
-            });
       }
+      setCurrentStep(function (param) {
+            return 3;
+          });
       updateStepStatus(3, "InProgress", undefined);
-      var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, Viem.getAddress(recipientAddress), tokenId);
-      updateStepStatus(3, "Completed", Caml_option.some(hash4));
+      var currentTokenOwner = await OnChainOperations.getTokenOwner(name);
+      var normalizedCurrentTokenOwner = Viem.getAddress(currentTokenOwner);
+      console.log("Current token owner: " + normalizedCurrentTokenOwner);
+      if (normalizedCurrentTokenOwner !== normalizedRecipient) {
+        var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, normalizedRecipient, tokenId);
+        updateStepStatus(3, "Completed", Caml_option.some(hash4));
+      } else {
+        console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping transfer step");
+        updateStepStatus(3, "Completed", Caml_option.some(undefined));
+      }
       setCurrentStep(function (param) {
             return 4;
           });

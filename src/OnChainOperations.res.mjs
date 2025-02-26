@@ -60,6 +60,19 @@ var baseRegistrarContract = {
       ],
       outputs: [],
       stateMutability: "nonpayable"
+    },
+    {
+      type: "function",
+      name: "ownerOf",
+      inputs: [{
+          name: "id",
+          type: "uint256"
+        }],
+      outputs: [{
+          name: "result",
+          type: "address"
+        }],
+      stateMutability: "view"
     }
   ]
 };
@@ -382,6 +395,16 @@ async function nameExpires(name) {
         args: [tokenId]
       });
   return Core__BigInt.toInt(result);
+}
+
+async function getTokenOwner(name) {
+  var tokenId = BigInt(Viem.keccak256(name));
+  return await OnChainOperationsCommon.publicClient.readContract({
+              address: baseRegistrarContract.address,
+              abi: baseRegistrarContract.abi,
+              functionName: "ownerOf",
+              args: [tokenId]
+            });
 }
 
 async function owner(name) {
@@ -726,6 +749,7 @@ export {
   multicallWithNodeCheck ,
   encodeSetText ,
   nameExpires ,
+  getTokenOwner ,
   owner ,
   encodeSetAddr ,
   encodeSetName ,
