@@ -64,7 +64,6 @@ let make = (
 ) => {
   let (recipientAddress, setRecipientAddress) = React.useState(_ => receiver->Option.getOr(""))
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
-  let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
 
   let (currentStep, setCurrentStep) = React.useState(() => 0)
   let (stepStatuses, setStepStatuses) = React.useState(() => [
@@ -105,6 +104,7 @@ let make = (
       // Check if the current address is already set to the recipient address
       let currentAddrOnChain = await OnChainOperations.getAddr(name)
       
+      // set address
       switch currentAddrOnChain {
       | Some(addr) if addr == getAddress(recipientAddress) => {
           // Skip setAddr step if the address is already set correctly
@@ -121,17 +121,31 @@ let make = (
         }
       }
 
+      // clear name
       updateStepStatus(1, #InProgress)
-      // let primaryName = await OnChainOperations.name(currentAddress)
-      let hash2 = await OnChainOperations.setName(walletClient, "")
-      updateStepStatus(1, #Completed, ~txHash=Some(hash2))
-      setCurrentStep(_ => 2)
+      // Check if the name is already cleared
+      let currentName = await OnChainOperations.name(currentAddress)
+      Console.log(`Current name: ${currentName == "" ? "true" : "false"}`)
+      
+      if currentName == "" {
+        // Skip setName step if the name is already cleared
+        Console.log(`Name for address ${currentAddress} is already cleared, skipping setName step`)
+        updateStepStatus(1, #Completed, ~txHash=None)
+        setCurrentStep(_ => 2)
+      } else {
+        // Name needs to be cleared
+        let hash2 = await OnChainOperations.setName(walletClient, "")
+        updateStepStatus(1, #Completed, ~txHash=Some(hash2))
+        setCurrentStep(_ => 2)
+      }
 
+      // reclaim name
       updateStepStatus(2, #InProgress)
       let hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
       updateStepStatus(2, #Completed, ~txHash=Some(hash3))
       setCurrentStep(_ => 3)
 
+      // transfer name
       updateStepStatus(3, #InProgress)
       let hash4 = await OnChainOperations.safeTransferFrom(
         walletClient,

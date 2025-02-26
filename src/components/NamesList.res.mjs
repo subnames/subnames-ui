@@ -315,26 +315,36 @@ function NamesList(props) {
                                                                 })
                                                             }, "Extend"));
                                                   }
+                                                  var tmp$3;
+                                                  var exit$1 = 0;
+                                                  if (primaryName !== undefined && primaryName.name === subname.name) {
+                                                    tmp$3 = null;
+                                                  } else {
+                                                    exit$1 = 1;
+                                                  }
+                                                  if (exit$1 === 1) {
+                                                    tmp$3 = React.createElement("button", {
+                                                          className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                          type: "button",
+                                                          onClick: (function (param) {
+                                                              setShowTransferPanel(function (param) {
+                                                                    return [
+                                                                            subname.name,
+                                                                            subname.receiver
+                                                                          ];
+                                                                  });
+                                                              setActiveDropdown(function (param) {
+                                                                    
+                                                                  });
+                                                            })
+                                                        }, "Transfer");
+                                                  }
                                                   tmp = React.createElement("div", {
                                                         ref: Caml_option.some(dropdownRef),
                                                         className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
                                                       }, React.createElement("div", {
                                                             className: "py-1"
-                                                          }, tmp$1, primaryName !== undefined && primaryName.name !== subname.name ? React.createElement("button", {
-                                                                  className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                                                  type: "button",
-                                                                  onClick: (function (param) {
-                                                                      setShowTransferPanel(function (param) {
-                                                                            return [
-                                                                                    subname.name,
-                                                                                    subname.receiver
-                                                                                  ];
-                                                                          });
-                                                                      setActiveDropdown(function (param) {
-                                                                            
-                                                                          });
-                                                                    })
-                                                                }, "Transfer") : null));
+                                                          }, tmp$1, tmp$3));
                                                 } else {
                                                   tmp = null;
                                                 }

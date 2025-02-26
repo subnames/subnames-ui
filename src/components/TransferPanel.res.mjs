@@ -70,9 +70,6 @@ function TransferPanel(props) {
       });
   var setIsWaitingForConfirmation = match$1[1];
   var isWaitingForConfirmation = match$1[0];
-  React.useState(function () {
-        return "Simulating";
-      });
   var match$2 = React.useState(function () {
         return 0;
       });
@@ -156,11 +153,23 @@ function TransferPanel(props) {
             });
       }
       updateStepStatus(1, "InProgress", undefined);
-      var hash2 = await OnChainOperations.setName(walletClient, "");
-      updateStepStatus(1, "Completed", Caml_option.some(hash2));
-      setCurrentStep(function (param) {
-            return 2;
-          });
+      var currentName = await OnChainOperations.name(currentAddress);
+      console.log("Current name: " + (
+            currentName === "" ? "true" : "false"
+          ));
+      if (currentName === "") {
+        console.log("Name for address " + currentAddress + " is already cleared, skipping setName step");
+        updateStepStatus(1, "Completed", Caml_option.some(undefined));
+        setCurrentStep(function (param) {
+              return 2;
+            });
+      } else {
+        var hash2 = await OnChainOperations.setName(walletClient, "");
+        updateStepStatus(1, "Completed", Caml_option.some(hash2));
+        setCurrentStep(function (param) {
+              return 2;
+            });
+      }
       updateStepStatus(2, "InProgress", undefined);
       var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
       updateStepStatus(2, "Completed", Caml_option.some(hash3));

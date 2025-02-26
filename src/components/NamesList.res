@@ -318,7 +318,7 @@ let make = () => {
                                 // Transfer
                                 {switch primaryName {
                                 | Some({name}) if name == subname.name => React.null
-                                | Some(_) =>
+                                | Some(_) | None =>
                                   <button
                                     type_="button"
                                     onClick={_ => {
@@ -328,7 +328,6 @@ let make = () => {
                                     className="block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left">
                                     {React.string("Transfer")}
                                   </button>
-                                | None => React.null
                                 }}
                               </div>
                             </div>
