@@ -153,23 +153,11 @@ function TransferPanel(props) {
             });
       }
       updateStepStatus(1, "InProgress", undefined);
-      var currentName = await OnChainOperations.name(currentAddress);
-      console.log("Current name: " + (
-            currentName === "" ? "true" : "false"
-          ));
-      if (currentName === "") {
-        console.log("Name for address " + currentAddress + " is already cleared, skipping setName step");
-        updateStepStatus(1, "Completed", Caml_option.some(undefined));
-        setCurrentStep(function (param) {
-              return 2;
-            });
-      } else {
-        var hash2 = await OnChainOperations.setName(walletClient, "");
-        updateStepStatus(1, "Completed", Caml_option.some(hash2));
-        setCurrentStep(function (param) {
-              return 2;
-            });
-      }
+      var hash2 = await OnChainOperations.setName(walletClient, "");
+      updateStepStatus(1, "Completed", Caml_option.some(hash2));
+      setCurrentStep(function (param) {
+            return 2;
+          });
       updateStepStatus(2, "InProgress", undefined);
       var newOwner = await OnChainOperations.getOwner(tokenId);
       var normalizedNewOwner = Viem.getAddress(newOwner);

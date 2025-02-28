@@ -123,21 +123,9 @@ let make = (
 
       // clear name
       updateStepStatus(1, #InProgress)
-      // Check if the name is already cleared
-      let currentName = await OnChainOperations.name(currentAddress)
-      Console.log(`Current name: ${currentName == "" ? "true" : "false"}`)
-      
-      if currentName == "" {
-        // Skip setName step if the name is already cleared
-        Console.log(`Name for address ${currentAddress} is already cleared, skipping setName step`)
-        updateStepStatus(1, #Completed, ~txHash=None)
-        setCurrentStep(_ => 2)
-      } else {
-        // Name needs to be cleared
-        let hash2 = await OnChainOperations.setName(walletClient, "")
-        updateStepStatus(1, #Completed, ~txHash=Some(hash2))
-        setCurrentStep(_ => 2)
-      }
+      let hash2 = await OnChainOperations.setName(walletClient, "")
+      updateStepStatus(1, #Completed, ~txHash=Some(hash2))
+      setCurrentStep(_ => 2)
 
       // reclaim name
       updateStepStatus(2, #InProgress)
