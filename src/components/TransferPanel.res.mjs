@@ -132,7 +132,7 @@ function TransferPanel$StepProgress(props) {
                       className: "flex items-center justify-between mb-6"
                     }, React.createElement("h2", {
                           className: "text-xl font-semibold text-gray-900"
-                        }, "Transfer Progress"), React.createElement("div", {
+                        }, "Subname Transfer Progress"), React.createElement("div", {
                           className: "text-sm font-medium text-gray-500"
                         }, "Step " + (props.currentStep + 1 | 0).toString() + " of " + steps.length.toString())), React.createElement("div", {
                       className: "space-y-6"
@@ -371,7 +371,7 @@ function TransferPanel(props) {
                             }) : React.createElement("div", {
                               className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
                             }, React.createElement("div", {
-                                  className: "p-6 max-w-2xl mx-auto"
+                                  className: "pt-6 pb-8 px-8 max-w-2xl mx-auto"
                                 }, React.createElement("div", {
                                       className: "flex justify-between items-center mb-6"
                                     }, React.createElement("div", {
@@ -386,7 +386,7 @@ function TransferPanel(props) {
                                                     className: "w-6 h-6 text-gray-600"
                                                   }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
                                               className: "text-xl font-semibold text-gray-900"
-                                            }, "Transfer Your Subname: " + name)), buttonType === "close" ? React.createElement("button", {
+                                            }, "Transfer \`" + name + "\`")), buttonType === "close" ? React.createElement("button", {
                                             className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                                             type: "button",
                                             onClick: (function (param) {

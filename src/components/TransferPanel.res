@@ -74,7 +74,7 @@ module StepProgress = {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md mx-4">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900"> {React.string("Transfer Progress")} </h2>
+          <h2 className="text-xl font-semibold text-gray-900"> {React.string("Subname Transfer Progress")} </h2>
           <div className="text-sm font-medium text-gray-500">
             {React.string(`Step ${(currentStep + 1)->Int.toString} of ${steps->Array.length->Int.toString}`)}
           </div>
@@ -305,7 +305,7 @@ let make = (
       } else {
         <div
           className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
-          <div className="p-6 max-w-2xl mx-auto">
+          <div className="pt-6 pb-8 px-8 max-w-2xl mx-auto">
             <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-3">
                 {switch buttonType {
@@ -321,7 +321,7 @@ let make = (
                 | #close => React.null
                 }}
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {React.string(`Transfer Your Subname: ${name}`)}
+                  {React.string(`Transfer \`${name}\``)}
                 </h2>
               </div>
               {switch buttonType {

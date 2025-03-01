@@ -3,7 +3,6 @@
 import * as Fee from "../Fee.res.mjs";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
-import * as Constants from "../Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -14,7 +13,7 @@ function RegisterExtendPanel(props) {
   var onSuccess = props.onSuccess;
   var onBack = props.onBack;
   var name = props.name;
-  var buttonType = __buttonType !== undefined ? __buttonType : "back";
+  var buttonType = __buttonType !== undefined ? __buttonType : "close";
   var match = React.useState(function () {
         return {
                 years: 1,
@@ -215,7 +214,7 @@ function RegisterExtendPanel(props) {
     tmp$2 = React.createElement("button", {
           className: "w-full py-4 px-6 " + (
             isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"
-          ) + " text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
+          ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
           disabled: isCalculatingFee || isWaitingForConfirmation,
           onClick: (function (param) {
               var years = fee.years;
@@ -269,7 +268,7 @@ function RegisterExtendPanel(props) {
         }, tmp$3);
   } else {
     tmp$2 = React.createElement("button", {
-          className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
+          className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
           onClick: (function (param) {
               handleConnectWallet();
             })
@@ -282,7 +281,7 @@ function RegisterExtendPanel(props) {
                 }), React.createElement("div", {
                   className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
                 }, React.createElement("div", {
-                      className: "p-8 max-w-2xl mx-auto"
+                      className: "pt-6 pb-8 px-8  max-w-2xl mx-auto"
                     }, React.createElement("div", {
                           className: "flex justify-between items-center mb-6"
                         }, React.createElement("div", {
@@ -297,7 +296,7 @@ function RegisterExtendPanel(props) {
                                         className: "w-6 h-6 text-gray-600"
                                       }, React.createElement(Icons.Back.make, {}))), React.createElement("h1", {
                                   className: "text-xl font-semibold text-gray-900 truncate"
-                                }, tmp + " " + name + "." + Constants.sld)), buttonType === "close" ? React.createElement("button", {
+                                }, tmp + " \`" + name + "\`")), buttonType === "close" ? React.createElement("button", {
                                 className: "p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto",
                                 type: "button",
                                 onClick: (function (param) {

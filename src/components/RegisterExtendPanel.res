@@ -14,7 +14,7 @@ let make = (
   ~onBack: unit => unit,
   ~onSuccess: Types.actionResult => unit,
   ~action: Types.action,
-  ~buttonType: [#back | #close]=#back,
+  ~buttonType: [#back | #close]=#close,
 ) => {
   let (fee, setFee) = React.useState(_ => {
     years: 1,
@@ -109,7 +109,7 @@ let make = (
   <div className="fixed inset-0 flex items-center justify-center z-40">
     <div className="fixed inset-0 bg-black bg-opacity-50" />
     <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
-      <div className="p-8 max-w-2xl mx-auto">
+      <div className="pt-6 pb-8 px-8  max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             {switch buttonType {
@@ -128,7 +128,7 @@ let make = (
               {React.string(`${switch action {
               | Types.Register => "Register"
               | Types.Extend => "Extend"
-              }} ${name}.${Constants.sld}`)}
+              }} \`${name}\``)}
             </h1>
           </div>
           {switch buttonType {
@@ -201,16 +201,16 @@ let make = (
           {if !isWalletConnected {
             <button
               onClick={_ => handleConnectWallet()}
-              className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+              className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2">
               <span>{React.string("Connect Wallet")}</span>
             </button>
           } else {
             <button
               onClick={_ => handleClick(~years=fee.years)}
               disabled={isCalculatingFee || isWaitingForConfirmation}
-              className={`w-full py-4 px-6 ${isCalculatingFee || isWaitingForConfirmation 
+              className={`w-full py-4 px-6 ${isCalculatingFee || isWaitingForConfirmation
                   ? "bg-zinc-400 cursor-not-allowed"
-                  : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"} text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2`}>
+                  : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"} text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2`}>
               {if isWaitingForConfirmation {
                 <>
                   <Icons.Spinner className="w-5 h-5 text-white" />
