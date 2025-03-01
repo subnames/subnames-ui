@@ -9,10 +9,12 @@ import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 function RegisterExtendPanel(props) {
+  var __buttonType = props.buttonType;
   var action = props.action;
   var onSuccess = props.onSuccess;
   var onBack = props.onBack;
   var name = props.name;
+  var buttonType = __buttonType !== undefined ? __buttonType : "back";
   var match = React.useState(function () {
         return {
                 years: 1,
@@ -59,7 +61,7 @@ function RegisterExtendPanel(props) {
                 RE_EXN_ID: "Match_failure",
                 _1: [
                   "RegisterExtendPanel.res",
-                  27,
+                  28,
                   4
                 ],
                 Error: new Error()
@@ -126,7 +128,7 @@ function RegisterExtendPanel(props) {
               RE_EXN_ID: "Match_failure",
               _1: [
                 "RegisterExtendPanel.res",
-                128,
+                145,
                 13
               ],
               Error: new Error()
@@ -150,7 +152,7 @@ function RegisterExtendPanel(props) {
                   RE_EXN_ID: "Match_failure",
                   _1: [
                     "RegisterExtendPanel.res",
-                    184,
+                    201,
                     14
                   ],
                   Error: new Error()
@@ -173,7 +175,7 @@ function RegisterExtendPanel(props) {
                   RE_EXN_ID: "Match_failure",
                   _1: [
                     "RegisterExtendPanel.res",
-                    191,
+                    208,
                     14
                   ],
                   Error: new Error()
@@ -227,7 +229,7 @@ function RegisterExtendPanel(props) {
                           RE_EXN_ID: "Match_failure",
                           _1: [
                             "RegisterExtendPanel.res",
-                            77,
+                            78,
                             4
                           ],
                           Error: new Error()
@@ -252,17 +254,25 @@ function RegisterExtendPanel(props) {
                       className: "flex justify-between items-center mb-8"
                     }, React.createElement("div", {
                           className: "flex items-center justify-center gap-3"
-                        }, React.createElement("button", {
-                              className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
-                              type: "button",
-                              onClick: (function (param) {
-                                  onBack();
-                                })
-                            }, React.createElement("div", {
-                                  className: "w-6 h-6 text-gray-600"
-                                }, React.createElement(Icons.Back.make, {}))), React.createElement("span", {
+                        }, buttonType === "close" ? null : React.createElement("button", {
+                                className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                                type: "button",
+                                onClick: (function (param) {
+                                    onBack();
+                                  })
+                              }, React.createElement("div", {
+                                    className: "w-6 h-6 text-gray-600"
+                                  }, React.createElement(Icons.Back.make, {}))), React.createElement("span", {
                               className: "text-lg sm:text-xl font-medium text-gray-700 truncate"
-                            }, name + "." + Constants.sld))), React.createElement("div", {
+                            }, name + "." + Constants.sld)), buttonType === "close" ? React.createElement("button", {
+                            className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                            type: "button",
+                            onClick: (function (param) {
+                                onBack();
+                              })
+                          }, React.createElement("div", {
+                                className: "w-6 h-6 text-gray-600"
+                              }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
                       className: "flex flex-col sm:flex-row justify-between gap-6 mb-8"
                     }, React.createElement("div", {
                           className: "space-y-2"

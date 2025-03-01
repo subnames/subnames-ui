@@ -237,7 +237,8 @@ function NamesList(props) {
                     });
               }),
             onSuccess: handleExtendSuccess,
-            action: "Extend"
+            action: "Extend",
+            buttonType: "close"
           });
     } else {
       tmp$1 = null;

@@ -14,6 +14,7 @@ let make = (
   ~onBack: unit => unit,
   ~onSuccess: Types.actionResult => unit,
   ~action: Types.action,
+  ~buttonType: [#back | #close]=#back,
 ) => {
   let (fee, setFee) = React.useState(_ => {
     years: 1,
@@ -109,18 +110,34 @@ let make = (
     <div className="p-4 sm:p-6 max-w-2xl mx-auto">
       <div className="flex justify-between items-center mb-8">
         <div className="flex items-center justify-center gap-3">
+          {switch buttonType {
+          | #back => 
+            <button
+              onClick={_ => onBack()}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              type_="button">
+              <div className="w-6 h-6 text-gray-600">
+                <Icons.Back />
+              </div>
+            </button>
+          | #close => React.null
+          }}
+          <span className="text-lg sm:text-xl font-medium text-gray-700 truncate">
+            {React.string(`${name}.${Constants.sld}`)}
+          </span>
+        </div>
+        {switch buttonType {
+        | #close => 
           <button
             onClick={_ => onBack()}
             className="p-2 hover:bg-gray-100 rounded-full transition-colors"
             type_="button">
             <div className="w-6 h-6 text-gray-600">
-              <Icons.Back />
+              <Icons.Close />
             </div>
           </button>
-          <span className="text-lg sm:text-xl font-medium text-gray-700 truncate">
-            {React.string(`${name}.${Constants.sld}`)}
-          </span>
-        </div>
+        | #back => React.null
+        }}
       </div>
       <div className="flex flex-col sm:flex-row justify-between gap-6 mb-8">
         <div className="space-y-2">

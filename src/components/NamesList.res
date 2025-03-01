@@ -378,6 +378,7 @@ let make = () => {
               onBack={() => setShowExtendPanel(_ => None)}
               onSuccess=handleExtendSuccess
               action={Types.Extend}
+              buttonType=#close
             />
           } else {
             React.null
