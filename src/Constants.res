@@ -8,3 +8,4 @@ let parentNode = "0xa00b30653aa21de4caea57dc656dcab595a7f3a936e0564ffc5dd8448b94
 let rpcUrl = "https://crab-rpc.darwinia.network"
 let indexerUrl = "https://g2d.site/graphql"
 // let indexerUrl = "http://localhost:4350/graphql"
+// let metricsUrl = "http://localhost:3000/metrics"
