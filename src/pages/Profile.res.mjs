@@ -85,43 +85,21 @@ function Profile$ProfileForm(props) {
     if (email === undefined) {
       return true;
     }
-    if (email !== "") {
-      var emailRegex = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
-      return emailRegex.test(email);
-    }
     if (email === "") {
       return true;
     }
-    throw {
-          RE_EXN_ID: "Match_failure",
-          _1: [
-            "Profile.res",
-            38,
-            6
-          ],
-          Error: new Error()
-        };
+    var emailRegex = new RegExp("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$");
+    return emailRegex.test(email);
   };
   var validateWebsite = function (website) {
     if (website === undefined) {
       return true;
     }
-    if (website !== "") {
-      var urlRegex = new RegExp("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$");
-      return urlRegex.test(website);
-    }
     if (website === "") {
       return true;
     }
-    throw {
-          RE_EXN_ID: "Match_failure",
-          _1: [
-            "Profile.res",
-            48,
-            6
-          ],
-          Error: new Error()
-        };
+    var urlRegex = new RegExp("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$");
+    return urlRegex.test(website);
   };
   var handleSubmit = async function ($$event) {
     $$event.preventDefault();

@@ -223,7 +223,8 @@ function NamesList(props) {
                       
                     });
               }),
-            onSuccess: handleTransferSuccess
+            onSuccess: handleTransferSuccess,
+            buttonType: "close"
           });
     } else if (Core__Option.isSome(showExtendPanel)) {
       var name = Core__Option.getExn(showExtendPanel, undefined);

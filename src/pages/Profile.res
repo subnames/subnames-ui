@@ -1,6 +1,4 @@
 open OnChainOperationsCommon
-open Utils
-
 
 @module("../assets/avatar.png") external avatarImage: string = "default"
 
@@ -40,7 +38,7 @@ module ProfileForm = {
         let emailRegex = Js.Re.fromString("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")
         Js.Re.test_(emailRegex, addr)
       | None => true
-      | Some("") => true
+      | Some(_) => true
       }
     }
 
@@ -52,7 +50,7 @@ module ProfileForm = {
         )
         Js.Re.test_(urlRegex, url)
       | None => true
-      | Some("") => true
+      | Some(_) => true
       }
     }
 

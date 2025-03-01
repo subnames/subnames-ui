@@ -51,12 +51,8 @@ function SubnameInput(props) {
                 break;
             case "Reclaim" :
                 throw {
-                      RE_EXN_ID: "Match_failure",
-                      _1: [
-                        "SubnameInput.res",
-                        33,
-                        13
-                      ],
+                      RE_EXN_ID: "Failure",
+                      _1: "Invalid action",
                       Error: new Error()
                     };
             
@@ -128,7 +124,6 @@ function SubnameInput(props) {
     case "transfer" :
         tmp = React.createElement(TransferPanel.make, {
               name: state.name,
-              receiver: undefined,
               onBack: (function () {
                   setState(function (prev) {
                         return {
@@ -139,7 +134,8 @@ function SubnameInput(props) {
                               };
                       });
                 }),
-              onSuccess: onSuccess
+              onSuccess: onSuccess,
+              buttonType: "close"
             });
         break;
     default:

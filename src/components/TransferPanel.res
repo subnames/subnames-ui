@@ -61,6 +61,7 @@ let make = (
   ~receiver: option<string>,
   ~onBack: unit => unit,
   ~onSuccess: Types.actionResult => unit,
+  ~buttonType: [#back | #close]=#back,
 ) => {
   let (recipientAddress, setRecipientAddress) = React.useState(_ => receiver->Option.getOr(""))
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
@@ -190,35 +191,52 @@ let make = (
       } else {
         <div
           className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
-          <div className="p-4 sm:p-6 max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-8">
+          <div className="p-6 max-w-2xl mx-auto">
+            <div className="flex justify-between items-center mb-6">
               <div className="flex items-center gap-3">
+                {switch buttonType {
+                | #back => 
+                  <button
+                    onClick={_ => onBack()}
+                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                    type_="button">
+                    <div className="w-6 h-6 text-gray-600">
+                      <Icons.Back />
+                    </div>
+                  </button>
+                | #close => React.null
+                }}
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {React.string(`Transfer Your Subname: ${name}`)}
+                </h2>
+              </div>
+              {switch buttonType {
+              | #close => 
                 <button
                   onClick={_ => onBack()}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   type_="button">
                   <div className="w-6 h-6 text-gray-600">
-                    <Icons.Back />
+                    <Icons.Close />
                   </div>
                 </button>
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {React.string(`Transfer "${name}" to`)}
-                </h2>
-              </div>
+              | #back => React.null
+              }}
             </div>
-            <div className="mb-6">
+            <div className="mb-8 mx-[1px]">
+              <label className="block text-gray-700 text-sm font-medium mb-2">{React.string("To:")}</label>
               <input
                 type_="text"
                 value={recipientAddress}
                 onChange={e => setRecipientAddress(ReactEvent.Form.target(e)["value"])}
-                className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500"
+                className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 font-medium text-lg"
                 placeholder="0x..."
               />
             </div>
             <button
               onClick={_ => handleTransfer()->ignore}
               disabled={isWaitingForConfirmation || recipientAddress == ""}
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400">
+              className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md">
               {React.string(isWaitingForConfirmation ? "Processing..." : "Transfer")}
             </button>
           </div>

@@ -56,10 +56,12 @@ var StepProgress = {
 };
 
 function TransferPanel(props) {
+  var __buttonType = props.buttonType;
   var onSuccess = props.onSuccess;
   var onBack = props.onBack;
   var receiver = props.receiver;
   var name = props.name;
+  var buttonType = __buttonType !== undefined ? __buttonType : "back";
   var match = React.useState(function () {
         return Core__Option.getOr(receiver, "");
       });
@@ -211,25 +213,35 @@ function TransferPanel(props) {
                             }) : React.createElement("div", {
                               className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
                             }, React.createElement("div", {
-                                  className: "p-4 sm:p-6 max-w-2xl mx-auto"
+                                  className: "p-6 max-w-2xl mx-auto"
                                 }, React.createElement("div", {
-                                      className: "flex justify-between items-center mb-8"
+                                      className: "flex justify-between items-center mb-6"
                                     }, React.createElement("div", {
                                           className: "flex items-center gap-3"
-                                        }, React.createElement("button", {
-                                              className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
-                                              type: "button",
-                                              onClick: (function (param) {
-                                                  onBack();
-                                                })
-                                            }, React.createElement("div", {
-                                                  className: "w-6 h-6 text-gray-600"
-                                                }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
+                                        }, buttonType === "close" ? null : React.createElement("button", {
+                                                className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                                                type: "button",
+                                                onClick: (function (param) {
+                                                    onBack();
+                                                  })
+                                              }, React.createElement("div", {
+                                                    className: "w-6 h-6 text-gray-600"
+                                                  }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
                                               className: "text-xl font-semibold text-gray-900"
-                                            }, "Transfer \"" + name + "\" to"))), React.createElement("div", {
-                                      className: "mb-6"
-                                    }, React.createElement("input", {
-                                          className: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
+                                            }, "Transfer Your Subname: " + name)), buttonType === "close" ? React.createElement("button", {
+                                            className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                                            type: "button",
+                                            onClick: (function (param) {
+                                                onBack();
+                                              })
+                                          }, React.createElement("div", {
+                                                className: "w-6 h-6 text-gray-600"
+                                              }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
+                                      className: "mb-8 mx-[1px]"
+                                    }, React.createElement("label", {
+                                          className: "block text-gray-700 text-sm font-medium mb-2"
+                                        }, "To:"), React.createElement("input", {
+                                          className: "w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 font-medium text-lg",
                                           placeholder: "0x...",
                                           type: "text",
                                           value: recipientAddress,
@@ -237,7 +249,7 @@ function TransferPanel(props) {
                                               setRecipientAddress(e.target.value);
                                             })
                                         })), React.createElement("button", {
-                                      className: "w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 disabled:bg-gray-400",
+                                      className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md",
                                       disabled: isWaitingForConfirmation || recipientAddress === "",
                                       onClick: (function (param) {
                                           handleTransfer();

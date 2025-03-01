@@ -368,6 +368,7 @@ let make = () => {
               receiver
               onBack={() => setShowTransferPanel(_ => None)}
               onSuccess=handleTransferSuccess
+              buttonType=#close
             />
           } else if Option.isSome(showExtendPanel) {
             let name = showExtendPanel->Option.getExn

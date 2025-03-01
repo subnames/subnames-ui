@@ -34,6 +34,7 @@ let make = (~isWalletConnected: bool) => {
       | Types.Register => "register"
       | Types.Transfer => "transfer"
       | Types.Extend => "extend"
+      | _ => raise(Failure("Invalid action"))
       },
       action,
     })
@@ -64,6 +65,7 @@ let make = (~isWalletConnected: bool) => {
         receiver={None}
         onBack={() => setState(prev => {...prev, panel: "input"})}
         onSuccess={onSuccess}
+        buttonType=#close
       />
     | "result" =>
       <ResultPanel
