@@ -106,112 +106,159 @@ let make = (
     connectButton->click
   }
 
-  <div className="bg-white rounded-custom shadow-lg overflow-hidden">
-    <div className="p-4 sm:p-6 max-w-2xl mx-auto">
-      <div className="flex justify-between items-center mb-8">
-        <div className="flex items-center justify-center gap-3">
+  <div className="fixed inset-0 flex items-center justify-center z-40">
+    <div className="fixed inset-0 bg-black bg-opacity-50" />
+    <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
+      <div className="p-8 max-w-2xl mx-auto">
+        <div className="flex justify-between items-center mb-6">
+          <div className="flex items-center gap-3">
+            {switch buttonType {
+            | #back => 
+              <button
+                onClick={_ => onBack()}
+                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                type_="button">
+                <div className="w-6 h-6 text-gray-600">
+                  <Icons.Back />
+                </div>
+              </button>
+            | #close => React.null
+            }}
+            <h1 className="text-xl font-semibold text-gray-900 truncate">
+              {React.string(`${switch action {
+              | Types.Register => "Register"
+              | Types.Extend => "Extend"
+              }} ${name}.${Constants.sld}`)}
+            </h1>
+          </div>
           {switch buttonType {
-          | #back => 
+          | #close => 
             <button
               onClick={_ => onBack()}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto"
               type_="button">
               <div className="w-6 h-6 text-gray-600">
-                <Icons.Back />
+                <Icons.Close />
               </div>
             </button>
-          | #close => React.null
+          | #back => React.null
           }}
-          <span className="text-lg sm:text-xl font-medium text-gray-700 truncate">
-            {React.string(`${name}.${Constants.sld}`)}
-          </span>
         </div>
-        {switch buttonType {
-        | #close => 
-          <button
-            onClick={_ => onBack()}
-            className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-            type_="button">
-            <div className="w-6 h-6 text-gray-600">
-              <Icons.Close />
+
+        <div className="mb-8 p-5 bg-gray-50 rounded-xl">
+          <div className="flex flex-col sm:flex-row justify-between items-center gap-8">
+            <div className="w-full sm:w-1/2">
+              <div className="text-base font-medium text-gray-700 mb-3 text-center sm:text-left">
+                {switch action {
+                | Types.Register => React.string("REGISTRATION PERIOD")
+                | Types.Extend => React.string("EXTENSION PERIOD")
+                }}
+              </div>
+              <div className="flex items-center justify-center sm:justify-start gap-4">
+                <button
+                  onClick={_ => decrementYears()}
+                  disabled={isCalculatingFee || fee.years <= 1}
+                  className={`w-10 h-10 rounded-full ${isCalculatingFee || fee.years <= 1
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
+                  <span className="text-xl font-medium"> {React.string("-")} </span>
+                </button>
+                <div className="text-2xl font-bold text-gray-900 min-w-[120px] text-center">
+                  {React.string(`${fee.years->Int.toString} year${fee.years > 1 ? "s" : ""}`)}
+                </div>
+                <button
+                  onClick={_ => incrementYears()}
+                  disabled={isCalculatingFee}
+                  className={`w-10 h-10 rounded-full ${isCalculatingFee
+                      ? "bg-gray-200 text-gray-400 cursor-not-allowed"
+                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
+                  <span className="text-xl font-medium"> {React.string("+")} </span>
+                </button>
+              </div>
             </div>
-          </button>
-        | #back => React.null
-        }}
-      </div>
-      <div className="flex flex-col sm:flex-row justify-between gap-6 mb-8">
-        <div className="space-y-2">
-          <div className="text-base sm:text-lg font-medium text-gray-600 text-center sm:text-left">
-            {switch action {
-            | Types.Register => React.string("CLAIM FOR")
-            | Types.Extend => React.string("EXTEND FOR")
-            }}
-          </div>
-          <div className="flex items-center justify-center gap-4">
-            <button
-              onClick={_ => decrementYears()}
-              disabled={isCalculatingFee}
-              className={`w-12 h-12 rounded-full ${isCalculatingFee
-                  ? "bg-gray-50 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200"} flex items-center justify-center transition-colors`}>
-              <span className="text-xl font-medium text-gray-700"> {React.string("-")} </span>
-            </button>
-            <div className="text-2xl sm:text-3xl font-bold text-gray-900 min-w-[120px] text-center">
-              {React.string(`${fee.years->Int.toString} year${fee.years > 1 ? "s" : ""}`)}
+
+            <div className="w-full sm:w-1/2 flex flex-col items-center sm:items-end">
+              <div className="text-base font-medium text-gray-700 mb-3 text-center sm:text-right">
+                {React.string("TOTAL COST")}
+              </div>
+              <div className=" py-3 min-w-[180px] text-right">
+                {if isCalculatingFee {
+                  <div className="flex items-center justify-center gap-2">
+                    <Icons.Spinner className="w-6 h-6 text-zinc-600" />
+                    <span className="text-gray-500 font-medium"> {React.string("Calculating...")} </span>
+                  </div>
+                } else {
+                  <div className="text-2xl font-bold text-gray-900">
+                    {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)}
+                  </div>
+                }}
+              </div>
             </div>
+          </div>
+        </div>
+
+        <div className="mt-8">
+          {if !isWalletConnected {
             <button
-              onClick={_ => incrementYears()}
-              disabled={isCalculatingFee}
-              className={`w-12 h-12 rounded-full ${isCalculatingFee
-                  ? "bg-gray-50 cursor-not-allowed"
-                  : "bg-gray-100 hover:bg-gray-200"} flex items-center justify-center transition-colors`}>
-              <span className="text-xl font-medium text-gray-700"> {React.string("+")} </span>
+              onClick={_ => handleConnectWallet()}
+              className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2">
+              <span>{React.string("Connect Wallet")}</span>
             </button>
-          </div>
+          } else {
+            <button
+              onClick={_ => handleClick(~years=fee.years)}
+              disabled={isCalculatingFee || isWaitingForConfirmation}
+              className={`w-full py-4 px-6 ${isCalculatingFee || isWaitingForConfirmation 
+                  ? "bg-zinc-400 cursor-not-allowed"
+                  : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"} text-white rounded-xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2`}>
+              {if isWaitingForConfirmation {
+                <>
+                  <Icons.Spinner className="w-5 h-5 text-white" />
+                  <span>
+                    {switch action {
+                    | Types.Register => React.string("Registering...")
+                    | Types.Extend => React.string("Extending...")
+                    }}
+                  </span>
+                </>
+              } else if isCalculatingFee {
+                <>
+                  <Icons.Spinner className="w-5 h-5 text-white" />
+                  <span>{React.string("Calculating...")}</span>
+                </>
+              } else {
+                <span>
+                  {switch action {
+                  | Types.Register => React.string("Register Now")
+                  | Types.Extend => React.string("Extend Now")
+                  }}
+                </span>
+              }}
+            </button>
+          }}
         </div>
-        <div className="space-y-2">
-          <div className="text-base sm:text-lg font-medium text-gray-600 text-center sm:text-right">
-            {React.string("AMOUNT")}
-          </div>
-          <div
-            className="text-2xl sm:text-3xl font-bold text-gray-900 h-12 flex items-center justify-center sm:justify-end">
-            {if isCalculatingFee {
-              <Icons.Spinner className="w-8 h-8 text-zinc-600" />
-            } else {
-              React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)
-            }}
-          </div>
-        </div>
-      </div>
-      <div className="mt-8">
-        {if !isWalletConnected {
-          <button
-            onClick={_ => handleConnectWallet()}
-            className="w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md">
-            {React.string("Connect Wallet")}
-          </button>
-        } else {
-          <button
-            onClick={_ => handleClick(~years=fee.years)}
-            disabled={isCalculatingFee || isWaitingForConfirmation}
-            className={`w-full py-4 px-6 ${isCalculatingFee || isWaitingForConfirmation 
-                ? "bg-zinc-400 cursor-not-allowed"
-                : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"} text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md`}>
-            {if isWaitingForConfirmation {
-              switch action {
-              | Types.Register => React.string("Registering...")
-              | Types.Extend => React.string("Extending...")
-              }
-            } else if isCalculatingFee {
-              React.string("Calculating...")
-            } else {
-              switch action {
-              | Types.Register => React.string("Register")
-              | Types.Extend => React.string("Extend")
-              }
-            }}
-          </button>
-        }}
+
+        // {if isWaitingForConfirmation {
+        //   <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+        //     <div className="flex items-start gap-3">
+        //       <div className="text-blue-500 mt-0.5">
+        //         <Icons.Spinner className="w-5 h-5" />
+        //       </div>
+        //       <div>
+        //         <p className="text-sm text-blue-800 font-medium">
+        //           {React.string("Transaction in progress")}
+        //         </p>
+        //         <p className="text-xs text-blue-600 mt-1">
+        //           {React.string("Please wait while your transaction is being processed. This may take a moment.")}
+        //         </p>
+        //       </div>
+        //     </div>
+        //   </div>
+        // } else {
+        //   <div className="mt-4 text-center text-sm text-gray-500">
+        //     {React.string("Fees are paid in RING tokens on the Darwinia network")}
+        //   </div>
+        // }}
       </div>
     </div>
   </div>
