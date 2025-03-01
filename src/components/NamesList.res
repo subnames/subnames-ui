@@ -366,7 +366,7 @@ let make = () => {
             <TransferPanel
               name
               receiver
-              onBack={() => setShowTransferPanel(_ => None)}
+              onCancel={() => setShowTransferPanel(_ => None)}
               onSuccess=handleTransferSuccess
               buttonType=#close
             />

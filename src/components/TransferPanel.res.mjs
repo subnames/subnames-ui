@@ -58,7 +58,7 @@ var StepProgress = {
 function TransferPanel(props) {
   var __buttonType = props.buttonType;
   var onSuccess = props.onSuccess;
-  var onBack = props.onBack;
+  var onCancel = props.onCancel;
   var receiver = props.receiver;
   var name = props.name;
   var buttonType = __buttonType !== undefined ? __buttonType : "back";
@@ -222,7 +222,7 @@ function TransferPanel(props) {
                                                 className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                                                 type: "button",
                                                 onClick: (function (param) {
-                                                    onBack();
+                                                    onCancel();
                                                   })
                                               }, React.createElement("div", {
                                                     className: "w-6 h-6 text-gray-600"
@@ -232,7 +232,7 @@ function TransferPanel(props) {
                                             className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                                             type: "button",
                                             onClick: (function (param) {
-                                                onBack();
+                                                onCancel();
                                               })
                                           }, React.createElement("div", {
                                                 className: "w-6 h-6 text-gray-600"

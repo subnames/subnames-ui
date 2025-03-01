@@ -59,7 +59,7 @@ module StepProgress = {
 let make = (
   ~name: string,
   ~receiver: option<string>,
-  ~onBack: unit => unit,
+  ~onCancel: unit => unit,
   ~onSuccess: Types.actionResult => unit,
   ~buttonType: [#back | #close]=#back,
 ) => {
@@ -197,7 +197,7 @@ let make = (
                 {switch buttonType {
                 | #back => 
                   <button
-                    onClick={_ => onBack()}
+                    onClick={_ => onCancel()}
                     className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                     type_="button">
                     <div className="w-6 h-6 text-gray-600">
@@ -213,7 +213,7 @@ let make = (
               {switch buttonType {
               | #close => 
                 <button
-                  onClick={_ => onBack()}
+                  onClick={_ => onCancel()}
                   className="p-2 hover:bg-gray-100 rounded-full transition-colors"
                   type_="button">
                   <div className="w-6 h-6 text-gray-600">

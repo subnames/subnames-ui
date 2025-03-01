@@ -124,7 +124,7 @@ function SubnameInput(props) {
     case "transfer" :
         tmp = React.createElement(TransferPanel.make, {
               name: state.name,
-              onBack: (function () {
+              onCancel: (function () {
                   setState(function (prev) {
                         return {
                                 name: prev.name,

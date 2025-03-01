@@ -218,7 +218,7 @@ function NamesList(props) {
       tmp$1 = React.createElement(TransferPanel.make, {
             name: match$7[0],
             receiver: match$7[1],
-            onBack: (function () {
+            onCancel: (function () {
                 setShowTransferPanel(function (param) {
                       
                     });
