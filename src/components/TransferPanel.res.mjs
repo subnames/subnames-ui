@@ -10,45 +10,203 @@ import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
+function TransferPanel$StatusIcon$NotStarted(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "w-6 h-6";
+  return React.createElement("svg", {
+              className: className,
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("circle", {
+                  cx: "12",
+                  cy: "12",
+                  r: "9",
+                  stroke: "currentColor",
+                  strokeWidth: "2"
+                }));
+}
+
+var NotStarted = {
+  make: TransferPanel$StatusIcon$NotStarted
+};
+
+function TransferPanel$StatusIcon$InProgress(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "w-6 h-6";
+  return React.createElement("svg", {
+              className: className + " animate-spin",
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("circle", {
+                  className: "opacity-25",
+                  cx: "12",
+                  cy: "12",
+                  r: "10",
+                  stroke: "currentColor",
+                  strokeWidth: "2"
+                }), React.createElement("path", {
+                  className: "opacity-75",
+                  d: "M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z",
+                  fill: "currentColor"
+                }));
+}
+
+var InProgress = {
+  make: TransferPanel$StatusIcon$InProgress
+};
+
+function TransferPanel$StatusIcon$Completed(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "w-6 h-6";
+  return React.createElement("svg", {
+              className: className,
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("circle", {
+                  cx: "12",
+                  cy: "12",
+                  fill: "currentColor",
+                  fillOpacity: "0.2",
+                  r: "9",
+                  stroke: "currentColor",
+                  strokeWidth: "2"
+                }), React.createElement("path", {
+                  d: "M8 12L11 15L16 9",
+                  stroke: "currentColor",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2"
+                }));
+}
+
+var Completed = {
+  make: TransferPanel$StatusIcon$Completed
+};
+
+function TransferPanel$StatusIcon$Failed(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "w-6 h-6";
+  return React.createElement("svg", {
+              className: className,
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("circle", {
+                  cx: "12",
+                  cy: "12",
+                  fill: "currentColor",
+                  fillOpacity: "0.2",
+                  r: "9",
+                  stroke: "currentColor",
+                  strokeWidth: "2"
+                }), React.createElement("path", {
+                  d: "M15 9L9 15M9 9L15 15",
+                  stroke: "currentColor",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2"
+                }));
+}
+
+var Failed = {
+  make: TransferPanel$StatusIcon$Failed
+};
+
+var StatusIcon = {
+  NotStarted: NotStarted,
+  InProgress: InProgress,
+  Completed: Completed,
+  Failed: Failed
+};
+
 function TransferPanel$StepProgress(props) {
+  var steps = props.steps;
   return React.createElement("div", {
               className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             }, React.createElement("div", {
-                  className: "bg-white p-6 rounded-lg shadow-xl w-96"
-                }, React.createElement("h3", {
-                      className: "text-lg font-semibold mb-4"
-                    }, "Transfer Progress"), React.createElement("div", {
-                      className: "space-y-4"
-                    }, Belt_Array.mapWithIndex(props.steps, (function (index, step) {
+                  className: "bg-white p-8 rounded-xl shadow-xl w-full max-w-md mx-4"
+                }, React.createElement("div", {
+                      className: "flex items-center justify-between mb-6"
+                    }, React.createElement("h2", {
+                          className: "text-xl font-semibold text-gray-900"
+                        }, "Transfer Progress"), React.createElement("div", {
+                          className: "text-sm font-medium text-gray-500"
+                        }, "Step " + (props.currentStep + 1 | 0).toString() + " of " + steps.length.toString())), React.createElement("div", {
+                      className: "space-y-6"
+                    }, Belt_Array.mapWithIndex(steps, (function (index, step) {
                             var match = step.status;
-                            var statusColor = match === "Completed" ? "text-green-500" : (
+                            var statusColor = match === "Completed" ? "text-green-600" : (
                                 match === "NotStarted" ? "text-gray-400" : (
-                                    match === "Failed" ? "text-red-500" : "text-blue-500"
+                                    match === "Failed" ? "text-red-600" : "text-blue-600"
                                   )
                               );
                             var match$1 = step.status;
-                            var statusIcon = match$1 === "Completed" ? "✅" : (
-                                match$1 === "NotStarted" ? "⚪" : (
-                                    match$1 === "Failed" ? "❌" : "🔄"
+                            var bgColor = match$1 === "Completed" ? "bg-green-50" : (
+                                match$1 === "NotStarted" ? "" : (
+                                    match$1 === "Failed" ? "bg-red-50" : "bg-blue-50"
                                   )
                               );
                             var match$2 = step.status;
-                            var match$3 = step.txHash;
+                            var borderColor = match$2 === "Completed" ? "border-green-200" : (
+                                match$2 === "NotStarted" ? "border-gray-200" : (
+                                    match$2 === "Failed" ? "border-red-200" : "border-blue-200"
+                                  )
+                              );
+                            var match$3 = step.status;
+                            var statusIcon = match$3 === "Completed" ? React.createElement(TransferPanel$StatusIcon$Completed, {
+                                    className: "w-6 h-6"
+                                  }) : (
+                                match$3 === "NotStarted" ? React.createElement(TransferPanel$StatusIcon$NotStarted, {
+                                        className: "w-6 h-6"
+                                      }) : (
+                                    match$3 === "Failed" ? React.createElement(TransferPanel$StatusIcon$Failed, {
+                                            className: "w-6 h-6"
+                                          }) : React.createElement(TransferPanel$StatusIcon$InProgress, {
+                                            className: "w-6 h-6"
+                                          })
+                                  )
+                              );
+                            var match$4 = step.status;
+                            var match$5 = step.status;
+                            var match$6 = step.txHash;
                             return React.createElement("div", {
                                         key: String(index),
-                                        className: "flex items-center gap-3"
+                                        className: "p-4 rounded-lg border " + borderColor + " " + bgColor + " transition-all duration-200"
                                       }, React.createElement("div", {
-                                            className: statusColor
-                                          }, statusIcon), React.createElement("div", {
-                                            className: "flex-1 space-y-1"
+                                            className: "flex items-center gap-4"
                                           }, React.createElement("div", {
-                                                className: "font-medium " + statusColor
-                                              }, step.label), match$2 === "Completed" && match$3 !== undefined ? React.createElement("a", {
-                                                  className: "text-xs text-blue-500 hover:text-blue-700 truncate block",
-                                                  href: "https://sepolia.etherscan.io/tx/" + match$3,
-                                                  target: "_blank"
-                                                }, match$3) : null));
-                          })))));
+                                                className: "flex-shrink-0 " + statusColor
+                                              }, statusIcon), React.createElement("div", {
+                                                className: "flex-1"
+                                              }, React.createElement("div", {
+                                                    className: "font-medium " + statusColor + " text-base"
+                                                  }, step.label), match$4 === "InProgress" ? React.createElement("div", {
+                                                      className: "text-sm text-blue-600 mt-1"
+                                                    }, "Processing...") : (
+                                                  match$4 === "Completed" ? React.createElement("div", {
+                                                          className: "text-sm text-green-600 mt-1"
+                                                        }, "Completed") : (
+                                                      match$4 === "Failed" ? React.createElement("div", {
+                                                              className: "text-sm text-red-600 mt-1"
+                                                            }, "Failed") : null
+                                                    )
+                                                ))), match$5 === "Completed" && match$6 !== undefined ? React.createElement("div", {
+                                              className: "mt-2 pt-2 border-t border-green-200"
+                                            }, React.createElement("div", {
+                                                  className: "flex items-center justify-between"
+                                                }, React.createElement("span", {
+                                                      className: "text-xs text-gray-500"
+                                                    }, "Transaction Hash:"), React.createElement("a", {
+                                                      className: "text-xs text-blue-600 hover:text-blue-800 underline ml-2 truncate max-w-[200px]",
+                                                      href: "https://sepolia.etherscan.io/tx/" + match$6,
+                                                      target: "_blank"
+                                                    }, match$6))) : null);
+                          }))), React.createElement("div", {
+                      className: "mt-6 text-center text-sm text-gray-500"
+                    }, "This process may take a few minutes to complete.")));
 }
 
 var StepProgress = {
@@ -261,6 +419,7 @@ function TransferPanel(props) {
 var make = TransferPanel;
 
 export {
+  StatusIcon ,
   StepProgress ,
   make ,
 }

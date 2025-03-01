@@ -10,45 +10,159 @@ type transferStep = {
   txHash: option<string>,
 }
 
+// Status icon components for the StepProgress
+module StatusIcon = {
+  module NotStarted = {
+    @react.component
+    let make = (~className="w-6 h-6") => {
+      <svg className viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" stroke="currentColor" strokeWidth="2" />
+      </svg>
+    }
+  }
+
+  module InProgress = {
+    @react.component
+    let make = (~className="w-6 h-6") => {
+      <svg className={`${className} animate-spin`} viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" />
+        <path
+          className="opacity-75"
+          fill="currentColor"
+          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+        />
+      </svg>
+    }
+  }
+
+  module Completed = {
+    @react.component
+    let make = (~className="w-6 h-6") => {
+      <svg className viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" />
+        <path
+          d="M8 12L11 15L16 9"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    }
+  }
+
+  module Failed = {
+    @react.component
+    let make = (~className="w-6 h-6") => {
+      <svg className viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="12" cy="12" r="9" fill="currentColor" fillOpacity="0.2" stroke="currentColor" strokeWidth="2" />
+        <path
+          d="M15 9L9 15M9 9L15 15"
+          stroke="currentColor"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    }
+  }
+}
+
 module StepProgress = {
   @react.component
   let make = (~steps: array<transferStep>, ~currentStep: int) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-        <h3 className="text-lg font-semibold mb-4"> {React.string("Transfer Progress")} </h3>
-        <div className="space-y-4">
+      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md mx-4">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-xl font-semibold text-gray-900"> {React.string("Transfer Progress")} </h2>
+          <div className="text-sm font-medium text-gray-500">
+            {React.string(`Step ${(currentStep + 1)->Int.toString} of ${steps->Array.length->Int.toString}`)}
+          </div>
+        </div>
+
+        <div className="space-y-6">
           {steps
           ->Belt.Array.mapWithIndex((index, step) => {
+            let isActive = index == currentStep
+            let isPast = index < currentStep
+            
             let statusColor = switch step.status {
             | #NotStarted => "text-gray-400"
-            | #InProgress => "text-blue-500"
-            | #Completed => "text-green-500"
-            | #Failed => "text-red-500"
+            | #InProgress => "text-blue-600"
+            | #Completed => "text-green-600"
+            | #Failed => "text-red-600"
             }
+            
+            let bgColor = switch step.status {
+            | #NotStarted => ""
+            | #InProgress => "bg-blue-50"
+            | #Completed => "bg-green-50"
+            | #Failed => "bg-red-50"
+            }
+            
+            let borderColor = switch step.status {
+            | #NotStarted => "border-gray-200"
+            | #InProgress => "border-blue-200"
+            | #Completed => "border-green-200"
+            | #Failed => "border-red-200"
+            }
+            
             let statusIcon = switch step.status {
-            | #NotStarted => "⚪"
-            | #InProgress => "🔄"
-            | #Completed => "✅"
-            | #Failed => "❌"
+            | #NotStarted => <StatusIcon.NotStarted className="w-6 h-6" />
+            | #InProgress => <StatusIcon.InProgress className="w-6 h-6" />
+            | #Completed => <StatusIcon.Completed className="w-6 h-6" />
+            | #Failed => <StatusIcon.Failed className="w-6 h-6" />
             }
-            <div key={Belt.Int.toString(index)} className="flex items-center gap-3">
-              <div className={`${statusColor}`}> {React.string(statusIcon)} </div>
-              <div className="flex-1 space-y-1">
-                <div className={`font-medium ${statusColor}`}> {React.string(step.label)} </div>
-                {switch (step.status, step.txHash) {
-                | (#Completed, Some(hash)) =>
-                  <a
-                    href={`https://sepolia.etherscan.io/tx/${hash}`}
-                    target="_blank"
-                    className="text-xs text-blue-500 hover:text-blue-700 truncate block">
-                    {React.string(hash)}
-                  </a>
-                | _ => React.null
-                }}
+            
+            <div 
+              key={Belt.Int.toString(index)} 
+              className={`p-4 rounded-lg border ${borderColor} ${bgColor} transition-all duration-200`}>
+              <div className="flex items-center gap-4">
+                <div className={`flex-shrink-0 ${statusColor}`}> {statusIcon} </div>
+                <div className="flex-1">
+                  <div className={`font-medium ${statusColor} text-base`}> 
+                    {React.string(step.label)} 
+                  </div>
+                  {switch step.status {
+                  | #InProgress => 
+                    <div className="text-sm text-blue-600 mt-1">
+                      {React.string("Processing...")}
+                    </div>
+                  | #Completed => 
+                    <div className="text-sm text-green-600 mt-1">
+                      {React.string("Completed")}
+                    </div>
+                  | #Failed => 
+                    <div className="text-sm text-red-600 mt-1">
+                      {React.string("Failed")}
+                    </div>
+                  | _ => React.null
+                  }}
+                </div>
               </div>
+              
+              {switch (step.status, step.txHash) {
+              | (#Completed, Some(hash)) =>
+                <div className="mt-2 pt-2 border-t border-green-200">
+                  <div className="flex items-center justify-between">
+                    <span className="text-xs text-gray-500">{React.string("Transaction Hash:")}</span>
+                    <a
+                      href={`https://sepolia.etherscan.io/tx/${hash}`}
+                      target="_blank"
+                      className="text-xs text-blue-600 hover:text-blue-800 underline ml-2 truncate max-w-[200px]">
+                      {React.string(hash)}
+                    </a>
+                  </div>
+                </div>
+              | _ => React.null
+              }}
             </div>
           })
           ->React.array}
+        </div>
+        
+        <div className="mt-6 text-center text-sm text-gray-500">
+          {React.string("This process may take a few minutes to complete.")}
         </div>
       </div>
     </div>
