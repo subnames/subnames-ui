@@ -207,11 +207,11 @@ function NamesList(props) {
     var tmp$1;
     if (settingPrimaryName) {
       tmp$1 = React.createElement("div", {
-            className: "flex items-center gap-3"
-          }, React.createElement("div", {
-                className: "animate-spin rounded-full h-5 w-5 border-2 border-gray-900 border-t-transparent"
+            className: "flex items-center gap-3 p-2 bg-gray-100 rounded-lg shadow-sm"
+          }, React.createElement(Icons.Spinner.make, {
+                className: "h-6 w-6 text-gray-900"
               }), React.createElement("p", {
-                className: "text-gray-900"
+                className: "text-gray-900 text-lg font-medium"
               }, "Setting primary name..."));
     } else if (Core__Option.isSome(showTransferPanel)) {
       var match$7 = Core__Option.getExn(showTransferPanel, undefined);
@@ -246,7 +246,7 @@ function NamesList(props) {
     tmp = React.createElement("div", {
           className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         }, React.createElement("div", {
-              className: "bg-white rounded-custom shadow-xl"
+              className: "bg-white rounded-2xl shadow-xl"
             }, tmp$1));
   } else {
     tmp = null;
