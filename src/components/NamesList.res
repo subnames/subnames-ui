@@ -138,13 +138,7 @@ let make = () => {
         let query = `
           query {
             subnames(where: {
-              owner: {id_eq: "${address}"}, 
-              OR: {
-                resolvedTo: {id_eq: "${address}"}, 
-                OR: {
-                  reverseResolvedFrom: {id_eq: "${address}"}
-                }
-              }
+              owner: {id_eq: "${address}"}
             }) {
               label
               name
@@ -185,6 +179,8 @@ let make = () => {
     <div className="p-8">
       <div className="w-full max-w-xl mx-auto">
         <div className="bg-white rounded-custom shadow-lg">
+
+          // Header
           <div className="p-8 py-6 border-b border-gray-200 relative">
             <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
             <div className="text-sm text-gray-500">
@@ -196,6 +192,7 @@ let make = () => {
               <Icons.Close />
             </button>
           </div>
+
           {if !account.isConnected {
             <div className="text-center py-4 text-gray-500">
               {React.string("Please connect your wallet to see your names")}

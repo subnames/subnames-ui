@@ -167,7 +167,7 @@ function NamesList(props) {
               var address = Core__Option.getExn(Core__Option.map(account.address, (function (prim) {
                           return prim.toLowerCase();
                         })), "No address found");
-              var query = "\n          query {\n            subnames(where: {\n              owner: {id_eq: \"" + address + "\"}, \n              OR: {\n                resolvedTo: {id_eq: \"" + address + "\"}, \n                OR: {\n                  reverseResolvedFrom: {id_eq: \"" + address + "\"}\n                }\n              }\n            }) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n              resolvedTo {\n                id\n              }\n              reverseResolvedFrom {\n                id\n              }\n            }\n          }\n        ";
+              var query = "\n          query {\n            subnames(where: {\n              owner: {id_eq: \"" + address + "\"}\n            }) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n              resolvedTo {\n                id\n              }\n              reverseResolvedFrom {\n                id\n              }\n            }\n          }\n        ";
               console.log(query);
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
