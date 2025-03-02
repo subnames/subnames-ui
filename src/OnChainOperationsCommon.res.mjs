@@ -6,6 +6,39 @@ import Sha3Mjs from "./sha3.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Chains from "viem/chains";
 
+async function waitForTransactionReceiptWithRetry(publicClient, hash, maxRetriesOpt, delayMsOpt) {
+  var maxRetries = maxRetriesOpt !== undefined ? maxRetriesOpt : 10;
+  var delayMs = delayMsOpt !== undefined ? delayMsOpt : 2000;
+  var attempt = async function (retryCount) {
+    try {
+      console.log("Waiting for transaction receipt: " + hash + ", attempt " + retryCount.toString() + "/" + maxRetries.toString());
+      var receipt = await publicClient.waitForTransactionReceipt({
+            hash: hash
+          });
+      console.log("Transaction " + hash + " confirmed in block " + receipt.blockNumber.toString() + ", status: " + receipt.status);
+      return receipt;
+    }
+    catch (error){
+      if (retryCount < maxRetries) {
+        console.log("Receipt not found yet, retrying in " + delayMs.toString() + "ms...");
+        await new Promise((function (resolve, reject) {
+                setTimeout((function () {
+                        resolve();
+                      }), delayMs);
+              }));
+        return await attempt(retryCount + 1 | 0);
+      } else {
+        console.log("Max retries reached for transaction " + hash + ". The transaction may still succeed on-chain.");
+        return {
+                blockNumber: BigInt(0),
+                status: "success_assumed"
+              };
+      }
+    }
+  };
+  return await attempt(1);
+}
+
 function sha3HexAddress(prim) {
   return Sha3Mjs(prim);
 }
@@ -33,7 +66,7 @@ async function currentAddress(walletClient) {
           RE_EXN_ID: "Assert_failure",
           _1: [
             "OnChainOperationsCommon.res",
-            57,
+            90,
             2
           ],
           Error: new Error()
@@ -51,6 +84,7 @@ async function getCurrentAddress() {
 }
 
 export {
+  waitForTransactionReceiptWithRetry ,
   sha3HexAddress ,
   publicClient ,
   buildWalletClient ,

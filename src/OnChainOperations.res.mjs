@@ -347,9 +347,7 @@ async function multicallWithNodeCheck(walletClient, name, calls) {
         ]
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match$1 = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
@@ -490,9 +488,7 @@ async function register(walletClient, name, years, owner, onStatusChange) {
   onStatusChange("WaitingForSignature");
   var hash = await walletClient.writeContract(match.request);
   onStatusChange("Broadcasting");
-  await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   return onStatusChange("Confirmed");
 }
 
@@ -512,9 +508,7 @@ async function renew(walletClient, name, years) {
         value: priceInWei
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match$1 = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
 }
 
@@ -549,9 +543,7 @@ async function setAddr(walletClient, name, a) {
         ]
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match$1 = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log("setAddr confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
   return hash;
 }
@@ -584,9 +576,7 @@ async function reclaim(walletClient, tokenId, newOwner) {
         ]
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match$1 = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log(hash + " confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
   return hash;
 }
@@ -609,9 +599,7 @@ async function setName(walletClient, name) {
         account: currentAddress,
         args: [name]
       });
-  var match = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log("setName confirmed in block " + match.blockNumber.toString() + ", status: " + match.status);
   return hash;
 }
@@ -648,9 +636,7 @@ async function safeTransferFrom(walletClient, from, to, tokenId) {
         ]
       });
   var hash = await walletClient.writeContract(match.request);
-  var match$1 = await OnChainOperationsCommon.publicClient.waitForTransactionReceipt({
-        hash: hash
-      });
+  var match$1 = await OnChainOperationsCommon.waitForTransactionReceiptWithRetry(OnChainOperationsCommon.publicClient, hash, undefined, undefined);
   console.log("transfer confirmed in block " + match$1.blockNumber.toString() + ", status: " + match$1.status);
   return hash;
 }

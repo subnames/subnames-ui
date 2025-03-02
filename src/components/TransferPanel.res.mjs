@@ -3,6 +3,7 @@
 import * as Viem from "viem";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
+import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -249,7 +250,6 @@ function TransferPanel(props) {
         return 0;
       });
   var setCurrentStep = match$3[1];
-  var currentStep = match$3[0];
   var match$4 = React.useState(function () {
         return [
                 {
@@ -304,73 +304,91 @@ function TransferPanel(props) {
           return true;
         });
     console.log("Transferring " + name + " to " + recipientAddress);
-    try {
-      var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
-      var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
-      var tokenId = BigInt(Viem.keccak256(name));
-      var currentAddrOnChain = await OnChainOperations.getAddr(name);
-      var exit = 0;
-      if (currentAddrOnChain !== undefined && Caml_option.valFromOption(currentAddrOnChain) === Viem.getAddress(recipientAddress)) {
-        console.log("Address for " + name + " is already set to " + recipientAddress + ", skipping setAddr step");
-        updateStepStatus(0, "Completed", Caml_option.some(undefined));
+    var executeStep = async function (stepIndex, stepName, operation) {
+      try {
+        updateStepStatus(stepIndex, "InProgress", undefined);
+        var result = await operation();
+        updateStepStatus(stepIndex, "Completed", Caml_option.some(result.txHash));
         setCurrentStep(function (param) {
-              return 1;
+              return stepIndex + 1 | 0;
             });
-      } else {
-        exit = 1;
+        return result.value;
       }
-      if (exit === 1) {
-        updateStepStatus(0, "InProgress", undefined);
-        var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
-        updateStepStatus(0, "Completed", Caml_option.some(hash));
-        setCurrentStep(function (param) {
-              return 1;
-            });
+      catch (raw_error){
+        var error = Caml_js_exceptions.internalToOCamlException(raw_error);
+        console.log("Error in step " + stepIndex.toString() + " (" + stepName + "): " + String(error));
+        updateStepStatus(stepIndex, "Failed", undefined);
+        if (Js_string.includes("TransactionReceiptNotFoundError", String(error))) {
+          console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.");
+          console.log("You can safely try again or check the transaction status on the blockchain explorer.");
+        }
+        console.error(error);
+        throw error;
       }
-      updateStepStatus(1, "InProgress", undefined);
-      var hash2 = await OnChainOperations.setName(walletClient, "");
-      updateStepStatus(1, "Completed", Caml_option.some(hash2));
-      setCurrentStep(function (param) {
-            return 2;
-          });
-      updateStepStatus(2, "InProgress", undefined);
-      var newOwner = await OnChainOperations.getOwner(tokenId);
-      var normalizedNewOwner = Viem.getAddress(newOwner);
-      var normalizedRecipient = Viem.getAddress(recipientAddress);
-      if (normalizedNewOwner !== normalizedRecipient) {
-        var hash3 = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
-        updateStepStatus(2, "Completed", Caml_option.some(hash3));
-      } else {
-        console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping reclaim step");
-        updateStepStatus(2, "Completed", Caml_option.some(undefined));
-      }
-      setCurrentStep(function (param) {
-            return 3;
-          });
-      updateStepStatus(3, "InProgress", undefined);
-      var currentTokenOwner = await OnChainOperations.getTokenOwner(name);
-      var normalizedCurrentTokenOwner = Viem.getAddress(currentTokenOwner);
-      console.log("Current token owner: " + normalizedCurrentTokenOwner);
-      if (normalizedCurrentTokenOwner !== normalizedRecipient) {
-        var hash4 = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, normalizedRecipient, tokenId);
-        updateStepStatus(3, "Completed", Caml_option.some(hash4));
-      } else {
-        console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping transfer step");
-        updateStepStatus(3, "Completed", Caml_option.some(undefined));
-      }
-      setCurrentStep(function (param) {
-            return 4;
-          });
-      return setAllStepsCompleted(function (param) {
-                  return true;
-                });
-    }
-    catch (raw_error){
-      var error = Caml_js_exceptions.internalToOCamlException(raw_error);
-      updateStepStatus(currentStep, "Failed", undefined);
-      console.error(error);
-      return ;
-    }
+    };
+    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), "Wallet connection failed");
+    var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
+    var tokenId = BigInt(Viem.keccak256(name));
+    await executeStep(0, "Set Address", (async function () {
+            var currentAddrOnChain = await OnChainOperations.getAddr(name);
+            if (currentAddrOnChain !== undefined && Caml_option.valFromOption(currentAddrOnChain) === Viem.getAddress(recipientAddress)) {
+              console.log("Address for " + name + " is already set to " + recipientAddress + ", skipping setAddr step");
+              return {
+                      value: undefined,
+                      txHash: undefined
+                    };
+            }
+            var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
+            return {
+                    value: undefined,
+                    txHash: hash
+                  };
+          }));
+    await executeStep(1, "Clear Name", (async function () {
+            var hash = await OnChainOperations.setName(walletClient, "");
+            return {
+                    value: undefined,
+                    txHash: hash
+                  };
+          }));
+    await executeStep(2, "Reclaim Token", (async function () {
+            var newOwner = await OnChainOperations.getOwner(tokenId);
+            var normalizedNewOwner = Viem.getAddress(newOwner);
+            var normalizedRecipient = Viem.getAddress(recipientAddress);
+            if (normalizedNewOwner !== normalizedRecipient) {
+              var hash = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
+              return {
+                      value: undefined,
+                      txHash: hash
+                    };
+            }
+            console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping reclaim step");
+            return {
+                    value: undefined,
+                    txHash: undefined
+                  };
+          }));
+    await executeStep(3, "Transfer Token", (async function () {
+            var currentTokenOwner = await OnChainOperations.getTokenOwner(name);
+            var normalizedCurrentTokenOwner = Viem.getAddress(currentTokenOwner);
+            var normalizedRecipient = Viem.getAddress(recipientAddress);
+            console.log("Current token owner: " + normalizedCurrentTokenOwner);
+            if (normalizedCurrentTokenOwner !== normalizedRecipient) {
+              var hash = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, normalizedRecipient, tokenId);
+              return {
+                      value: undefined,
+                      txHash: hash
+                    };
+            }
+            console.log("Token for " + name + " is already owned by " + recipientAddress + ", skipping transfer step");
+            return {
+                    value: undefined,
+                    txHash: undefined
+                  };
+          }));
+    return setAllStepsCompleted(function (param) {
+                return true;
+              });
   };
   return React.createElement(React.Fragment, {
               children: Caml_option.some(React.createElement("div", {
@@ -379,7 +397,7 @@ function TransferPanel(props) {
                             className: "fixed inset-0 bg-black bg-opacity-50"
                           }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
                               steps: match$4[0],
-                              currentStep: currentStep,
+                              currentStep: match$3[0],
                               allStepsCompleted: match$2[0],
                               onClose: (function () {
                                   setIsWaitingForConfirmation(function (param) {
