@@ -89,8 +89,9 @@ module StepProgress = {
           {if allStepsCompleted {
             <button
               onClick={_ => onClose()}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <div className="w-4 h-4 text-gray-600">
+              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center"
+              type_="button">
+              <div className="w-4 h-4 text-gray-600 flex items-center justify-center">
                 <Icons.Close />
               </div>
             </button>
@@ -162,7 +163,7 @@ module StepProgress = {
         <div className="border-t border-gray-200 mt-4 -mx-8"></div>
         
         <div className="mt-5 text-center text-sm text-gray-500">
-          {React.string(allStepsCompleted ? "All steps completed successfully." : "Don't close or refresh this window.")}
+          {React.string(allStepsCompleted ? "All steps completed successfully, you can close this window now." : "Don't close or refresh this window.")}
         </div>
       </div>
     </div>

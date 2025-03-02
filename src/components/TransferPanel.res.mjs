@@ -145,12 +145,13 @@ function TransferPanel$StepProgress(props) {
                     }, React.createElement("h1", {
                           className: "text-lg font-semibold text-gray-900"
                         }, "Transfer Progress"), allStepsCompleted ? React.createElement("button", {
-                            className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                            className: "p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center",
+                            type: "button",
                             onClick: (function (param) {
                                 onClose();
                               })
                           }, React.createElement("div", {
-                                className: "w-4 h-4 text-gray-600"
+                                className: "w-4 h-4 text-gray-600 flex items-center justify-center"
                               }, React.createElement(Icons.Close.make, {}))) : React.createElement("div", {
                             className: "text-xs font-medium text-gray-500"
                           }, (props.currentStep + 1 | 0).toString() + "/" + steps.length.toString())), React.createElement("div", {
@@ -216,7 +217,7 @@ function TransferPanel$StepProgress(props) {
                       className: "border-t border-gray-200 mt-4 -mx-8"
                     }), React.createElement("div", {
                       className: "mt-5 text-center text-sm text-gray-500"
-                    }, allStepsCompleted ? "All steps completed successfully." : "Don't close or refresh this window.")));
+                    }, allStepsCompleted ? "All steps completed successfully, you can close this window now." : "Don't close or refresh this window.")));
 }
 
 var StepProgress = {
