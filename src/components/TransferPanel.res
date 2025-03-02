@@ -81,14 +81,24 @@ module StatusIcon = {
 
 module StepProgress = {
   @react.component
-  let make = (~steps: array<transferStep>, ~currentStep: int) => {
+  let make = (~steps: array<transferStep>, ~currentStep: int, ~allStepsCompleted: bool, ~onClose: unit => unit) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white px-8 py-6 rounded-custom shadow-lg w-full max-w-sm mx-4">
         <div className="flex items-center justify-between mb-5">
           <h1 className="text-lg font-semibold text-gray-900"> {React.string("Transfer Progress")} </h1>
-          <div className="text-xs font-medium text-gray-500">
-            {React.string(`${(currentStep + 1)->Int.toString}/${steps->Array.length->Int.toString}`)}
-          </div>
+          {if allStepsCompleted {
+            <button
+              onClick={_ => onClose()}
+              className="p-2 hover:bg-gray-100 rounded-full transition-colors">
+              <div className="w-4 h-4 text-gray-600">
+                <Icons.Close />
+              </div>
+            </button>
+          } else {
+            <div className="text-xs font-medium text-gray-500">
+              {React.string(`${(currentStep + 1)->Int.toString}/${steps->Array.length->Int.toString}`)}
+            </div>
+          }}
         </div>
         <div className="border-b border-gray-200 mb-4 -mx-8"></div>
 
@@ -150,8 +160,9 @@ module StepProgress = {
         </div>
         
         <div className="border-t border-gray-200 mt-4 -mx-8"></div>
-        <div className="mt-5 text-center text-md text-gray-500">
-          {React.string("Don't close or refresh this window.")}
+        
+        <div className="mt-5 text-center text-sm text-gray-500">
+          {React.string(allStepsCompleted ? "All steps completed successfully." : "Don't close or refresh this window.")}
         </div>
       </div>
     </div>
@@ -168,6 +179,7 @@ let make = (
 ) => {
   let (recipientAddress, setRecipientAddress) = React.useState(_ => receiver->Option.getOr(""))
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
+  let (allStepsCompleted, setAllStepsCompleted) = React.useState(() => false)
 
   let (currentStep, setCurrentStep) = React.useState(() => 0)
   let (stepStatuses, setStepStatuses) = React.useState(() => [
@@ -272,25 +284,31 @@ let make = (
         updateStepStatus(3, #Completed, ~txHash=None)
       }
       setCurrentStep(_ => 4)
-
-      onSuccess({
-        action: Types.Transfer,
-        newExpiryDate: None,
-      })
+      setAllStepsCompleted(_ => true)
     } catch {
     | error => {
         updateStepStatus(currentStep, #Failed)
         Js.Console.error(error)
       }
     }
-    setIsWaitingForConfirmation(_ => false)
   }
 
   <>
     <div className="fixed inset-0 flex items-center justify-center z-40">
       <div className="fixed inset-0 bg-black bg-opacity-50" />
       {if isWaitingForConfirmation {
-        <StepProgress steps=stepStatuses currentStep />
+        <StepProgress 
+          steps=stepStatuses 
+          currentStep 
+          allStepsCompleted 
+          onClose={() => {
+            setIsWaitingForConfirmation(_ => false)
+            onSuccess({
+              action: Types.Transfer,
+              newExpiryDate: None,
+            })
+          }} 
+        />
       } else {
         <div
           className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">

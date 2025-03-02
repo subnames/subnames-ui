@@ -133,6 +133,8 @@ var StatusIcon = {
 };
 
 function TransferPanel$StepProgress(props) {
+  var onClose = props.onClose;
+  var allStepsCompleted = props.allStepsCompleted;
   var steps = props.steps;
   return React.createElement("div", {
               className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
@@ -142,9 +144,16 @@ function TransferPanel$StepProgress(props) {
                       className: "flex items-center justify-between mb-5"
                     }, React.createElement("h1", {
                           className: "text-lg font-semibold text-gray-900"
-                        }, "Transfer Progress"), React.createElement("div", {
-                          className: "text-xs font-medium text-gray-500"
-                        }, (props.currentStep + 1 | 0).toString() + "/" + steps.length.toString())), React.createElement("div", {
+                        }, "Transfer Progress"), allStepsCompleted ? React.createElement("button", {
+                            className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                            onClick: (function (param) {
+                                onClose();
+                              })
+                          }, React.createElement("div", {
+                                className: "w-4 h-4 text-gray-600"
+                              }, React.createElement(Icons.Close.make, {}))) : React.createElement("div", {
+                            className: "text-xs font-medium text-gray-500"
+                          }, (props.currentStep + 1 | 0).toString() + "/" + steps.length.toString())), React.createElement("div", {
                       className: "border-b border-gray-200 mb-4 -mx-8"
                     }), React.createElement("div", {
                       className: "space-y-2"
@@ -206,8 +215,8 @@ function TransferPanel$StepProgress(props) {
                           }))), React.createElement("div", {
                       className: "border-t border-gray-200 mt-4 -mx-8"
                     }), React.createElement("div", {
-                      className: "mt-5 text-center text-md text-gray-500"
-                    }, "Don't close or refresh this window.")));
+                      className: "mt-5 text-center text-sm text-gray-500"
+                    }, allStepsCompleted ? "All steps completed successfully." : "Don't close or refresh this window.")));
 }
 
 var StepProgress = {
@@ -232,11 +241,15 @@ function TransferPanel(props) {
   var setIsWaitingForConfirmation = match$1[1];
   var isWaitingForConfirmation = match$1[0];
   var match$2 = React.useState(function () {
+        return false;
+      });
+  var setAllStepsCompleted = match$2[1];
+  var match$3 = React.useState(function () {
         return 0;
       });
-  var setCurrentStep = match$2[1];
-  var currentStep = match$2[0];
-  var match$3 = React.useState(function () {
+  var setCurrentStep = match$3[1];
+  var currentStep = match$3[0];
+  var match$4 = React.useState(function () {
         return [
                 {
                   label: "Set Address",
@@ -260,7 +273,7 @@ function TransferPanel(props) {
                 }
               ];
       });
-  var setStepStatuses = match$3[1];
+  var setStepStatuses = match$4[1];
   React.useEffect((function () {
           if (receiver !== undefined) {
             setRecipientAddress(function (param) {
@@ -347,19 +360,16 @@ function TransferPanel(props) {
       setCurrentStep(function (param) {
             return 4;
           });
-      onSuccess({
-            action: "Transfer",
-            newExpiryDate: undefined
-          });
+      return setAllStepsCompleted(function (param) {
+                  return true;
+                });
     }
     catch (raw_error){
       var error = Caml_js_exceptions.internalToOCamlException(raw_error);
       updateStepStatus(currentStep, "Failed", undefined);
       console.error(error);
+      return ;
     }
-    return setIsWaitingForConfirmation(function (param) {
-                return false;
-              });
   };
   return React.createElement(React.Fragment, {
               children: Caml_option.some(React.createElement("div", {
@@ -367,8 +377,18 @@ function TransferPanel(props) {
                       }, React.createElement("div", {
                             className: "fixed inset-0 bg-black bg-opacity-50"
                           }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
-                              steps: match$3[0],
-                              currentStep: currentStep
+                              steps: match$4[0],
+                              currentStep: currentStep,
+                              allStepsCompleted: match$2[0],
+                              onClose: (function () {
+                                  setIsWaitingForConfirmation(function (param) {
+                                        return false;
+                                      });
+                                  onSuccess({
+                                        action: "Transfer",
+                                        newExpiryDate: undefined
+                                      });
+                                })
                             }) : React.createElement("div", {
                               className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
                             }, React.createElement("div", {
