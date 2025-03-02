@@ -4,6 +4,17 @@ type window
 @val external win: window = "window"
 @send external alert: (window, string) => unit = "alert"
 
+let shortenHash = (hash: string): string => {
+  let length = String.length(hash)
+  if length <= 10 {
+    hash
+  } else {
+    let start = String.slice(~start=0, ~end=6, hash)
+    let end = String.slice(~start=length - 4, ~end=length, hash)
+    `${start}...${end}`
+  }
+}
+
 type transferStep = {
   label: string,
   status: [#NotStarted | #InProgress | #Completed | #Failed],
@@ -72,20 +83,18 @@ module StepProgress = {
   @react.component
   let make = (~steps: array<transferStep>, ~currentStep: int) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-8 rounded-xl shadow-xl w-full max-w-md mx-4">
-        <div className="flex items-center justify-between mb-6">
-          <h2 className="text-xl font-semibold text-gray-900"> {React.string("Subname Transfer Progress")} </h2>
-          <div className="text-sm font-medium text-gray-500">
-            {React.string(`Step ${(currentStep + 1)->Int.toString} of ${steps->Array.length->Int.toString}`)}
+      <div className="bg-white px-8 py-6 rounded-custom shadow-lg w-full max-w-sm mx-4">
+        <div className="flex items-center justify-between mb-5">
+          <h1 className="text-lg font-semibold text-gray-900"> {React.string("Transfer Progress")} </h1>
+          <div className="text-xs font-medium text-gray-500">
+            {React.string(`${(currentStep + 1)->Int.toString}/${steps->Array.length->Int.toString}`)}
           </div>
         </div>
+        <div className="border-b border-gray-200 mb-4 -mx-8"></div>
 
-        <div className="space-y-6">
+        <div className="space-y-2">
           {steps
           ->Belt.Array.mapWithIndex((index, step) => {
-            let isActive = index == currentStep
-            let isPast = index < currentStep
-            
             let statusColor = switch step.status {
             | #NotStarted => "text-gray-400"
             | #InProgress => "text-blue-600"
@@ -93,76 +102,56 @@ module StepProgress = {
             | #Failed => "text-red-600"
             }
             
-            let bgColor = switch step.status {
-            | #NotStarted => ""
-            | #InProgress => "bg-blue-50"
-            | #Completed => "bg-green-50"
-            | #Failed => "bg-red-50"
-            }
-            
             let borderColor = switch step.status {
-            | #NotStarted => "border-gray-200"
+            | #NotStarted => "border-gray-100"
             | #InProgress => "border-blue-200"
             | #Completed => "border-green-200"
             | #Failed => "border-red-200"
             }
             
             let statusIcon = switch step.status {
-            | #NotStarted => <StatusIcon.NotStarted className="w-6 h-6" />
-            | #InProgress => <StatusIcon.InProgress className="w-6 h-6" />
-            | #Completed => <StatusIcon.Completed className="w-6 h-6" />
-            | #Failed => <StatusIcon.Failed className="w-6 h-6" />
+            | #NotStarted => <StatusIcon.NotStarted className="w-4 h-4" />
+            | #InProgress => <StatusIcon.InProgress className="w-4 h-4" />
+            | #Completed => <StatusIcon.Completed className="w-4 h-4" />
+            | #Failed => <StatusIcon.Failed className="w-4 h-4" />
+            }
+            
+            let _statusText = switch step.status {
+            | #InProgress => <span className="text-xs text-blue-600 ml-1">{React.string("Processing")}</span>
+            | _ => React.null
             }
             
             <div 
               key={Belt.Int.toString(index)} 
-              className={`p-4 rounded-lg border ${borderColor} ${bgColor} transition-all duration-200`}>
-              <div className="flex items-center gap-4">
+              className={`py-2 px-2 rounded border-l-0 ${borderColor} transition-all duration-200`}>
+              <div className="flex items-center">
                 <div className={`flex-shrink-0 ${statusColor}`}> {statusIcon} </div>
-                <div className="flex-1">
-                  <div className={`font-medium ${statusColor} text-base`}> 
-                    {React.string(step.label)} 
+                <div className="flex-1 ml-2">
+                  <div className="flex items-center">
+                    <span className={`text-sm ${statusColor}`}>{React.string(step.label)}</span>
+                    // {statusText}
                   </div>
-                  {switch step.status {
-                  | #InProgress => 
-                    <div className="text-sm text-blue-600 mt-1">
-                      {React.string("Processing...")}
-                    </div>
-                  | #Completed => 
-                    <div className="text-sm text-green-600 mt-1">
-                      {React.string("Completed")}
-                    </div>
-                  | #Failed => 
-                    <div className="text-sm text-red-600 mt-1">
-                      {React.string("Failed")}
-                    </div>
-                  | _ => React.null
-                  }}
                 </div>
+                
+                {switch (step.status, step.txHash) {
+                | (#Completed, Some(hash)) =>
+                  <a
+                    href={`https://sepolia.etherscan.io/tx/${hash}`}
+                    target="_blank"
+                    className="text-xs text-blue-600 hover:text-blue-800 ml-auto">
+                    <span className="underline">{React.string(`${shortenHash(hash)}`)}</span>
+                  </a>
+                | _ => React.null
+                }}
               </div>
-              
-              {switch (step.status, step.txHash) {
-              | (#Completed, Some(hash)) =>
-                <div className="mt-2 pt-2 border-t border-green-200">
-                  <div className="flex items-center justify-between">
-                    <span className="text-xs text-gray-500">{React.string("Transaction Hash:")}</span>
-                    <a
-                      href={`https://sepolia.etherscan.io/tx/${hash}`}
-                      target="_blank"
-                      className="text-xs text-blue-600 hover:text-blue-800 underline ml-2 truncate max-w-[200px]">
-                      {React.string(hash)}
-                    </a>
-                  </div>
-                </div>
-              | _ => React.null
-              }}
             </div>
           })
           ->React.array}
         </div>
         
-        <div className="mt-6 text-center text-sm text-gray-500">
-          {React.string("This process may take a few minutes to complete.")}
+        <div className="border-t border-gray-200 mt-4 -mx-8"></div>
+        <div className="mt-5 text-center text-md text-gray-500">
+          {React.string("Don't close or refresh this window.")}
         </div>
       </div>
     </div>

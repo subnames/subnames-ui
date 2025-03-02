@@ -10,6 +10,16 @@ import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
+function shortenHash(hash) {
+  var length = hash.length;
+  if (length <= 10) {
+    return hash;
+  }
+  var start = hash.slice(0, 6);
+  var end = hash.slice(length - 4 | 0, length);
+  return start + "..." + end;
+}
+
 function TransferPanel$StatusIcon$NotStarted(props) {
   var __className = props.className;
   var className = __className !== undefined ? __className : "w-6 h-6";
@@ -127,15 +137,17 @@ function TransferPanel$StepProgress(props) {
   return React.createElement("div", {
               className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
             }, React.createElement("div", {
-                  className: "bg-white p-8 rounded-xl shadow-xl w-full max-w-md mx-4"
+                  className: "bg-white px-8 py-6 rounded-custom shadow-lg w-full max-w-sm mx-4"
                 }, React.createElement("div", {
-                      className: "flex items-center justify-between mb-6"
-                    }, React.createElement("h2", {
-                          className: "text-xl font-semibold text-gray-900"
-                        }, "Subname Transfer Progress"), React.createElement("div", {
-                          className: "text-sm font-medium text-gray-500"
-                        }, "Step " + (props.currentStep + 1 | 0).toString() + " of " + steps.length.toString())), React.createElement("div", {
-                      className: "space-y-6"
+                      className: "flex items-center justify-between mb-5"
+                    }, React.createElement("h1", {
+                          className: "text-lg font-semibold text-gray-900"
+                        }, "Transfer Progress"), React.createElement("div", {
+                          className: "text-xs font-medium text-gray-500"
+                        }, (props.currentStep + 1 | 0).toString() + "/" + steps.length.toString())), React.createElement("div", {
+                      className: "border-b border-gray-200 mb-4 -mx-8"
+                    }), React.createElement("div", {
+                      className: "space-y-2"
                     }, Belt_Array.mapWithIndex(steps, (function (index, step) {
                             var match = step.status;
                             var statusColor = match === "Completed" ? "text-green-600" : (
@@ -144,69 +156,58 @@ function TransferPanel$StepProgress(props) {
                                   )
                               );
                             var match$1 = step.status;
-                            var bgColor = match$1 === "Completed" ? "bg-green-50" : (
-                                match$1 === "NotStarted" ? "" : (
-                                    match$1 === "Failed" ? "bg-red-50" : "bg-blue-50"
+                            var borderColor = match$1 === "Completed" ? "border-green-200" : (
+                                match$1 === "NotStarted" ? "border-gray-100" : (
+                                    match$1 === "Failed" ? "border-red-200" : "border-blue-200"
                                   )
                               );
                             var match$2 = step.status;
-                            var borderColor = match$2 === "Completed" ? "border-green-200" : (
-                                match$2 === "NotStarted" ? "border-gray-200" : (
-                                    match$2 === "Failed" ? "border-red-200" : "border-blue-200"
-                                  )
-                              );
-                            var match$3 = step.status;
-                            var statusIcon = match$3 === "Completed" ? React.createElement(TransferPanel$StatusIcon$Completed, {
-                                    className: "w-6 h-6"
+                            var statusIcon = match$2 === "Completed" ? React.createElement(TransferPanel$StatusIcon$Completed, {
+                                    className: "w-4 h-4"
                                   }) : (
-                                match$3 === "NotStarted" ? React.createElement(TransferPanel$StatusIcon$NotStarted, {
-                                        className: "w-6 h-6"
+                                match$2 === "NotStarted" ? React.createElement(TransferPanel$StatusIcon$NotStarted, {
+                                        className: "w-4 h-4"
                                       }) : (
-                                    match$3 === "Failed" ? React.createElement(TransferPanel$StatusIcon$Failed, {
-                                            className: "w-6 h-6"
+                                    match$2 === "Failed" ? React.createElement(TransferPanel$StatusIcon$Failed, {
+                                            className: "w-4 h-4"
                                           }) : React.createElement(TransferPanel$StatusIcon$InProgress, {
-                                            className: "w-6 h-6"
+                                            className: "w-4 h-4"
                                           })
                                   )
                               );
+                            var match$3 = step.status;
+                            if (match$3 === "InProgress") {
+                              React.createElement("span", {
+                                    className: "text-xs text-blue-600 ml-1"
+                                  }, "Processing");
+                            }
                             var match$4 = step.status;
-                            var match$5 = step.status;
-                            var match$6 = step.txHash;
+                            var match$5 = step.txHash;
                             return React.createElement("div", {
                                         key: String(index),
-                                        className: "p-4 rounded-lg border " + borderColor + " " + bgColor + " transition-all duration-200"
+                                        className: "py-2 px-2 rounded border-l-0 " + borderColor + " transition-all duration-200"
                                       }, React.createElement("div", {
-                                            className: "flex items-center gap-4"
+                                            className: "flex items-center"
                                           }, React.createElement("div", {
                                                 className: "flex-shrink-0 " + statusColor
                                               }, statusIcon), React.createElement("div", {
-                                                className: "flex-1"
+                                                className: "flex-1 ml-2"
                                               }, React.createElement("div", {
-                                                    className: "font-medium " + statusColor + " text-base"
-                                                  }, step.label), match$4 === "InProgress" ? React.createElement("div", {
-                                                      className: "text-sm text-blue-600 mt-1"
-                                                    }, "Processing...") : (
-                                                  match$4 === "Completed" ? React.createElement("div", {
-                                                          className: "text-sm text-green-600 mt-1"
-                                                        }, "Completed") : (
-                                                      match$4 === "Failed" ? React.createElement("div", {
-                                                              className: "text-sm text-red-600 mt-1"
-                                                            }, "Failed") : null
-                                                    )
-                                                ))), match$5 === "Completed" && match$6 !== undefined ? React.createElement("div", {
-                                              className: "mt-2 pt-2 border-t border-green-200"
-                                            }, React.createElement("div", {
-                                                  className: "flex items-center justify-between"
+                                                    className: "flex items-center"
+                                                  }, React.createElement("span", {
+                                                        className: "text-sm " + statusColor
+                                                      }, step.label))), match$4 === "Completed" && match$5 !== undefined ? React.createElement("a", {
+                                                  className: "text-xs text-blue-600 hover:text-blue-800 ml-auto",
+                                                  href: "https://sepolia.etherscan.io/tx/" + match$5,
+                                                  target: "_blank"
                                                 }, React.createElement("span", {
-                                                      className: "text-xs text-gray-500"
-                                                    }, "Transaction Hash:"), React.createElement("a", {
-                                                      className: "text-xs text-blue-600 hover:text-blue-800 underline ml-2 truncate max-w-[200px]",
-                                                      href: "https://sepolia.etherscan.io/tx/" + match$6,
-                                                      target: "_blank"
-                                                    }, match$6))) : null);
+                                                      className: "underline"
+                                                    }, shortenHash(match$5))) : null));
                           }))), React.createElement("div", {
-                      className: "mt-6 text-center text-sm text-gray-500"
-                    }, "This process may take a few minutes to complete.")));
+                      className: "border-t border-gray-200 mt-4 -mx-8"
+                    }), React.createElement("div", {
+                      className: "mt-5 text-center text-md text-gray-500"
+                    }, "Don't close or refresh this window.")));
 }
 
 var StepProgress = {
@@ -419,6 +420,7 @@ function TransferPanel(props) {
 var make = TransferPanel;
 
 export {
+  shortenHash ,
   StatusIcon ,
   StepProgress ,
   make ,
