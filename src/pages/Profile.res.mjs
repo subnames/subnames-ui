@@ -362,10 +362,10 @@ function Profile$ProfileField(props) {
                 }, React.createElement("div", {
                       className: "text-sm font-medium text-gray-500 mb-1"
                     }, props.label), React.createElement("div", {
-                      className: "text-gray-800"
+                      className: "text-gray-800 break-words"
                     }, value !== undefined ? (
                         value.startsWith("http") ? React.createElement("a", {
-                                className: "text-blue-600 hover:underline",
+                                className: "text-blue-600 hover:underline break-all",
                                 href: value
                               }, value) : value
                       ) : React.createElement("span", {

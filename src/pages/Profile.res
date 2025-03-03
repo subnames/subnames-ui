@@ -311,10 +311,10 @@ module ProfileField = {
       </div>
       <div className="flex-1">
         <div className="text-sm font-medium text-gray-500 mb-1"> {React.string(label)} </div>
-        <div className="text-gray-800">
+        <div className="text-gray-800 break-words">
             {switch value {
             | Some(v) when String.startsWith(v, "http") =>
-              <a href={v} className="text-blue-600 hover:underline">{React.string(v)}</a>
+              <a href={v} className="text-blue-600 hover:underline break-all">{React.string(v)}</a>
             | Some(v) =>
               React.string(v)
             | None => <span className="text-gray-400 italic"> {React.string("Not provided")} </span>
