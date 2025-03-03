@@ -460,7 +460,7 @@ function Profile$ViewProfile(props) {
                         }, description !== undefined ? description : React.createElement("div", {
                                 className: "text-gray-400"
                               }, "No description"))), React.createElement("div", {
-                      className: "grid grid-cols-1 md:grid-cols-2 gap-4 pb-4"
+                      className: "grid grid-cols-1 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",

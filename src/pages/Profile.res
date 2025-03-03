@@ -425,7 +425,7 @@ module ViewProfile = {
           </div>
         </div>
         // body
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pb-4">
+        <div className="grid grid-cols-1 gap-4 pb-4">
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
