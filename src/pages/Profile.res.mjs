@@ -6,7 +6,6 @@ import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Router from "../Router.res.mjs";
-import * as Constants from "../Constants.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
@@ -420,8 +419,8 @@ function Profile$ViewProfile(props) {
                           className: "flex justify-end items-center w-full relative"
                         }, React.createElement("h1", {
                               className: "w-full text-3xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2 max-w-[70%] truncate",
-                              title: name + "." + Constants.sld
-                            }, name + "." + Constants.sld), React.createElement("div", {
+                              title: name
+                            }, name), React.createElement("div", {
                               className: "flex items-center gap-4"
                             }, React.createElement("div", {
                                   className: "relative flex-shrink-0 z-10"
@@ -465,7 +464,7 @@ function Profile$ViewProfile(props) {
                         }, description !== undefined ? description : React.createElement("div", {
                                 className: "text-gray-400"
                               }, "No description"))), React.createElement("div", {
-                      className: "border-t border-gray-200 my-4 ml-[-2rem] mr-[-2rem]"
+                      className: "border-t border-gray-200 my-6 ml-[-2rem] mr-[-2rem]"
                     }), React.createElement("div", {
                       className: "grid grid-cols-1 gap-4 pb-4"
                     }, React.createElement(Profile$ProfileField, {
