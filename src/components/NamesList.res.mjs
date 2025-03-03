@@ -207,7 +207,7 @@ function NamesList(props) {
     var tmp$1;
     if (settingPrimaryName) {
       tmp$1 = React.createElement("div", {
-            className: "flex items-center gap-3 p-2 bg-gray-100 rounded-lg shadow-sm"
+            className: "flex items-center gap-3 py-4 px-6 bg-gray-100 rounded-2xl shadow-sm"
           }, React.createElement(Icons.Spinner.make, {
                 className: "h-6 w-6 text-gray-900"
               }), React.createElement("p", {

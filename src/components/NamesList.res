@@ -352,7 +352,7 @@ let make = () => {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
         <div className="bg-white rounded-2xl shadow-xl">
           {if settingPrimaryName {
-            <div className="flex items-center gap-3 p-2 bg-gray-100 rounded-lg shadow-sm">
+            <div className="flex items-center gap-3 py-4 px-6 bg-gray-100 rounded-2xl shadow-sm">
               <Icons.Spinner className="h-6 w-6 text-gray-900" />
               <p className="text-gray-900 text-lg font-medium">
                 {React.string("Setting primary name...")}
