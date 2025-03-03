@@ -352,6 +352,8 @@ module ViewProfile = {
     }
 
     <div className="w-full max-w-xl mx-auto relative">
+
+      // profile card
       <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16">
         // header
         <div className="flex flex-col mb-4 items-center">
@@ -429,6 +431,7 @@ module ViewProfile = {
           </div>
         </div>
         // body
+        <div className="border-t border-gray-200 my-4 ml-[-2rem] mr-[-2rem]"></div>
         <div className="grid grid-cols-1 gap-4 pb-4">
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -502,7 +505,7 @@ module ViewProfile = {
             value={email}
           />
         </div>
-      </div>
+      </div> // end of profile card
     </div>
   }
 }
