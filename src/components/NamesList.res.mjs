@@ -397,7 +397,7 @@ function NamesList(props) {
                                                                                     strokeLinejoin: "round",
                                                                                     strokeWidth: "2"
                                                                                   }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
-                                                                  className: "border-b border-gray-200 mx-6"
+                                                                  className: "border-b border-gray-100 mx-6"
                                                                 }) : null);
                                               })))
                               )

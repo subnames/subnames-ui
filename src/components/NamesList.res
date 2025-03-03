@@ -335,7 +335,7 @@ let make = () => {
                       </div>
                     </div>
                     {if index < names->Array.length - 1 {
-                      <div className="border-b border-gray-200 mx-6" />
+                      <div className="border-b border-gray-100 mx-6" />
                     } else {
                       React.null
                     }}

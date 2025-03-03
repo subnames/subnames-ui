@@ -1,6 +1,7 @@
 open OnChainOperationsCommon
 
 @module("../assets/avatar.png") external avatarImage: string = "default"
+@module("../color.mjs") external stringToRgba: (string, float) => string = "default"
 
 module ProfileForm = {
   @react.component
@@ -304,7 +305,7 @@ module ProfileField = {
   @react.component
   let make = (~icon: React.element, ~label: string, ~value: option<string>) => {
     <div
-      className="flex items-center space-x-3 rounded-lg p-3 ">
+      className="flex items-center space-x-3 rounded-lg p-5">
       <div className="flex items-center justify-center w-10 h-10 rounded-lg">
         {React.cloneElement(
           icon,
@@ -315,7 +316,7 @@ module ProfileField = {
       </div>
       <div className="flex-1">
         <div className="text-sm font-medium text-gray-400 mb-1"> {React.string(label)} </div>
-        <div className="text-gray-800 break-words">
+        <div className="text-gray-800 break-words mr-5">
             {switch (label, value) {
             | ("Location", Some(v)) => 
                 <a href={`https://maps.google.com/?q=${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
@@ -368,10 +369,11 @@ module ViewProfile = {
     <div className="w-full max-w-xl mx-auto relative">
 
       // profile card
-      <div className="bg-white rounded-custom shadow-lg p-8 py-6 mt-16 relative">
+      <div className="bg-white rounded-custom shadow-lg mt-16 relative">
         // header
+        <div className="p-8 py-6 rounded-custom shadow-md" style={ReactDOM.Style.make(~backgroundColor=stringToRgba(name, 0.2), ())}>
         // dropdown menu in top right corner
-        <div className="absolute top-4 right-4 z-10">
+        <div className="absolute top-4 right-4 z-10" >
           <div className="relative flex-shrink-0">
             <button
               className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none"
@@ -432,7 +434,7 @@ module ViewProfile = {
               {React.string(name)}
             </h1>
           </div>
-          <div className="text-xs text-gray-400 mt-1">
+          <div className="text-xs text-gray-500 mt-1">
             {React.string("Expiry: ")}
             {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
           </div>
@@ -443,9 +445,10 @@ module ViewProfile = {
             }}
           </div>
         </div>
+        </div>
+
         // body
-        <div className="border-t border-gray-200 mt-6 mb-8 ml-[-2rem] mr-[-2rem]"></div>
-        <div className="grid grid-cols-1 pb-4">
+        <div className="grid grid-cols-1 pb-4 pt-5">
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -464,7 +467,7 @@ module ViewProfile = {
             label="Location"
             value={location}
           />
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="border-t border-gray-100 my-3 mx-6"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -474,7 +477,7 @@ module ViewProfile = {
             label="X"
             value={twitter}
           />
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="border-t border-gray-100 my-3 mx-6"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -484,7 +487,7 @@ module ViewProfile = {
             label="Telegram"
             value={telegram}
           />
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="border-t border-gray-100 my-3 mx-6"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -496,7 +499,7 @@ module ViewProfile = {
             label="GitHub"
             value={github}
           />
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="border-t border-gray-100 my-3 mx-6"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -509,7 +512,7 @@ module ViewProfile = {
             label="Website"
             value={website}
           />
-          <div className="border-t border-gray-100 my-3"></div>
+          <div className="border-t border-gray-100 my-3 mx-6"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path

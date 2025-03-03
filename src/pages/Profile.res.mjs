@@ -7,6 +7,7 @@ import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Router from "../Router.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
+import ColorMjs from "../color.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
@@ -15,6 +16,10 @@ import AvatarPng from "../assets/avatar.png";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 var avatarImage = AvatarPng;
+
+function stringToRgba(prim0, prim1) {
+  return ColorMjs(prim0, prim1);
+}
 
 function Profile$ProfileForm(props) {
   var profile = props.profile;
@@ -435,7 +440,7 @@ function Profile$ProfileField(props) {
           }, "Not provided");
   }
   return React.createElement("div", {
-              className: "flex items-center space-x-3 rounded-lg p-3 "
+              className: "flex items-center space-x-3 rounded-lg p-5"
             }, React.createElement("div", {
                   className: "flex items-center justify-center w-10 h-10 rounded-lg"
                 }, React.cloneElement(props.icon, {
@@ -445,7 +450,7 @@ function Profile$ProfileField(props) {
                 }, React.createElement("div", {
                       className: "text-sm font-medium text-gray-400 mb-1"
                     }, label), React.createElement("div", {
-                      className: "text-gray-800 break-words"
+                      className: "text-gray-800 break-words mr-5"
                     }, tmp)));
 }
 
@@ -472,77 +477,80 @@ function Profile$ViewProfile(props) {
   return React.createElement("div", {
               className: "w-full max-w-xl mx-auto relative"
             }, React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg p-8 py-6 mt-16 relative"
+                  className: "bg-white rounded-custom shadow-lg mt-16 relative"
                 }, React.createElement("div", {
-                      className: "absolute top-4 right-4 z-10"
+                      className: "p-8 py-6 rounded-custom shadow-md",
+                      style: {
+                        backgroundColor: ColorMjs(name, 0.2)
+                      }
                     }, React.createElement("div", {
-                          className: "relative flex-shrink-0"
-                        }, React.createElement("button", {
-                              className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
-                              onClick: (function (param) {
-                                  setShowDropdown(function (prev) {
-                                        return !prev;
-                                      });
-                                })
-                            }, React.createElement("svg", {
-                                  className: "w-5 h-5",
-                                  fill: "none",
-                                  stroke: "currentColor",
-                                  viewBox: "0 0 24 24"
-                                }, React.createElement("path", {
-                                      d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
-                                      strokeLinecap: "round",
-                                      strokeLinejoin: "round",
-                                      strokeWidth: "2"
-                                    }))), React.createElement("div", {
-                              className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 " + (
-                                match[0] ? "" : "hidden"
-                              )
-                            }, React.createElement("div", {
-                                  className: "py-1"
-                                }, React.createElement("button", {
-                                      className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
-                                      onClick: (function (param) {
-                                          setShowDropdown(function (param) {
-                                                return false;
-                                              });
-                                          setIsEditing(function (param) {
-                                                return true;
-                                              });
-                                        })
-                                    }, "Edit Profile"))))), React.createElement("div", {
-                      className: "flex flex-col mb-4 items-center"
-                    }, React.createElement("div", {
-                          className: "flex justify-center -mt-20 mb-3 relative"
+                          className: "absolute top-4 right-4 z-10"
                         }, React.createElement("div", {
-                              className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100 shadow"
-                            }, React.createElement("div", {
-                                  className: "flex justify-center items-center absolute inset-0"
-                                }, React.createElement(Icons.Spinner.make, {
-                                      className: "w-5 h-5 text-zinc-600"
-                                    })), React.createElement("img", {
-                                  className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full",
-                                  alt: "Profile Avatar",
-                                  src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name,
-                                  onLoad: (function (e) {
-                                      var target = e.target;
-                                      target.classList.remove("opacity-0");
+                              className: "relative flex-shrink-0"
+                            }, React.createElement("button", {
+                                  className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
+                                  onClick: (function (param) {
+                                      setShowDropdown(function (prev) {
+                                            return !prev;
+                                          });
                                     })
-                                }))), React.createElement("div", {
-                          className: "flex justify-center items-center w-full relative"
-                        }, React.createElement("h1", {
-                              className: "text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center",
-                              title: name
-                            }, name)), React.createElement("div", {
-                          className: "text-xs text-gray-400 mt-1"
-                        }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
-                          className: "text-center leading-relaxed  py-2"
-                        }, description !== undefined ? description : React.createElement("div", {
-                                className: "text-gray-400"
-                              }, "No description"))), React.createElement("div", {
-                      className: "border-t border-gray-200 mt-6 mb-8 ml-[-2rem] mr-[-2rem]"
-                    }), React.createElement("div", {
-                      className: "grid grid-cols-1 pb-4"
+                                }, React.createElement("svg", {
+                                      className: "w-5 h-5",
+                                      fill: "none",
+                                      stroke: "currentColor",
+                                      viewBox: "0 0 24 24"
+                                    }, React.createElement("path", {
+                                          d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z",
+                                          strokeLinecap: "round",
+                                          strokeLinejoin: "round",
+                                          strokeWidth: "2"
+                                        }))), React.createElement("div", {
+                                  className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 " + (
+                                    match[0] ? "" : "hidden"
+                                  )
+                                }, React.createElement("div", {
+                                      className: "py-1"
+                                    }, React.createElement("button", {
+                                          className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                          onClick: (function (param) {
+                                              setShowDropdown(function (param) {
+                                                    return false;
+                                                  });
+                                              setIsEditing(function (param) {
+                                                    return true;
+                                                  });
+                                            })
+                                        }, "Edit Profile"))))), React.createElement("div", {
+                          className: "flex flex-col mb-4 items-center"
+                        }, React.createElement("div", {
+                              className: "flex justify-center -mt-20 mb-3 relative"
+                            }, React.createElement("div", {
+                                  className: "w-32 h-32 rounded-full border-4 border-white overflow-hidden relative bg-gray-100 shadow"
+                                }, React.createElement("div", {
+                                      className: "flex justify-center items-center absolute inset-0"
+                                    }, React.createElement(Icons.Spinner.make, {
+                                          className: "w-5 h-5 text-zinc-600"
+                                        })), React.createElement("img", {
+                                      className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full",
+                                      alt: "Profile Avatar",
+                                      src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name,
+                                      onLoad: (function (e) {
+                                          var target = e.target;
+                                          target.classList.remove("opacity-0");
+                                        })
+                                    }))), React.createElement("div", {
+                              className: "flex justify-center items-center w-full relative"
+                            }, React.createElement("h1", {
+                                  className: "text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center",
+                                  title: name
+                                }, name)), React.createElement("div", {
+                              className: "text-xs text-gray-500 mt-1"
+                            }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
+                              className: "text-center leading-relaxed  py-2"
+                            }, description !== undefined ? description : React.createElement("div", {
+                                    className: "text-gray-400"
+                                  }, "No description")))), React.createElement("div", {
+                      className: "grid grid-cols-1 pb-4 pt-5"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -563,7 +571,7 @@ function Profile$ViewProfile(props) {
                           label: "Location",
                           value: profile[1]
                         }), React.createElement("div", {
-                          className: "border-t border-gray-100 my-3"
+                          className: "border-t border-gray-100 my-3 mx-6"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -575,7 +583,7 @@ function Profile$ViewProfile(props) {
                           label: "X",
                           value: profile[2]
                         }), React.createElement("div", {
-                          className: "border-t border-gray-100 my-3"
+                          className: "border-t border-gray-100 my-3 mx-6"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -587,7 +595,7 @@ function Profile$ViewProfile(props) {
                           label: "Telegram",
                           value: profile[3]
                         }), React.createElement("div", {
-                          className: "border-t border-gray-100 my-3"
+                          className: "border-t border-gray-100 my-3 mx-6"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -602,7 +610,7 @@ function Profile$ViewProfile(props) {
                           label: "GitHub",
                           value: profile[4]
                         }), React.createElement("div", {
-                          className: "border-t border-gray-100 my-3"
+                          className: "border-t border-gray-100 my-3 mx-6"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -618,7 +626,7 @@ function Profile$ViewProfile(props) {
                           label: "Website",
                           value: profile[5]
                         }), React.createElement("div", {
-                          className: "border-t border-gray-100 my-3"
+                          className: "border-t border-gray-100 my-3 mx-6"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -776,6 +784,7 @@ var make = Profile;
 
 export {
   avatarImage ,
+  stringToRgba ,
   ProfileForm ,
   ProfileField ,
   ViewProfile ,
