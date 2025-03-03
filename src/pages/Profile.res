@@ -374,8 +374,12 @@ module ViewProfile = {
           // name line
           <div className="flex justify-end items-center w-full relative">
             <h1
-              className="text-3xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2">
-              {React.string(`${name}.${Constants.sld}`)}
+              className="w-full text-3xl font-bold text-gray-900 absolute left-1/2 transform -translate-x-1/2 max-w-[70%] truncate"
+              title={`${name}.${Constants.sld}`}>
+              {
+                let fullname = `${name}.${Constants.sld}`
+                React.string(fullname)
+              }
             </h1>
             <div className="flex items-center gap-4">
               <div className="relative flex-shrink-0 z-10">
