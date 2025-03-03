@@ -464,9 +464,9 @@ function Profile$ViewProfile(props) {
                         }, description !== undefined ? description : React.createElement("div", {
                                 className: "text-gray-400"
                               }, "No description"))), React.createElement("div", {
-                      className: "border-t border-gray-200 my-6 ml-[-2rem] mr-[-2rem]"
+                      className: "border-t border-gray-200 mt-6 mb-8 ml-[-2rem] mr-[-2rem]"
                     }), React.createElement("div", {
-                      className: "grid grid-cols-1 gap-4 pb-4"
+                      className: "grid grid-cols-1 pb-4"
                     }, React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -486,6 +486,8 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "Location",
                           value: profile[1]
+                        }), React.createElement("div", {
+                          className: "border-t border-gray-100 my-3"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -496,6 +498,8 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "X",
                           value: profile[2]
+                        }), React.createElement("div", {
+                          className: "border-t border-gray-100 my-3"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -506,6 +510,8 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "Telegram",
                           value: profile[3]
+                        }), React.createElement("div", {
+                          className: "border-t border-gray-100 my-3"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -519,6 +525,8 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "GitHub",
                           value: profile[4]
+                        }), React.createElement("div", {
+                          className: "border-t border-gray-100 my-3"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",
@@ -533,6 +541,8 @@ function Profile$ViewProfile(props) {
                                   })),
                           label: "Website",
                           value: profile[5]
+                        }), React.createElement("div", {
+                          className: "border-t border-gray-100 my-3"
                         }), React.createElement(Profile$ProfileField, {
                           icon: React.createElement("svg", {
                                 className: "w-5 h-5",

@@ -428,8 +428,8 @@ module ViewProfile = {
           </div>
         </div>
         // body
-        <div className="border-t border-gray-200 my-6 ml-[-2rem] mr-[-2rem]"></div>
-        <div className="grid grid-cols-1 gap-4 pb-4">
+        <div className="border-t border-gray-200 mt-6 mb-8 ml-[-2rem] mr-[-2rem]"></div>
+        <div className="grid grid-cols-1 pb-4">
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -448,6 +448,7 @@ module ViewProfile = {
             label="Location"
             value={location}
           />
+          <div className="border-t border-gray-100 my-3"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -457,6 +458,7 @@ module ViewProfile = {
             label="X"
             value={twitter}
           />
+          <div className="border-t border-gray-100 my-3"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
               <path
@@ -466,6 +468,7 @@ module ViewProfile = {
             label="Telegram"
             value={telegram}
           />
+          <div className="border-t border-gray-100 my-3"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -477,6 +480,7 @@ module ViewProfile = {
             label="GitHub"
             value={github}
           />
+          <div className="border-t border-gray-100 my-3"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
@@ -489,6 +493,7 @@ module ViewProfile = {
             label="Website"
             value={website}
           />
+          <div className="border-t border-gray-100 my-3"></div>
           <ProfileField
             icon={<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path
