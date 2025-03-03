@@ -282,8 +282,14 @@ function Profile$ProfileForm(props) {
                                                   });
                                             })
                                         })), React.createElement("div", undefined, React.createElement("label", {
-                                          className: "block text-sm font-medium mb-2 text-gray-700"
-                                        }, "GitHub"), React.createElement("input", {
+                                          className: "block text-sm font-medium text-gray-700"
+                                        }, "GitHub Username"), React.createElement("div", {
+                                          className: "mb-2"
+                                        }, React.createElement("span", {
+                                              className: "text-gray-400 text-xs"
+                                            }, "https://github.com/"), React.createElement("span", {
+                                              className: "text-gray-600 text-xs font-bold"
+                                            }, "username")), React.createElement("input", {
                                           className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                           placeholder: "username",
                                           type: "text",
@@ -351,6 +357,83 @@ var ProfileForm = {
 
 function Profile$ProfileField(props) {
   var value = props.value;
+  var label = props.label;
+  var tmp;
+  var exit = 0;
+  switch (label) {
+    case "Email" :
+        if (value !== undefined && value.indexOf("@") > 0) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: "mailto:" + value
+              }, value);
+        } else {
+          exit = 1;
+        }
+        break;
+    case "GitHub" :
+        if (value !== undefined) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: "https://github.com/" + value,
+                target: "_blank"
+              }, "https://github.com/" + value);
+        } else {
+          exit = 1;
+        }
+        break;
+    case "Location" :
+        if (value !== undefined) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: "https://maps.google.com/?q=" + value,
+                target: "_blank"
+              }, value);
+        } else {
+          exit = 1;
+        }
+        break;
+    case "Telegram" :
+        if (value !== undefined) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: "https://t.me/" + value.replace("@", ""),
+                target: "_blank"
+              }, value);
+        } else {
+          exit = 1;
+        }
+        break;
+    case "Website" :
+        if (value !== undefined && value.startsWith("http")) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: value,
+                target: "_blank"
+              }, value);
+        } else {
+          exit = 1;
+        }
+        break;
+    case "X" :
+        if (value !== undefined) {
+          tmp = React.createElement("a", {
+                className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
+                href: "https://x.com/" + value.replace("@", ""),
+                target: "_blank"
+              }, value);
+        } else {
+          exit = 1;
+        }
+        break;
+    default:
+      exit = 1;
+  }
+  if (exit === 1) {
+    tmp = value !== undefined ? value : React.createElement("span", {
+            className: "text-gray-400 italic"
+          }, "Not provided");
+  }
   return React.createElement("div", {
               className: "flex items-center space-x-3 rounded-lg p-3 "
             }, React.createElement("div", {
@@ -360,17 +443,10 @@ function Profile$ProfileField(props) {
                     })), React.createElement("div", {
                   className: "flex-1"
                 }, React.createElement("div", {
-                      className: "text-sm font-medium text-gray-500 mb-1"
-                    }, props.label), React.createElement("div", {
+                      className: "text-sm font-medium text-gray-400 mb-1"
+                    }, label), React.createElement("div", {
                       className: "text-gray-800 break-words"
-                    }, value !== undefined ? (
-                        value.startsWith("http") ? React.createElement("a", {
-                                className: "text-blue-600 hover:underline break-all",
-                                href: value
-                              }, value) : value
-                      ) : React.createElement("span", {
-                            className: "text-gray-400 italic"
-                          }, "Not provided"))));
+                    }, tmp)));
 }
 
 var ProfileField = {

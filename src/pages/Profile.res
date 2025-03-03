@@ -228,9 +228,13 @@ module ProfileForm = {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium mb-2 text-gray-700">
-                    {React.string("GitHub")}
+                  <label className="block text-sm font-medium text-gray-700">
+                    {React.string("GitHub Username")} 
                   </label>
+                  <div className="mb-2">
+                    <span className="text-gray-400 text-xs">{React.string("https://github.com/")}</span>
+                    <span className="text-gray-600 text-xs font-bold">{React.string("username")}</span>
+                  </div>
                   <input
                     type_="text"
                     value={github->Option.getOr("")}
@@ -310,14 +314,24 @@ module ProfileField = {
         )}
       </div>
       <div className="flex-1">
-        <div className="text-sm font-medium text-gray-500 mb-1"> {React.string(label)} </div>
+        <div className="text-sm font-medium text-gray-400 mb-1"> {React.string(label)} </div>
         <div className="text-gray-800 break-words">
-            {switch value {
-            | Some(v) when String.startsWith(v, "http") =>
-              <a href={v} className="text-blue-600 hover:underline break-all">{React.string(v)}</a>
-            | Some(v) =>
+            {switch (label, value) {
+            | ("Location", Some(v)) => 
+                <a href={`https://maps.google.com/?q=${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
+            | ("X", Some(v)) => 
+                <a href={`https://x.com/${v->String.replace("@", "")}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
+            | ("Telegram", Some(v)) => 
+                <a href={`https://t.me/${v->String.replace("@", "")}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
+            | ("GitHub", Some(v)) =>
+              <a href={`https://github.com/${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(`https://github.com/${v}`)}</a>
+            | ("Website", Some(v)) when String.startsWith(v, "http") =>
+              <a href={v} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
+            | ("Email", Some(v)) when String.indexOf(v, "@") > 0 =>
+              <a href={`mailto:${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all">{React.string(v)}</a>
+            | (_, Some(v)) =>
               React.string(v)
-            | None => <span className="text-gray-400 italic"> {React.string("Not provided")} </span>
+            | (_, None) => <span className="text-gray-400 italic"> {React.string("Not provided")} </span>
             }}
         </div>
       </div>
