@@ -300,7 +300,7 @@ module ProfileField = {
   @react.component
   let make = (~icon: React.element, ~label: string, ~value: option<string>) => {
     <div
-      className="flex items-center space-x-3 rounded-lg p-3 bg-gradient-to-r to-white from-slate-100 ">
+      className="flex items-center space-x-3 rounded-lg p-3 ">
       <div className="flex items-center justify-center w-10 h-10 rounded-lg">
         {React.cloneElement(
           icon,
@@ -312,9 +312,13 @@ module ProfileField = {
       <div className="flex-1">
         <div className="text-sm font-medium text-gray-500 mb-1"> {React.string(label)} </div>
         <div className="text-gray-800">
-          {value === None
-            ? <span className="text-gray-400 italic"> {React.string("Not provided")} </span>
-            : React.string(value->Option.getOr(""))}
+            {switch value {
+            | Some(v) when String.startsWith(v, "http") =>
+              <a href={v} className="text-blue-600 hover:underline">{React.string(v)}</a>
+            | Some(v) =>
+              React.string(v)
+            | None => <span className="text-gray-400 italic"> {React.string("Not provided")} </span>
+            }}
         </div>
       </div>
     </div>

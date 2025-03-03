@@ -353,7 +353,7 @@ var ProfileForm = {
 function Profile$ProfileField(props) {
   var value = props.value;
   return React.createElement("div", {
-              className: "flex items-center space-x-3 rounded-lg p-3 bg-gradient-to-r to-white from-slate-100 "
+              className: "flex items-center space-x-3 rounded-lg p-3 "
             }, React.createElement("div", {
                   className: "flex items-center justify-center w-10 h-10 rounded-lg"
                 }, React.cloneElement(props.icon, {
@@ -364,9 +364,14 @@ function Profile$ProfileField(props) {
                       className: "text-sm font-medium text-gray-500 mb-1"
                     }, props.label), React.createElement("div", {
                       className: "text-gray-800"
-                    }, value === undefined ? React.createElement("span", {
+                    }, value !== undefined ? (
+                        value.startsWith("http") ? React.createElement("a", {
+                                className: "text-blue-600 hover:underline",
+                                href: value
+                              }, value) : value
+                      ) : React.createElement("span", {
                             className: "text-gray-400 italic"
-                          }, "Not provided") : Core__Option.getOr(value, ""))));
+                          }, "Not provided"))));
 }
 
 var ProfileField = {
