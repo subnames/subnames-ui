@@ -241,7 +241,7 @@ function RegisterExtendPanel(props) {
                 }, React.createElement("div", {
                       className: "pt-6 pb-8 px-8"
                     }, React.createElement("div", {
-                          className: "flex justify-between items-start"
+                          className: "flex justify-between"
                         }, React.createElement("div", {
                               className: "flex gap-3"
                             }, buttonType === "close" ? null : React.createElement("button", {
@@ -256,13 +256,15 @@ function RegisterExtendPanel(props) {
                                       className: "mt-0"
                                     }, React.createElement("span", {
                                           className: "text-sm text-gray-500"
-                                        }, name + "." + Constants.sld)))), buttonType === "close" ? React.createElement("button", {
-                                className: "p-1 hover:bg-gray-100 rounded-full transition-colors ml-auto",
-                                type: "button",
-                                onClick: (function (param) {
-                                    onBack();
-                                  })
-                              }, React.createElement(Icons.Close.make, {})) : null), React.createElement("div", {
+                                        }, name + "." + Constants.sld)))), buttonType === "close" ? React.createElement("div", {
+                                className: "self-center"
+                              }, React.createElement("button", {
+                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                                    type: "button",
+                                    onClick: (function (param) {
+                                        onBack();
+                                      })
+                                  }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
                           className: "border-t border-gray-200 my-4 -mx-8"
                         }), React.createElement("div", {
                           className: "p-6 rounded-xl"

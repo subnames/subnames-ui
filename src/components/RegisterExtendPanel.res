@@ -113,7 +113,7 @@ let make = (
     <div className="bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn">
       <div className="pt-6 pb-8 px-8">
         // header
-        <div className="flex justify-between items-start">
+        <div className="flex justify-between">
           <div className="flex gap-3">
             {switch buttonType {
             | #back => 
@@ -140,12 +140,14 @@ let make = (
           </div>
           {switch buttonType {
           | #close => 
-            <button
-              onClick={_ => onBack()}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors ml-auto"
-              type_="button">
-              <Icons.Close />
-            </button>
+            <div className="self-center">
+              <button
+                onClick={_ => onBack()}
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                type_="button">
+                <Icons.Close />
+              </button>
+            </div>
           | #back => React.null
           }}
         </div>
