@@ -241,34 +241,30 @@ function RegisterExtendPanel(props) {
                 }, React.createElement("div", {
                       className: "pt-6 pb-8 px-8"
                     }, React.createElement("div", {
-                          className: "flex justify-between items-center mb-6"
+                          className: "flex justify-between items-start"
                         }, React.createElement("div", {
-                              className: "flex items-center gap-3"
+                              className: "flex gap-3"
                             }, buttonType === "close" ? null : React.createElement("button", {
-                                    className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
+                                    className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
                                     type: "button",
                                     onClick: (function (param) {
                                         onBack();
                                       })
-                                  }, React.createElement("div", {
-                                        className: "w-6 h-6 text-gray-600"
-                                      }, React.createElement(Icons.Back.make, {}))), React.createElement("h1", {
-                                  className: "text-xl font-semibold text-gray-900 truncate"
-                                }, tmp)), buttonType === "close" ? React.createElement("button", {
-                                className: "p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto",
+                                  }, React.createElement(Icons.Back.make, {})), React.createElement("div", undefined, React.createElement("h1", {
+                                      className: "text-xl font-semibold text-gray-900 truncate"
+                                    }, tmp), React.createElement("div", {
+                                      className: "mt-0"
+                                    }, React.createElement("span", {
+                                          className: "text-sm text-gray-500"
+                                        }, name + "." + Constants.sld)))), buttonType === "close" ? React.createElement("button", {
+                                className: "p-1 hover:bg-gray-100 rounded-full transition-colors ml-auto",
                                 type: "button",
                                 onClick: (function (param) {
                                     onBack();
                                   })
-                              }, React.createElement("div", {
-                                    className: "w-6 h-6 text-gray-600"
-                                  }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
-                          className: "mb-4 text-center"
-                        }, React.createElement("div", {
-                              className: "inline-block px-4 py-2 rounded-full"
-                            }, React.createElement("span", {
-                                  className: "text-md font-medium"
-                                }, name + "." + Constants.sld))), React.createElement("div", {
+                              }, React.createElement(Icons.Close.make, {})) : null), React.createElement("div", {
+                          className: "border-t border-gray-200 my-4 -mx-8"
+                        }), React.createElement("div", {
                           className: "p-6 rounded-xl"
                         }, React.createElement("div", {
                               className: "flex flex-col items-center gap-6"
@@ -303,7 +299,7 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("span", {
                                               className: "text-xl font-medium"
                                             }, "+")))), React.createElement("div", {
-                                  className: "w-full flex flex-col items-center pt-6 border-t border-gray-200"
+                                  className: "w-full flex flex-col items-center pt-6 border-t border-gray-100"
                                 }, React.createElement("div", {
                                       className: "text-sm font-medium text-gray-600 text-center uppercase tracking-wider"
                                     }, "Total Cost"), React.createElement("div", {

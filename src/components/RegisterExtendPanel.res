@@ -112,48 +112,45 @@ let make = (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm" />
     <div className="bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn">
       <div className="pt-6 pb-8 px-8">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center gap-3">
+        // header
+        <div className="flex justify-between items-start">
+          <div className="flex gap-3">
             {switch buttonType {
             | #back => 
               <button
                 onClick={_ => onBack()}
-                className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                className="p-1 hover:bg-gray-100 rounded-full transition-colors"
                 type_="button">
-                <div className="w-6 h-6 text-gray-600">
                   <Icons.Back />
-                </div>
               </button>
             | #close => React.null
             }}
-            <h1 className="text-xl font-semibold text-gray-900 truncate">
-              {React.string(`${switch action {
-              | Types.Register => "Register"
-              | Types.Extend => "Extend"
-              | _ => Exn.raiseError("Unreachable")
-              }}`)}
-            </h1>
+            <div>
+              <h1 className="text-xl font-semibold text-gray-900 truncate">
+                {React.string(`${switch action {
+                | Types.Register => "Register"
+                | Types.Extend => "Extend"
+                | _ => Exn.raiseError("Unreachable")
+                }}`)}
+              </h1>
+              <div className="mt-0">
+                <span className="text-sm text-gray-500">{React.string(`${name}.${Constants.sld}`)}</span>
+              </div>
+            </div>
           </div>
           {switch buttonType {
           | #close => 
             <button
               onClick={_ => onBack()}
-              className="p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto"
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors ml-auto"
               type_="button">
-              <div className="w-6 h-6 text-gray-600">
-                <Icons.Close />
-              </div>
+              <Icons.Close />
             </button>
           | #back => React.null
           }}
         </div>
 
-        // show the name being registered/extended
-        <div className="mb-4 text-center">
-          <div className="inline-block px-4 py-2 rounded-full">
-            <span className="text-md font-medium">{React.string(`${name}.${Constants.sld}`)}</span>
-          </div>
-        </div> 
+        <div className="border-t border-gray-200 my-4 -mx-8"></div>
         
         // main content
         <div className="p-6 rounded-xl">
@@ -192,7 +189,7 @@ let make = (
             </div>
 
             // fee amount
-            <div className="w-full flex flex-col items-center pt-6 border-t border-gray-200">
+            <div className="w-full flex flex-col items-center pt-6 border-t border-gray-100">
               <div className="text-sm font-medium text-gray-600 text-center uppercase tracking-wider">
                 {React.string("Total Cost")}
               </div>
