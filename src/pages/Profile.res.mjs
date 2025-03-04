@@ -475,7 +475,7 @@ function Profile$ViewProfile(props) {
       });
   var name = match$2.name;
   return React.createElement("div", {
-              className: "w-full max-w-xl mx-auto relative"
+              className: "w-full max-w-xl mx-auto relative p-8"
             }, React.createElement("div", {
                   className: "bg-white rounded-custom shadow-lg mt-16 relative"
                 }, React.createElement("div", {

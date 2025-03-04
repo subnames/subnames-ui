@@ -366,7 +366,7 @@ module ViewProfile = {
     | None => {name: "", expires: 0}
     }
 
-    <div className="w-full max-w-xl mx-auto relative">
+    <div className="w-full max-w-xl mx-auto relative p-8">
 
       // profile card
       <div className="bg-white rounded-custom shadow-lg mt-16 relative">
