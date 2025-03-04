@@ -109,9 +109,9 @@ let make = (
   }
 
   <div className="fixed inset-0 flex items-center justify-center z-40">
-    <div className="fixed inset-0 bg-black bg-opacity-50" />
-    <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl mx-4">
-      <div className="pt-6 pb-8 px-8  max-w-2xl mx-auto">
+    <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm" />
+    <div className="bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn">
+      <div className="pt-6 pb-8 px-8">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
             {switch buttonType {
@@ -149,20 +149,22 @@ let make = (
         </div>
 
         // show the name being registered/extended
-        <div className="">
-          {React.string(name)}
+        <div className="mb-4 text-center">
+          <div className="inline-block px-4 py-2 rounded-full">
+            <span className="text-md font-medium">{React.string(`${name}.${Constants.sld}`)}</span>
+          </div>
         </div> 
         
         // main content
-        <div className="mb-8 p-5 bg-gray-50 rounded-xl">
+        <div className="p-6 rounded-xl">
           <div className="flex flex-col items-center gap-6">
 
             // years selection
             <div className="w-full">
-              <div className="text-base font-medium text-gray-700 mb-3 text-center">
+              <div className="text-sm font-medium text-gray-600 mb-3 text-center uppercase tracking-wider">
                 {switch action {
-                | Types.Register => React.string("REGISTRATION PERIOD")
-                | Types.Extend => React.string("EXTENSION PERIOD")
+                | Types.Register => React.string("Registration Period")
+                | Types.Extend => React.string("Extension Period")
                 | _ => Exn.raiseError("Unreachable")
                 }}
               </div>
@@ -175,7 +177,7 @@ let make = (
                       : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
                   <span className="text-xl font-medium"> {React.string("-")} </span>
                 </button>
-                <div className="text-2xl font-bold text-gray-900 min-w-[120px] text-center">
+                <div className="text-3xl font-bold text-gray-900 min-w-[140px] text-center">
                   {React.string(`${fee.years->Int.toString} year${fee.years > 1 ? "s" : ""}`)}
                 </div>
                 <button
@@ -190,19 +192,24 @@ let make = (
             </div>
 
             // fee amount
-            <div className="w-full flex flex-col items-center">
-              <div className="text-base font-medium text-gray-700 mb-3 text-center">
-                {React.string("TOTAL COST")}
+            <div className="w-full flex flex-col items-center pt-6 border-t border-gray-200">
+              <div className="text-sm font-medium text-gray-600 text-center uppercase tracking-wider">
+                {React.string("Total Cost")}
               </div>
               <div className="py-3 min-w-[180px] text-center">
                 {if isCalculatingFee {
-                  <div className="flex items-center justify-center gap-2">
-                    <Icons.Spinner className="w-6 h-6 text-zinc-600" />
+                  <div className="flex items-center justify-center gap-2 h-12">
+                    <Icons.Spinner className="w-6 h-6 text-blue-600" />
                     <span className="text-gray-500 font-medium"> {React.string("Calculating...")} </span>
                   </div>
                 } else {
-                  <div className="text-2xl font-bold text-gray-900">
-                    {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)}
+                  <div className="flex flex-col items-center">
+                    <div className="text-3xl font-bold text-gray-900">
+                      {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)}
+                    </div>
+                    <div className="text-xs text-gray-500 mt-1">
+                      {React.string("Paid in RING tokens on Darwinia network")}
+                    </div>
                   </div>
                 }}
               </div>
@@ -210,7 +217,7 @@ let make = (
           </div>
         </div>
 
-        <div className="mt-8">
+        <div className="mt-2">
           {if !isWalletConnected {
             <button
               onClick={_ => handleConnectWallet()}
@@ -253,27 +260,25 @@ let make = (
           }}
         </div>
 
-        // {if isWaitingForConfirmation {
-        //   <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
-        //     <div className="flex items-start gap-3">
-        //       <div className="text-blue-500 mt-0.5">
-        //         <Icons.Spinner className="w-5 h-5" />
-        //       </div>
-        //       <div>
-        //         <p className="text-sm text-blue-800 font-medium">
-        //           {React.string("Transaction in progress")}
-        //         </p>
-        //         <p className="text-xs text-blue-600 mt-1">
-        //           {React.string("Please wait while your transaction is being processed. This may take a moment.")}
-        //         </p>
-        //       </div>
-        //     </div>
-        //   </div>
-        // } else {
-        //   <div className="mt-4 text-center text-sm text-gray-500">
-        //     {React.string("Fees are paid in RING tokens on the Darwinia network")}
-        //   </div>
-        // }}
+        {if isWaitingForConfirmation {
+          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+            <div className="flex items-start gap-3">
+              <div className="text-blue-500 mt-0.5">
+                <Icons.Spinner className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-sm text-blue-800 font-medium">
+                  {React.string("Transaction in progress")}
+                </p>
+                <p className="text-xs text-blue-600 mt-1">
+                  {React.string("Please wait while your transaction is being processed. This may take a moment.")}
+                </p>
+              </div>
+            </div>
+          </div>
+        } else {
+          React.null
+        }}
       </div>
     </div>
   </div>

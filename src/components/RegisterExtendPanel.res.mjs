@@ -4,6 +4,7 @@ import * as Fee from "../Fee.res.mjs";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
+import * as Constants from "../Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -123,10 +124,10 @@ function RegisterExtendPanel(props) {
   var tmp$1;
   switch (action) {
     case "Register" :
-        tmp$1 = "REGISTRATION PERIOD";
+        tmp$1 = "Registration Period";
         break;
     case "Extend" :
-        tmp$1 = "EXTENSION PERIOD";
+        tmp$1 = "Extension Period";
         break;
     case "Transfer" :
     case "Reclaim" :
@@ -234,11 +235,11 @@ function RegisterExtendPanel(props) {
   return React.createElement("div", {
               className: "fixed inset-0 flex items-center justify-center z-40"
             }, React.createElement("div", {
-                  className: "fixed inset-0 bg-black bg-opacity-50"
+                  className: "fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm"
                 }), React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl mx-4"
+                  className: "bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn"
                 }, React.createElement("div", {
-                      className: "pt-6 pb-8 px-8  max-w-2xl mx-auto"
+                      className: "pt-6 pb-8 px-8"
                     }, React.createElement("div", {
                           className: "flex justify-between items-center mb-6"
                         }, React.createElement("div", {
@@ -262,15 +263,19 @@ function RegisterExtendPanel(props) {
                               }, React.createElement("div", {
                                     className: "w-6 h-6 text-gray-600"
                                   }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
-                          className: ""
-                        }, name), React.createElement("div", {
-                          className: "mb-8 p-5 bg-gray-50 rounded-xl"
+                          className: "mb-4 text-center"
+                        }, React.createElement("div", {
+                              className: "inline-block px-4 py-2 rounded-full"
+                            }, React.createElement("span", {
+                                  className: "text-md font-medium"
+                                }, name + "." + Constants.sld))), React.createElement("div", {
+                          className: "p-6 rounded-xl"
                         }, React.createElement("div", {
                               className: "flex flex-col items-center gap-6"
                             }, React.createElement("div", {
                                   className: "w-full"
                                 }, React.createElement("div", {
-                                      className: "text-base font-medium text-gray-700 mb-3 text-center"
+                                      className: "text-sm font-medium text-gray-600 mb-3 text-center uppercase tracking-wider"
                                     }, tmp$1), React.createElement("div", {
                                       className: "flex items-center justify-center gap-4"
                                     }, React.createElement("button", {
@@ -284,7 +289,7 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("span", {
                                               className: "text-xl font-medium"
                                             }, "-")), React.createElement("div", {
-                                          className: "text-2xl font-bold text-gray-900 min-w-[120px] text-center"
+                                          className: "text-3xl font-bold text-gray-900 min-w-[140px] text-center"
                                         }, fee.years.toString() + " year" + (
                                           fee.years > 1 ? "s" : ""
                                         )), React.createElement("button", {
@@ -298,22 +303,38 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("span", {
                                               className: "text-xl font-medium"
                                             }, "+")))), React.createElement("div", {
-                                  className: "w-full flex flex-col items-center"
+                                  className: "w-full flex flex-col items-center pt-6 border-t border-gray-200"
                                 }, React.createElement("div", {
-                                      className: "text-base font-medium text-gray-700 mb-3 text-center"
-                                    }, "TOTAL COST"), React.createElement("div", {
+                                      className: "text-sm font-medium text-gray-600 text-center uppercase tracking-wider"
+                                    }, "Total Cost"), React.createElement("div", {
                                       className: "py-3 min-w-[180px] text-center"
                                     }, isCalculatingFee ? React.createElement("div", {
-                                            className: "flex items-center justify-center gap-2"
+                                            className: "flex items-center justify-center gap-2 h-12"
                                           }, React.createElement(Icons.Spinner.make, {
-                                                className: "w-6 h-6 text-zinc-600"
+                                                className: "w-6 h-6 text-blue-600"
                                               }), React.createElement("span", {
                                                 className: "text-gray-500 font-medium"
                                               }, "Calculating...")) : React.createElement("div", {
-                                            className: "text-2xl font-bold text-gray-900"
-                                          }, fee.feeAmount.toExponential(2) + " RING"))))), React.createElement("div", {
-                          className: "mt-8"
-                        }, tmp$2))));
+                                            className: "flex flex-col items-center"
+                                          }, React.createElement("div", {
+                                                className: "text-3xl font-bold text-gray-900"
+                                              }, fee.feeAmount.toExponential(2) + " RING"), React.createElement("div", {
+                                                className: "text-xs text-gray-500 mt-1"
+                                              }, "Paid in RING tokens on Darwinia network")))))), React.createElement("div", {
+                          className: "mt-2"
+                        }, tmp$2), isWaitingForConfirmation ? React.createElement("div", {
+                            className: "mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100"
+                          }, React.createElement("div", {
+                                className: "flex items-start gap-3"
+                              }, React.createElement("div", {
+                                    className: "text-blue-500 mt-0.5"
+                                  }, React.createElement(Icons.Spinner.make, {
+                                        className: "w-5 h-5"
+                                      })), React.createElement("div", undefined, React.createElement("p", {
+                                        className: "text-sm text-blue-800 font-medium"
+                                      }, "Transaction in progress"), React.createElement("p", {
+                                        className: "text-xs text-blue-600 mt-1"
+                                      }, "Please wait while your transaction is being processed. This may take a moment.")))) : null)));
 }
 
 var make = RegisterExtendPanel;
