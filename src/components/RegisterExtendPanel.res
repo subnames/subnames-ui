@@ -22,7 +22,7 @@ let make = (
   })
   let (isCalculatingFee, setIsCalculatingFee) = React.useState(_ => false)
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
-  let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
+  let (_, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
 
   let calculateFee = async years => {
     switch action {
@@ -38,6 +38,7 @@ let make = (
         years,
         feeAmount: priceInEth,
       })
+    | _ => Exn.raiseError("Unreachable")
     }
   }
 
@@ -98,6 +99,7 @@ let make = (
           Promise.resolve()
         })
       })
+    | _ => Exn.raiseError("Unreachable")
     }
   }
 
@@ -108,7 +110,7 @@ let make = (
 
   <div className="fixed inset-0 flex items-center justify-center z-40">
     <div className="fixed inset-0 bg-black bg-opacity-50" />
-    <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
+    <div className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl mx-4">
       <div className="pt-6 pb-8 px-8  max-w-2xl mx-auto">
         <div className="flex justify-between items-center mb-6">
           <div className="flex items-center gap-3">
@@ -128,7 +130,8 @@ let make = (
               {React.string(`${switch action {
               | Types.Register => "Register"
               | Types.Extend => "Extend"
-              }} \`${name}\``)}
+              | _ => Exn.raiseError("Unreachable")
+              }}`)}
             </h1>
           </div>
           {switch buttonType {
@@ -145,16 +148,25 @@ let make = (
           }}
         </div>
 
+        // show the name being registered/extended
+        <div className="">
+          {React.string(name)}
+        </div> 
+        
+        // main content
         <div className="mb-8 p-5 bg-gray-50 rounded-xl">
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-8">
-            <div className="w-full sm:w-1/2">
-              <div className="text-base font-medium text-gray-700 mb-3 text-center sm:text-left">
+          <div className="flex flex-col items-center gap-6">
+
+            // years selection
+            <div className="w-full">
+              <div className="text-base font-medium text-gray-700 mb-3 text-center">
                 {switch action {
                 | Types.Register => React.string("REGISTRATION PERIOD")
                 | Types.Extend => React.string("EXTENSION PERIOD")
+                | _ => Exn.raiseError("Unreachable")
                 }}
               </div>
-              <div className="flex items-center justify-center sm:justify-start gap-4">
+              <div className="flex items-center justify-center gap-4">
                 <button
                   onClick={_ => decrementYears()}
                   disabled={isCalculatingFee || fee.years <= 1}
@@ -177,11 +189,12 @@ let make = (
               </div>
             </div>
 
-            <div className="w-full sm:w-1/2 flex flex-col items-center sm:items-end">
-              <div className="text-base font-medium text-gray-700 mb-3 text-center sm:text-right">
+            // fee amount
+            <div className="w-full flex flex-col items-center">
+              <div className="text-base font-medium text-gray-700 mb-3 text-center">
                 {React.string("TOTAL COST")}
               </div>
-              <div className=" py-3 min-w-[180px] text-right">
+              <div className="py-3 min-w-[180px] text-center">
                 {if isCalculatingFee {
                   <div className="flex items-center justify-center gap-2">
                     <Icons.Spinner className="w-6 h-6 text-zinc-600" />
@@ -218,6 +231,7 @@ let make = (
                     {switch action {
                     | Types.Register => React.string("Registering...")
                     | Types.Extend => React.string("Extending...")
+                    | _ => Exn.raiseError("Unreachable")
                     }}
                   </span>
                 </>
@@ -231,6 +245,7 @@ let make = (
                   {switch action {
                   | Types.Register => React.string("Register Now")
                   | Types.Extend => React.string("Extend Now")
+                  | _ => Exn.raiseError("Unreachable")
                   }}
                 </span>
               }}

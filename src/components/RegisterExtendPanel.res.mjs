@@ -3,6 +3,7 @@
 import * as Fee from "../Fee.res.mjs";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
+import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
@@ -56,15 +57,7 @@ function RegisterExtendPanel(props) {
                     });
       case "Transfer" :
       case "Reclaim" :
-          throw {
-                RE_EXN_ID: "Match_failure",
-                _1: [
-                  "RegisterExtendPanel.res",
-                  28,
-                  4
-                ],
-                Error: new Error()
-              };
+          return Js_exn.raiseError("Unreachable");
       
     }
   };
@@ -123,15 +116,8 @@ function RegisterExtendPanel(props) {
         break;
     case "Transfer" :
     case "Reclaim" :
-        throw {
-              RE_EXN_ID: "Match_failure",
-              _1: [
-                "RegisterExtendPanel.res",
-                128,
-                31
-              ],
-              Error: new Error()
-            };
+        tmp = Js_exn.raiseError("Unreachable");
+        break;
     
   }
   var tmp$1;
@@ -144,15 +130,8 @@ function RegisterExtendPanel(props) {
         break;
     case "Transfer" :
     case "Reclaim" :
-        throw {
-              RE_EXN_ID: "Match_failure",
-              _1: [
-                "RegisterExtendPanel.res",
-                152,
-                17
-              ],
-              Error: new Error()
-            };
+        tmp$1 = Js_exn.raiseError("Unreachable");
+        break;
     
   }
   var tmp$2;
@@ -169,15 +148,8 @@ function RegisterExtendPanel(props) {
             break;
         case "Transfer" :
         case "Reclaim" :
-            throw {
-                  RE_EXN_ID: "Match_failure",
-                  _1: [
-                    "RegisterExtendPanel.res",
-                    218,
-                    21
-                  ],
-                  Error: new Error()
-                };
+            tmp$4 = Js_exn.raiseError("Unreachable");
+            break;
         
       }
       tmp$3 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
@@ -198,15 +170,8 @@ function RegisterExtendPanel(props) {
             break;
         case "Transfer" :
         case "Reclaim" :
-            throw {
-                  RE_EXN_ID: "Match_failure",
-                  _1: [
-                    "RegisterExtendPanel.res",
-                    231,
-                    19
-                  ],
-                  Error: new Error()
-                };
+            tmp$5 = Js_exn.raiseError("Unreachable");
+            break;
         
       }
       tmp$3 = React.createElement("span", undefined, tmp$5);
@@ -253,15 +218,7 @@ function RegisterExtendPanel(props) {
                     return ;
                 case "Transfer" :
                 case "Reclaim" :
-                    throw {
-                          RE_EXN_ID: "Match_failure",
-                          _1: [
-                            "RegisterExtendPanel.res",
-                            78,
-                            4
-                          ],
-                          Error: new Error()
-                        };
+                    return Js_exn.raiseError("Unreachable");
                 
               }
             })
@@ -279,7 +236,7 @@ function RegisterExtendPanel(props) {
             }, React.createElement("div", {
                   className: "fixed inset-0 bg-black bg-opacity-50"
                 }), React.createElement("div", {
-                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4"
+                  className: "bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl mx-4"
                 }, React.createElement("div", {
                       className: "pt-6 pb-8 px-8  max-w-2xl mx-auto"
                     }, React.createElement("div", {
@@ -296,7 +253,7 @@ function RegisterExtendPanel(props) {
                                         className: "w-6 h-6 text-gray-600"
                                       }, React.createElement(Icons.Back.make, {}))), React.createElement("h1", {
                                   className: "text-xl font-semibold text-gray-900 truncate"
-                                }, tmp + " \`" + name + "\`")), buttonType === "close" ? React.createElement("button", {
+                                }, tmp)), buttonType === "close" ? React.createElement("button", {
                                 className: "p-2 hover:bg-gray-100 rounded-full transition-colors ml-auto",
                                 type: "button",
                                 onClick: (function (param) {
@@ -305,15 +262,17 @@ function RegisterExtendPanel(props) {
                               }, React.createElement("div", {
                                     className: "w-6 h-6 text-gray-600"
                                   }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
+                          className: ""
+                        }, name), React.createElement("div", {
                           className: "mb-8 p-5 bg-gray-50 rounded-xl"
                         }, React.createElement("div", {
-                              className: "flex flex-col sm:flex-row justify-between items-center gap-8"
+                              className: "flex flex-col items-center gap-6"
                             }, React.createElement("div", {
-                                  className: "w-full sm:w-1/2"
+                                  className: "w-full"
                                 }, React.createElement("div", {
-                                      className: "text-base font-medium text-gray-700 mb-3 text-center sm:text-left"
+                                      className: "text-base font-medium text-gray-700 mb-3 text-center"
                                     }, tmp$1), React.createElement("div", {
-                                      className: "flex items-center justify-center sm:justify-start gap-4"
+                                      className: "flex items-center justify-center gap-4"
                                     }, React.createElement("button", {
                                           className: "w-10 h-10 rounded-full " + (
                                             isCalculatingFee || fee.years <= 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
@@ -339,11 +298,11 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("span", {
                                               className: "text-xl font-medium"
                                             }, "+")))), React.createElement("div", {
-                                  className: "w-full sm:w-1/2 flex flex-col items-center sm:items-end"
+                                  className: "w-full flex flex-col items-center"
                                 }, React.createElement("div", {
-                                      className: "text-base font-medium text-gray-700 mb-3 text-center sm:text-right"
+                                      className: "text-base font-medium text-gray-700 mb-3 text-center"
                                     }, "TOTAL COST"), React.createElement("div", {
-                                      className: " py-3 min-w-[180px] text-right"
+                                      className: "py-3 min-w-[180px] text-center"
                                     }, isCalculatingFee ? React.createElement("div", {
                                             className: "flex items-center justify-center gap-2"
                                           }, React.createElement(Icons.Spinner.make, {
