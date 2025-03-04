@@ -284,9 +284,9 @@ function RegisterExtendPanel(props) {
                                           onClick: (function (param) {
                                               decrementYears();
                                             })
-                                        }, React.createElement("span", {
-                                              className: "text-xl font-medium"
-                                            }, "-")), React.createElement("div", {
+                                        }, React.createElement("div", {
+                                              className: "flex items-center justify-center w-5 h-5"
+                                            }, React.createElement(Icons.Minus.make, {}))), React.createElement("div", {
                                           className: "text-3xl font-bold text-gray-900 min-w-[140px] text-center"
                                         }, fee.years.toString() + " year" + (
                                           fee.years > 1 ? "s" : ""
@@ -298,9 +298,9 @@ function RegisterExtendPanel(props) {
                                           onClick: (function (param) {
                                               incrementYears();
                                             })
-                                        }, React.createElement("span", {
-                                              className: "text-xl font-medium"
-                                            }, "+")))), React.createElement("div", {
+                                        }, React.createElement("div", {
+                                              className: "flex items-center justify-center w-5 h-5"
+                                            }, React.createElement(Icons.Plus.make, {}))))), React.createElement("div", {
                                   className: "w-full flex flex-col items-center pt-6 border-t border-gray-100"
                                 }, React.createElement("div", {
                                       className: "text-sm font-medium text-gray-600 text-center uppercase tracking-wider"

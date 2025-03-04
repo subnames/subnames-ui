@@ -109,11 +109,53 @@ var Success = {
   make: Icons$Success
 };
 
+function Icons$Plus(props) {
+  return React.createElement("svg", {
+              height: "24",
+              width: "24",
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("path", {
+                  d: "M12 5V19M5 12H19",
+                  stroke: "currentColor",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2"
+                }));
+}
+
+var Plus = {
+  make: Icons$Plus
+};
+
+function Icons$Minus(props) {
+  return React.createElement("svg", {
+              height: "24",
+              width: "24",
+              fill: "none",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("path", {
+                  d: "M5 12H19",
+                  stroke: "currentColor",
+                  strokeLinecap: "round",
+                  strokeLinejoin: "round",
+                  strokeWidth: "2"
+                }));
+}
+
+var Minus = {
+  make: Icons$Minus
+};
+
 export {
   Search ,
   Close ,
   Back ,
   Spinner ,
   Success ,
+  Plus ,
+  Minus ,
 }
 /* react Not a pure module */

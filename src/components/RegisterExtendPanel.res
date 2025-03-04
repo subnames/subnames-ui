@@ -174,7 +174,9 @@ let make = (
                   className={`w-10 h-10 rounded-full ${isCalculatingFee || fee.years <= 1
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
-                  <span className="text-xl font-medium"> {React.string("-")} </span>
+                  <div className="flex items-center justify-center w-5 h-5">
+                    <Icons.Minus />
+                  </div>
                 </button>
                 <div className="text-3xl font-bold text-gray-900 min-w-[140px] text-center">
                   {React.string(`${fee.years->Int.toString} year${fee.years > 1 ? "s" : ""}`)}
@@ -185,7 +187,9 @@ let make = (
                   className={`w-10 h-10 rounded-full ${isCalculatingFee
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
                       : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
-                  <span className="text-xl font-medium"> {React.string("+")} </span>
+                  <div className="flex items-center justify-center w-5 h-5">
+                    <Icons.Plus />
+                  </div>
                 </button>
               </div>
             </div>
