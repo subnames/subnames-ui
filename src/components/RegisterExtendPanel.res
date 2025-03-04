@@ -160,33 +160,27 @@ let make = (
 
             // years selection
             <div className="w-full">
-              <div className="text-sm font-medium text-gray-600 mb-3 text-center uppercase tracking-wider">
-                {switch action {
-                | Types.Register => React.string("Registration Period")
-                | Types.Extend => React.string("Extension Period")
-                | _ => Exn.raiseError("Unreachable")
-                }}
-              </div>
-              <div className="flex items-center justify-center gap-4">
+              
+              <div className="flex items-center justify-between border-2 border-gray-600 rounded-full p-1 w-full max-w-md">
                 <button
                   onClick={_ => decrementYears()}
                   disabled={isCalculatingFee || fee.years <= 1}
-                  className={`w-10 h-10 rounded-full ${isCalculatingFee || fee.years <= 1
+                  className={`w-10 h-10 border-2 border-gray-300 rounded-full ${isCalculatingFee || fee.years <= 1
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-100"} flex items-center justify-center transition-colors`}>
                   <div className="flex items-center justify-center w-5 h-5">
                     <Icons.Minus />
                   </div>
                 </button>
-                <div className="text-3xl font-bold text-gray-900 min-w-[140px] text-center">
+                <div className="text-2xl font-bold text-gray-900 text-center">
                   {React.string(`${fee.years->Int.toString} year${fee.years > 1 ? "s" : ""}`)}
                 </div>
                 <button
                   onClick={_ => incrementYears()}
                   disabled={isCalculatingFee}
-                  className={`w-10 h-10 rounded-full ${isCalculatingFee
+                  className={`w-10 h-10 border-2 border-gray-300 rounded-full ${isCalculatingFee
                       ? "bg-gray-200 text-gray-400 cursor-not-allowed"
-                      : "bg-gray-200 hover:bg-gray-300 text-gray-700"} flex items-center justify-center transition-colors`}>
+                      : "bg-gray-200 text-gray-700 hover:bg-gray-100"} flex items-center justify-center transition-colors`}>
                   <div className="flex items-center justify-center w-5 h-5">
                     <Icons.Plus />
                   </div>
@@ -195,20 +189,20 @@ let make = (
             </div>
 
             // fee amount
-            <div className="w-full flex flex-col items-center pt-6 border-t border-gray-100">
+            <div className="w-full flex flex-col items-center pt-2">
               <div className="text-sm font-medium text-gray-600 text-center uppercase tracking-wider">
-                {React.string("Total Cost")}
+                {React.string("Cost")}
               </div>
-              <div className="py-3 min-w-[180px] text-center">
+              <div className="py-1 min-w-[180px] text-center">
                 {if isCalculatingFee {
                   <div className="flex items-center justify-center gap-2 h-12">
-                    <Icons.Spinner className="w-6 h-6 text-blue-600" />
+                    <Icons.Spinner className="w-6 h-6 text-gray-600" />
                     <span className="text-gray-500 font-medium"> {React.string("Calculating...")} </span>
                   </div>
                 } else {
                   <div className="flex flex-col items-center">
                     <div className="text-3xl font-bold text-gray-900">
-                      {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)} RING`)}
+                      {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)}`)}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       {React.string("Paid in RING tokens on Darwinia network")}

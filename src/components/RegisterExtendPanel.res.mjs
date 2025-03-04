@@ -122,30 +122,38 @@ function RegisterExtendPanel(props) {
     
   }
   var tmp$1;
-  switch (action) {
-    case "Register" :
-        tmp$1 = "Registration Period";
-        break;
-    case "Extend" :
-        tmp$1 = "Extension Period";
-        break;
-    case "Transfer" :
-    case "Reclaim" :
-        tmp$1 = Js_exn.raiseError("Unreachable");
-        break;
-    
-  }
-  var tmp$2;
   if (props.isWalletConnected) {
-    var tmp$3;
+    var tmp$2;
     if (isWaitingForConfirmation) {
+      var tmp$3;
+      switch (action) {
+        case "Register" :
+            tmp$3 = "Registering...";
+            break;
+        case "Extend" :
+            tmp$3 = "Extending...";
+            break;
+        case "Transfer" :
+        case "Reclaim" :
+            tmp$3 = Js_exn.raiseError("Unreachable");
+            break;
+        
+      }
+      tmp$2 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
+                className: "w-5 h-5 text-white"
+              }), React.createElement("span", undefined, tmp$3));
+    } else if (isCalculatingFee) {
+      tmp$2 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
+                className: "w-5 h-5 text-white"
+              }), React.createElement("span", undefined, "Calculating..."));
+    } else {
       var tmp$4;
       switch (action) {
         case "Register" :
-            tmp$4 = "Registering...";
+            tmp$4 = "Register Now";
             break;
         case "Extend" :
-            tmp$4 = "Extending...";
+            tmp$4 = "Extend Now";
             break;
         case "Transfer" :
         case "Reclaim" :
@@ -153,31 +161,9 @@ function RegisterExtendPanel(props) {
             break;
         
       }
-      tmp$3 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
-                className: "w-5 h-5 text-white"
-              }), React.createElement("span", undefined, tmp$4));
-    } else if (isCalculatingFee) {
-      tmp$3 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
-                className: "w-5 h-5 text-white"
-              }), React.createElement("span", undefined, "Calculating..."));
-    } else {
-      var tmp$5;
-      switch (action) {
-        case "Register" :
-            tmp$5 = "Register Now";
-            break;
-        case "Extend" :
-            tmp$5 = "Extend Now";
-            break;
-        case "Transfer" :
-        case "Reclaim" :
-            tmp$5 = Js_exn.raiseError("Unreachable");
-            break;
-        
-      }
-      tmp$3 = React.createElement("span", undefined, tmp$5);
+      tmp$2 = React.createElement("span", undefined, tmp$4);
     }
-    tmp$2 = React.createElement("button", {
+    tmp$1 = React.createElement("button", {
           className: "w-full py-4 px-6 " + (
             isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed" : "bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900"
           ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
@@ -223,9 +209,9 @@ function RegisterExtendPanel(props) {
                 
               }
             })
-        }, tmp$3);
+        }, tmp$2);
   } else {
-    tmp$2 = React.createElement("button", {
+    tmp$1 = React.createElement("button", {
           className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
           onClick: (function (param) {
               handleConnectWallet();
@@ -273,12 +259,10 @@ function RegisterExtendPanel(props) {
                             }, React.createElement("div", {
                                   className: "w-full"
                                 }, React.createElement("div", {
-                                      className: "text-sm font-medium text-gray-600 mb-3 text-center uppercase tracking-wider"
-                                    }, tmp$1), React.createElement("div", {
-                                      className: "flex items-center justify-center gap-4"
+                                      className: "flex items-center justify-between border-2 border-gray-600 rounded-full p-1 w-full max-w-md"
                                     }, React.createElement("button", {
-                                          className: "w-10 h-10 rounded-full " + (
-                                            isCalculatingFee || fee.years <= 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                          className: "w-10 h-10 border-2 border-gray-300 rounded-full " + (
+                                            isCalculatingFee || fee.years <= 1 ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-100"
                                           ) + " flex items-center justify-center transition-colors",
                                           disabled: isCalculatingFee || fee.years <= 1,
                                           onClick: (function (param) {
@@ -287,12 +271,12 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("div", {
                                               className: "flex items-center justify-center w-5 h-5"
                                             }, React.createElement(Icons.Minus.make, {}))), React.createElement("div", {
-                                          className: "text-3xl font-bold text-gray-900 min-w-[140px] text-center"
+                                          className: "text-2xl font-bold text-gray-900 text-center"
                                         }, fee.years.toString() + " year" + (
                                           fee.years > 1 ? "s" : ""
                                         )), React.createElement("button", {
-                                          className: "w-10 h-10 rounded-full " + (
-                                            isCalculatingFee ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-200 hover:bg-gray-300 text-gray-700"
+                                          className: "w-10 h-10 border-2 border-gray-300 rounded-full " + (
+                                            isCalculatingFee ? "bg-gray-200 text-gray-400 cursor-not-allowed" : "bg-gray-200 text-gray-700 hover:bg-gray-100"
                                           ) + " flex items-center justify-center transition-colors",
                                           disabled: isCalculatingFee,
                                           onClick: (function (param) {
@@ -301,26 +285,26 @@ function RegisterExtendPanel(props) {
                                         }, React.createElement("div", {
                                               className: "flex items-center justify-center w-5 h-5"
                                             }, React.createElement(Icons.Plus.make, {}))))), React.createElement("div", {
-                                  className: "w-full flex flex-col items-center pt-6 border-t border-gray-100"
+                                  className: "w-full flex flex-col items-center pt-2"
                                 }, React.createElement("div", {
                                       className: "text-sm font-medium text-gray-600 text-center uppercase tracking-wider"
-                                    }, "Total Cost"), React.createElement("div", {
-                                      className: "py-3 min-w-[180px] text-center"
+                                    }, "Cost"), React.createElement("div", {
+                                      className: "py-1 min-w-[180px] text-center"
                                     }, isCalculatingFee ? React.createElement("div", {
                                             className: "flex items-center justify-center gap-2 h-12"
                                           }, React.createElement(Icons.Spinner.make, {
-                                                className: "w-6 h-6 text-blue-600"
+                                                className: "w-6 h-6 text-gray-600"
                                               }), React.createElement("span", {
                                                 className: "text-gray-500 font-medium"
                                               }, "Calculating...")) : React.createElement("div", {
                                             className: "flex flex-col items-center"
                                           }, React.createElement("div", {
                                                 className: "text-3xl font-bold text-gray-900"
-                                              }, fee.feeAmount.toExponential(2) + " RING"), React.createElement("div", {
+                                              }, fee.feeAmount.toExponential(2)), React.createElement("div", {
                                                 className: "text-xs text-gray-500 mt-1"
                                               }, "Paid in RING tokens on Darwinia network")))))), React.createElement("div", {
                           className: "mt-2"
-                        }, tmp$2), isWaitingForConfirmation ? React.createElement("div", {
+                        }, tmp$1), isWaitingForConfirmation ? React.createElement("div", {
                             className: "mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100"
                           }, React.createElement("div", {
                                 className: "flex items-start gap-3"
