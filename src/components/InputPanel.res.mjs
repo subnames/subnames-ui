@@ -19,7 +19,8 @@ var initialState = {
   isAvailable: false,
   owner: undefined,
   expiryDate: undefined,
-  isOwnedByUser: undefined
+  isOwnedByUser: undefined,
+  isFocused: false
 };
 
 function isValidSubname(name) {
@@ -91,7 +92,8 @@ function InputPanel(props) {
                   isAvailable: false,
                   owner: undefined,
                   expiryDate: undefined,
-                  isOwnedByUser: prev.isOwnedByUser
+                  isOwnedByUser: prev.isOwnedByUser,
+                  isFocused: prev.isFocused
                 };
         });
     try {
@@ -106,7 +108,8 @@ function InputPanel(props) {
                             isAvailable: true,
                             owner: prev.owner,
                             expiryDate: prev.expiryDate,
-                            isOwnedByUser: prev.isOwnedByUser
+                            isOwnedByUser: prev.isOwnedByUser,
+                            isFocused: prev.isFocused
                           };
                   });
       }
@@ -122,7 +125,8 @@ function InputPanel(props) {
                           isAvailable: false,
                           owner: owner,
                           expiryDate: Caml_option.some(Utils.timestampToDate(expiryInt)),
-                          isOwnedByUser: isOwnedByUser$1
+                          isOwnedByUser: isOwnedByUser$1,
+                          isFocused: prev.isFocused
                         };
                 });
     }
@@ -138,7 +142,8 @@ function InputPanel(props) {
                           isAvailable: prev.isAvailable,
                           owner: prev.owner,
                           expiryDate: prev.expiryDate,
-                          isOwnedByUser: prev.isOwnedByUser
+                          isOwnedByUser: prev.isOwnedByUser,
+                          isFocused: prev.isFocused
                         };
                 });
     }
@@ -165,7 +170,8 @@ function InputPanel(props) {
                         isAvailable: prev.isAvailable,
                         owner: prev.owner,
                         expiryDate: prev.expiryDate,
-                        isOwnedByUser: prev.isOwnedByUser
+                        isOwnedByUser: prev.isOwnedByUser,
+                        isFocused: prev.isFocused
                       };
               });
           if (isValid && value !== "") {
@@ -185,7 +191,8 @@ function InputPanel(props) {
                   isAvailable: prev.isAvailable,
                   owner: prev.owner,
                   expiryDate: prev.expiryDate,
-                  isOwnedByUser: prev.isOwnedByUser
+                  isOwnedByUser: prev.isOwnedByUser,
+                  isFocused: prev.isFocused
                 };
         });
     runValidation(newValue);
@@ -193,6 +200,36 @@ function InputPanel(props) {
   var handleClear = function (param) {
     setState(function (param) {
           return initialState;
+        });
+  };
+  var handleFocus = function (param) {
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  owner: prev.owner,
+                  expiryDate: prev.expiryDate,
+                  isOwnedByUser: prev.isOwnedByUser,
+                  isFocused: true
+                };
+        });
+  };
+  var handleBlur = function (param) {
+    setState(function (prev) {
+          return {
+                  value: prev.value,
+                  isValid: prev.isValid,
+                  errorMessage: prev.errorMessage,
+                  isChecking: prev.isChecking,
+                  isAvailable: prev.isAvailable,
+                  owner: prev.owner,
+                  expiryDate: prev.expiryDate,
+                  isOwnedByUser: prev.isOwnedByUser,
+                  isFocused: false
+                };
         });
   };
   var error = state.errorMessage;
@@ -279,7 +316,9 @@ function InputPanel(props) {
     tmp = null;
   }
   return React.createElement("div", {
-              className: "bg-white rounded-custom shadow-lg overflow-hidden"
+              className: "bg-white rounded-custom " + (
+                state.isFocused ? "shadow-xl" : "shadow-lg"
+              ) + " overflow-hidden transition-shadow duration-200"
             }, React.createElement("div", {
                   className: "relative " + (
                     Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
@@ -289,6 +328,8 @@ function InputPanel(props) {
                       placeholder: "SEARCH FOR A NAME",
                       type: "text",
                       value: state.value,
+                      onFocus: handleFocus,
+                      onBlur: handleBlur,
                       onChange: handleChange
                     }), React.createElement("div", {
                       className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"

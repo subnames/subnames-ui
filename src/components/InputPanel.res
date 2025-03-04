@@ -9,7 +9,8 @@ type state = {
   isAvailable: bool,
   owner: option<string>,
   expiryDate: option<Date.t>,
-  isOwnedByUser: option<bool>
+  isOwnedByUser: option<bool>,
+  isFocused: bool
 }
 
 let initialState = {
@@ -27,6 +28,7 @@ let initialState = {
   owner: None,
   expiryDate: None,
   isOwnedByUser: None,
+  isFocused: false,
 }
 
 // Validation rules for ENS subnames
@@ -135,7 +137,15 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
     setState(_ => initialState)
   }
 
-  <div className="bg-white rounded-custom shadow-lg overflow-hidden">
+  let handleFocus = _ => {
+    setState(prev => {...prev, isFocused: true})
+  }
+
+  let handleBlur = _ => {
+    setState(prev => {...prev, isFocused: false})
+  }
+
+  <div className={`bg-white rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
     <div
       className={`relative ${state.errorMessage->Option.isSome ||
           (state.isValid && state.value != "")
@@ -145,6 +155,8 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
         type_="text"
         value={state.value}
         onChange={handleChange}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
         placeholder="SEARCH FOR A NAME"
         className="w-full px-6 py-4 text-lg focus:outline-none"
       />
