@@ -39,6 +39,7 @@ function NamesList(props) {
         return true;
       });
   var setIsSynced = match$3[1];
+  var isSynced = match$3[0];
   var match$4 = React.useState(function () {
         
       });
@@ -321,11 +322,11 @@ function NamesList(props) {
                                   className: "text-3xl font-bold text-gray-900"
                                 }, "Your names"), React.createElement("div", {
                                   className: "text-sm text-gray-500"
-                                }, "It may take a while to sync your names. ", match$3[0] ? React.createElement("span", {
+                                }, "It may take a while to sync your names. ", isSynced ? React.createElement("span", {
                                         className: "text-green-600 font-medium"
                                       }, "Indexer is fully synced") : React.createElement("span", {
                                         className: "text-amber-600 font-medium"
-                                      }, "Indexer is currently syncing...")), React.createElement("button", {
+                                      }, "Indexer is currently syncing... Operations are disabled.")), React.createElement("button", {
                                   className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");
@@ -357,6 +358,7 @@ function NamesList(props) {
                                                     if (exit === 1) {
                                                       tmp$2 = React.createElement("button", {
                                                             className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                            disabled: !isSynced,
                                                             type: "button",
                                                             onClick: (function (param) {
                                                                 setPrimary(subname.name);
@@ -368,6 +370,7 @@ function NamesList(props) {
                                                     }
                                                     tmp$1 = React.createElement(React.Fragment, {}, tmp$2, React.createElement("button", {
                                                               className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                              disabled: !isSynced,
                                                               type: "button",
                                                               onClick: (function (param) {
                                                                   setShowExtendPanel(function (param) {
@@ -389,6 +392,7 @@ function NamesList(props) {
                                                   if (exit$1 === 1) {
                                                     tmp$3 = React.createElement("button", {
                                                           className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                          disabled: !isSynced,
                                                           type: "button",
                                                           onClick: (function (param) {
                                                               setShowTransferPanel(function (param) {
@@ -437,7 +441,10 @@ function NamesList(props) {
                                                                             }, "Expires " + Utils.distanceToExpiry(Utils.timestampToDate(subname.expires)))), React.createElement("div", {
                                                                         className: "relative"
                                                                       }, React.createElement("button", {
-                                                                            className: "p-2 rounded-lg hover:bg-gray-100 focus:outline-none",
+                                                                            className: "p-2 rounded-lg focus:outline-none " + (
+                                                                              isSynced ? "hover:bg-gray-100" : "opacity-50 cursor-not-allowed"
+                                                                            ),
+                                                                            disabled: !isSynced,
                                                                             type: "button",
                                                                             onClick: (function (param) {
                                                                                 setActiveDropdown(function (current) {

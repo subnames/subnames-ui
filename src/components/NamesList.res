@@ -159,6 +159,7 @@ let make = () => {
             ->Option.flatMap(str => str->Int.fromString)
             ->Option.getOr(0)
 
+          // let lastBlock = 1
           Console.log(`Chain height: ${chainHeight->Int.toString}, Last block: ${lastBlock->Int.toString}`)
             
           // Check if the difference is more than 3 blocks
@@ -246,7 +247,7 @@ let make = () => {
               {React.string("It may take a while to sync your names. ")}
               {if !isSynced {
                 <span className="text-amber-600 font-medium">
-                  {React.string("Indexer is currently syncing...")}
+                  {React.string("Indexer is currently syncing... Operations are disabled.")}
                 </span>
               } else {
                 <span className="text-green-600 font-medium">
@@ -322,6 +323,7 @@ let make = () => {
                         <div className="relative">
                           <button
                             type_="button"
+                            disabled={!isSynced}
                             onClick={_ => {
                               setActiveDropdown(current =>
                                 if current == Some(subname.name) {
@@ -331,7 +333,7 @@ let make = () => {
                                 }
                               )
                             }}
-                            className="p-2 rounded-lg hover:bg-gray-100 focus:outline-none">
+                            className={`p-2 rounded-lg focus:outline-none ${isSynced ? "hover:bg-gray-100" : "opacity-50 cursor-not-allowed"}`}>
                             <svg
                               className="w-5 h-5"
                               fill="none"
@@ -358,6 +360,7 @@ let make = () => {
                                     | _ =>
                                       <button
                                         type_="button"
+                                        disabled={!isSynced}
                                         onClick={_ => {
                                           setPrimary(subname.name)->ignore
                                           setActiveDropdown(_ => None)
@@ -369,6 +372,7 @@ let make = () => {
                                     // Extend
                                     <button
                                       type_="button"
+                                      disabled={!isSynced}
                                       onClick={_ => {
                                         setShowExtendPanel(_ => Some(subname.name))
                                         setActiveDropdown(_ => None)
@@ -386,6 +390,7 @@ let make = () => {
                                 | Some(_) | None =>
                                   <button
                                     type_="button"
+                                    disabled={!isSynced}
                                     onClick={_ => {
                                       setShowTransferPanel(_ => Some(subname.name, subname.receiver))
                                       setActiveDropdown(_ => None)
