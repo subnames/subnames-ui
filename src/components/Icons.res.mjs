@@ -149,6 +149,70 @@ var Minus = {
   make: Icons$Minus
 };
 
+function Icons$Synced(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "";
+  return React.createElement("svg", {
+              className: className,
+              height: "20",
+              width: "20",
+              fill: "none",
+              stroke: "currentColor",
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: "2",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("path", {
+                  d: "M12 2v4"
+                }), React.createElement("path", {
+                  d: "M12 18v4"
+                }), React.createElement("path", {
+                  d: "m4.93 4.93 2.83 2.83"
+                }), React.createElement("path", {
+                  d: "m16.24 16.24 2.83 2.83"
+                }), React.createElement("path", {
+                  d: "M2 12h4"
+                }), React.createElement("path", {
+                  d: "M18 12h4"
+                }), React.createElement("path", {
+                  d: "m4.93 19.07 2.83-2.83"
+                }), React.createElement("path", {
+                  d: "m16.24 7.76 2.83-2.83"
+                }), React.createElement("circle", {
+                  cx: "12",
+                  cy: "12",
+                  r: "4"
+                }));
+}
+
+var Synced = {
+  make: Icons$Synced
+};
+
+function Icons$Syncing(props) {
+  var __className = props.className;
+  var className = __className !== undefined ? __className : "";
+  return React.createElement("svg", {
+              className: className + " animate-spin",
+              height: "20",
+              width: "20",
+              fill: "none",
+              stroke: "currentColor",
+              strokeLinecap: "round",
+              strokeLinejoin: "round",
+              strokeWidth: "2",
+              viewBox: "0 0 24 24",
+              xmlns: "http://www.w3.org/2000/svg"
+            }, React.createElement("path", {
+                  d: "M21 12a9 9 0 1 1-6.219-8.56"
+                }));
+}
+
+var Syncing = {
+  make: Icons$Syncing
+};
+
 export {
   Search ,
   Close ,
@@ -157,5 +221,7 @@ export {
   Success ,
   Plus ,
   Minus ,
+  Synced ,
+  Syncing ,
 }
 /* react Not a pure module */

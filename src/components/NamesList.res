@@ -178,10 +178,10 @@ let make = () => {
     // Initial check
     checkSyncStatus()->ignore
     
-    // Set up interval to check every 30 seconds
+    // Set up interval to check every 3 seconds
     let intervalId = Js.Global.setInterval(() => {
       checkSyncStatus()->ignore
-    }, 30000)
+    }, 3000)
     
     // Clean up interval on unmount
     Some(() => Js.Global.clearInterval(intervalId))
@@ -243,16 +243,23 @@ let make = () => {
           // Header
           <div className="p-8 py-6 border-b border-gray-200 relative">
             <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your names")} </h1>
-            <div className="text-sm text-gray-500">
-              {React.string("It may take a while to sync your names. ")}
-              {if !isSynced {
-                <span className="text-amber-600 font-medium">
-                  {React.string("Indexer is currently syncing... Operations are disabled.")}
-                </span>
+            <div className="text-sm text-gray-500 flex items-center gap-2">
+              {if isSynced {
+                <div className="flex items-center gap-1">
+                  {React.string("Indexer has been synced")}
+                </div>
               } else {
-                <span className="text-green-600 font-medium">
-                  {React.string("Indexer is fully synced")}
-                </span>
+                React.null
+              }}
+            </div>
+            <div>
+              {if !isSynced {
+                <div className="flex items-center gap-1 text-amber-600 text-sm">
+                  <Icons.Syncing className="text-amber-600" />
+                  {React.string("Indexer is syncing... Operations disabled")}
+                </div>
+              } else {
+                React.null
               }}
             </div>
             <button

@@ -215,7 +215,7 @@ function NamesList(props) {
           checkSyncStatus();
           var intervalId = setInterval((function () {
                   checkSyncStatus();
-                }), 30000);
+                }), 3000);
           return (function () {
                     clearInterval(intervalId);
                   });
@@ -321,12 +321,14 @@ function NamesList(props) {
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900"
                                 }, "Your names"), React.createElement("div", {
-                                  className: "text-sm text-gray-500"
-                                }, "It may take a while to sync your names. ", isSynced ? React.createElement("span", {
-                                        className: "text-green-600 font-medium"
-                                      }, "Indexer is fully synced") : React.createElement("span", {
-                                        className: "text-amber-600 font-medium"
-                                      }, "Indexer is currently syncing... Operations are disabled.")), React.createElement("button", {
+                                  className: "text-sm text-gray-500 flex items-center gap-2"
+                                }, isSynced ? React.createElement("div", {
+                                        className: "flex items-center gap-1"
+                                      }, "Indexer has been synced") : null), React.createElement("div", undefined, isSynced ? null : React.createElement("div", {
+                                        className: "flex items-center gap-1 text-amber-600 text-sm"
+                                      }, React.createElement(Icons.Syncing.make, {
+                                            className: "text-amber-600"
+                                          }), "Indexer is syncing... Operations disabled")), React.createElement("button", {
                                   className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");
