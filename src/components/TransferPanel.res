@@ -162,8 +162,18 @@ module StepProgress = {
         
         <div className="border-t border-gray-200 mt-4 -mx-8"></div>
         
-        <div className="mt-5 text-center text-sm text-gray-500">
-          {React.string(allStepsCompleted ? "All steps completed successfully, you can close this window now." : "Don't close or refresh this window.")}
+        <div className="mt-5 text-center">
+          {allStepsCompleted 
+            ? <button
+                onClick={_ => onClose()}
+                className="w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium transition-colors shadow-sm hover:shadow-md"
+                type_="button">
+                {React.string("Close")}
+              </button>
+            : <div className="text-sm text-gray-500">
+                {React.string("Don't close or refresh this window.")}
+              </div>
+          }
         </div>
       </div>
     </div>

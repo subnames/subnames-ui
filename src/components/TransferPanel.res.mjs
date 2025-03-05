@@ -218,8 +218,16 @@ function TransferPanel$StepProgress(props) {
                           }))), React.createElement("div", {
                       className: "border-t border-gray-200 mt-4 -mx-8"
                     }), React.createElement("div", {
-                      className: "mt-5 text-center text-sm text-gray-500"
-                    }, allStepsCompleted ? "All steps completed successfully, you can close this window now." : "Don't close or refresh this window.")));
+                      className: "mt-5 text-center"
+                    }, allStepsCompleted ? React.createElement("button", {
+                            className: "w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium transition-colors shadow-sm hover:shadow-md",
+                            type: "button",
+                            onClick: (function (param) {
+                                onClose();
+                              })
+                          }, "Close") : React.createElement("div", {
+                            className: "text-sm text-gray-500"
+                          }, "Don't close or refresh this window."))));
 }
 
 var StepProgress = {
