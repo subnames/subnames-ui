@@ -138,7 +138,7 @@ module Layout = {
                   <button
                     onClick={_ => RescriptReactRouter.push("/names")}
                     className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
-                    {React.string("Your Names")}
+                    {React.string("Your names")}
                   </button>
                   </>
                 } else {

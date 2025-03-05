@@ -123,7 +123,7 @@ function App$Layout(props) {
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/names");
                                                 })
-                                            }, "Your Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                                            }, "Your names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
                             className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                           }, tmp)))
             });
