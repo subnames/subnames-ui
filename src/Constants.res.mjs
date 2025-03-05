@@ -19,6 +19,8 @@ var rpcUrl = "https://crab-rpc.darwinia.network";
 
 var indexerUrl = "https://g2d.site/graphql";
 
+var metricsUrl = "https://g2d.site/metrics";
+
 export {
   sld ,
   registryContractAddress ,
@@ -29,5 +31,6 @@ export {
   parentNode ,
   rpcUrl ,
   indexerUrl ,
+  metricsUrl ,
 }
 /* No side effect */

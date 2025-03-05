@@ -33,6 +33,7 @@ let make = () => {
   let {setForceRefresh, primaryName} = NameContext.use()
   let (names, setNames) = React.useState(() => [])
   let (loading, setLoading) = React.useState(() => true)
+  let (isSynced, setIsSynced) = React.useState(() => true)
   let (activeDropdown, setActiveDropdown) = React.useState(() => None)
   let (settingPrimaryName, setSettingPrimaryName) = React.useState(() => false)
   let (showExtendPanel, setShowExtendPanel) = React.useState(() => None)
@@ -127,6 +128,64 @@ let make = () => {
     ->Option.getExn
   }
 
+  // Check indexer sync status
+  let checkSyncStatus = async () => {
+    try {
+      let response = await Fetch.fetch(
+        Constants.metricsUrl, {
+          method: #GET
+        }
+      )
+
+      let text = await response->Fetch.Response.text
+      
+      // Parse the metrics text to extract chain height and last block
+      let lines = text->String.split("\n")
+      let chainHeightLine = lines->Array.find(line => line->String.startsWith("sqd_processor_chain_height"))
+      let lastBlockLine = lines->Array.find(line => line->String.startsWith("sqd_processor_last_block"))
+      
+      switch (chainHeightLine, lastBlockLine) {
+      | (Some(chainHeightStr), Some(lastBlockStr)) => {
+          // Extract the numbers from the lines
+          let chainHeight = chainHeightStr
+            ->String.split(" ")
+            ->Array.get(1)
+            ->Option.flatMap(str => str->Int.fromString)
+            ->Option.getOr(0)
+            
+          let lastBlock = lastBlockStr
+            ->String.split(" ")
+            ->Array.get(1)
+            ->Option.flatMap(str => str->Int.fromString)
+            ->Option.getOr(0)
+
+          Console.log(`Chain height: ${chainHeight->Int.toString}, Last block: ${lastBlock->Int.toString}`)
+            
+          // Check if the difference is more than 3 blocks
+          let diff = chainHeight - lastBlock
+          setIsSynced(_ => diff <= 3)
+        }
+      | _ => setIsSynced(_ => true) // Default to synced if can't parse
+      }
+    } catch {
+    | _ => setIsSynced(_ => true) // Default to synced if fetch fails
+    }
+  }
+
+  // Check sync status periodically
+  React.useEffect0(() => {
+    // Initial check
+    checkSyncStatus()->ignore
+    
+    // Set up interval to check every 30 seconds
+    let intervalId = Js.Global.setInterval(() => {
+      checkSyncStatus()->ignore
+    }, 30000)
+    
+    // Clean up interval on unmount
+    Some(() => Js.Global.clearInterval(intervalId))
+  })
+
   React.useEffect2(() => {
     if account.isConnected {
       let fetchNames = async () => {
@@ -185,6 +244,15 @@ let make = () => {
             <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your names")} </h1>
             <div className="text-sm text-gray-500">
               {React.string("It may take a while to sync your names. ")}
+              {if !isSynced {
+                <span className="text-amber-600 font-medium">
+                  {React.string("Indexer is currently syncing...")}
+                </span>
+              } else {
+                <span className="text-green-600 font-medium">
+                  {React.string("Indexer is fully synced")}
+                </span>
+              }}
             </div>
             <button
               onClick={_ => RescriptReactRouter.push("/")}

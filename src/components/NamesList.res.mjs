@@ -36,25 +36,29 @@ function NamesList(props) {
       });
   var setLoading = match$2[1];
   var match$3 = React.useState(function () {
+        return true;
+      });
+  var setIsSynced = match$3[1];
+  var match$4 = React.useState(function () {
         
       });
-  var setActiveDropdown = match$3[1];
-  var activeDropdown = match$3[0];
-  var match$4 = React.useState(function () {
+  var setActiveDropdown = match$4[1];
+  var activeDropdown = match$4[0];
+  var match$5 = React.useState(function () {
         return false;
       });
-  var setSettingPrimaryName = match$4[1];
-  var settingPrimaryName = match$4[0];
-  var match$5 = React.useState(function () {
-        
-      });
-  var setShowExtendPanel = match$5[1];
-  var showExtendPanel = match$5[0];
+  var setSettingPrimaryName = match$5[1];
+  var settingPrimaryName = match$5[0];
   var match$6 = React.useState(function () {
         
       });
-  var setShowTransferPanel = match$6[1];
-  var showTransferPanel = match$6[0];
+  var setShowExtendPanel = match$6[1];
+  var showExtendPanel = match$6[0];
+  var match$7 = React.useState(function () {
+        
+      });
+  var setShowTransferPanel = match$7[1];
+  var showTransferPanel = match$7[0];
   var dropdownRef = React.useRef(null);
   React.useEffect((function () {
           var handleClickOutside = function ($$event) {
@@ -161,6 +165,60 @@ function NamesList(props) {
                             };
                     })), undefined);
   };
+  var checkSyncStatus = async function () {
+    try {
+      var response = await fetch(Constants.metricsUrl, {
+            method: "GET"
+          });
+      var text = await response.text();
+      var lines = text.split("\n");
+      var chainHeightLine = lines.find(function (line) {
+            return line.startsWith("sqd_processor_chain_height");
+          });
+      var lastBlockLine = lines.find(function (line) {
+            return line.startsWith("sqd_processor_last_block");
+          });
+      var exit = 0;
+      if (chainHeightLine !== undefined) {
+        if (lastBlockLine !== undefined) {
+          var chainHeight = Core__Option.getOr(Core__Option.flatMap(chainHeightLine.split(" ")[1], (function (str) {
+                      return Core__Int.fromString(str, undefined);
+                    })), 0);
+          var lastBlock = Core__Option.getOr(Core__Option.flatMap(lastBlockLine.split(" ")[1], (function (str) {
+                      return Core__Int.fromString(str, undefined);
+                    })), 0);
+          console.log("Chain height: " + chainHeight.toString() + ", Last block: " + lastBlock.toString());
+          var diff = chainHeight - lastBlock | 0;
+          return setIsSynced(function (param) {
+                      return diff <= 3;
+                    });
+        }
+        exit = 1;
+      } else {
+        exit = 1;
+      }
+      if (exit === 1) {
+        return setIsSynced(function (param) {
+                    return true;
+                  });
+      }
+      
+    }
+    catch (exn){
+      return setIsSynced(function (param) {
+                  return true;
+                });
+    }
+  };
+  React.useEffect((function () {
+          checkSyncStatus();
+          var intervalId = setInterval((function () {
+                  checkSyncStatus();
+                }), 30000);
+          return (function () {
+                    clearInterval(intervalId);
+                  });
+        }), []);
   React.useEffect((function () {
           if (account.isConnected) {
             var fetchNames = async function () {
@@ -214,10 +272,10 @@ function NamesList(props) {
                 className: "text-gray-900 text-lg font-medium"
               }, "Setting primary name..."));
     } else if (Core__Option.isSome(showTransferPanel)) {
-      var match$7 = Core__Option.getExn(showTransferPanel, undefined);
+      var match$8 = Core__Option.getExn(showTransferPanel, undefined);
       tmp$1 = React.createElement(TransferPanel.make, {
-            name: match$7[0],
-            receiver: match$7[1],
+            name: match$8[0],
+            receiver: match$8[1],
             onCancel: (function () {
                 setShowTransferPanel(function (param) {
                       
@@ -263,7 +321,11 @@ function NamesList(props) {
                                   className: "text-3xl font-bold text-gray-900"
                                 }, "Your names"), React.createElement("div", {
                                   className: "text-sm text-gray-500"
-                                }, "It may take a while to sync your names. "), React.createElement("button", {
+                                }, "It may take a while to sync your names. ", match$3[0] ? React.createElement("span", {
+                                        className: "text-green-600 font-medium"
+                                      }, "Indexer is fully synced") : React.createElement("span", {
+                                        className: "text-amber-600 font-medium"
+                                      }, "Indexer is currently syncing...")), React.createElement("button", {
                                   className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");

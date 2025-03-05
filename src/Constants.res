@@ -7,5 +7,6 @@ let reverseRegistrarContractAddress = "0xc4848453278116613F6CC1660BffAD5a4ac2182
 let parentNode = "0xa00b30653aa21de4caea57dc656dcab595a7f3a936e0564ffc5dd8448b945581"
 let rpcUrl = "https://crab-rpc.darwinia.network"
 let indexerUrl = "https://g2d.site/graphql"
+let metricsUrl = "https://g2d.site/metrics"
+
 // let indexerUrl = "http://localhost:4350/graphql"
-// let metricsUrl = "http://localhost:3000/metrics"
