@@ -182,9 +182,9 @@ let make = () => {
 
           // Header
           <div className="p-8 py-6 border-b border-gray-200 relative">
-            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Subnames")} </h1>
+            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your names")} </h1>
             <div className="text-sm text-gray-500">
-              {React.string("It may take a while to sync your subnames. ")}
+              {React.string("It may take a while to sync your names. ")}
             </div>
             <button
               onClick={_ => RescriptReactRouter.push("/")}
@@ -203,7 +203,7 @@ let make = () => {
             </div>
           } else if names->Array.length == 0 {
             <div className="text-center py-4 text-gray-500">
-              {React.string("You don't have any subnames yet")}
+              {React.string("You don't have any names yet")}
             </div>
           } else {
             <div>

@@ -124,7 +124,7 @@ module Layout = {
                 <button
                   onClick={_ => RescriptReactRouter.push("/")}
                   className="text-xl font-bold text-gray-900">
-                  {React.string(Constants.sld)}
+                  {React.string("Darwinia Names")}
                 </button>
               </div>
               <div className="flex items-center gap-4">

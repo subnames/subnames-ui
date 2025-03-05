@@ -261,9 +261,9 @@ function NamesList(props) {
                               className: "p-8 py-6 border-b border-gray-200 relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900"
-                                }, "Your Subnames"), React.createElement("div", {
+                                }, "Your names"), React.createElement("div", {
                                   className: "text-sm text-gray-500"
-                                }, "It may take a while to sync your subnames. "), React.createElement("button", {
+                                }, "It may take a while to sync your names. "), React.createElement("button", {
                                   className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");
@@ -276,7 +276,7 @@ function NamesList(props) {
                                       })) : (
                                 names.length === 0 ? React.createElement("div", {
                                         className: "text-center py-4 text-gray-500"
-                                      }, "You don't have any subnames yet") : React.createElement("div", undefined, React.createElement("div", {
+                                      }, "You don't have any names yet") : React.createElement("div", undefined, React.createElement("div", {
                                             className: "py-1"
                                           }, names.map(function (subname, index) {
                                                 var tmp;

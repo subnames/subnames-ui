@@ -4,7 +4,6 @@ import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Router from "./Router.res.mjs";
 import * as Profile from "./pages/Profile.res.mjs";
-import * as Constants from "./Constants.res.mjs";
 import * as NamesList from "./components/NamesList.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
 import * as Chains from "viem/chains";
@@ -112,7 +111,7 @@ function App$Layout(props) {
                                         onClick: (function (param) {
                                             RescriptReactRouter.push("/");
                                           })
-                                      }, Constants.sld)), React.createElement("div", {
+                                      }, "Darwinia Names")), React.createElement("div", {
                                     className: "flex items-center gap-4"
                                   }, account.isConnected ? React.createElement(React.Fragment, {}, React.createElement("button", {
                                               className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
