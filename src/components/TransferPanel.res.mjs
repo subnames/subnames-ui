@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
@@ -232,25 +233,27 @@ function TransferPanel(props) {
   var receiver = props.receiver;
   var name = props.name;
   var buttonType = __buttonType !== undefined ? __buttonType : "back";
-  var match = React.useState(function () {
+  var match = NameContext.use();
+  var primaryName = match.primaryName;
+  var match$1 = React.useState(function () {
         return Core__Option.getOr(receiver, "");
       });
-  var setRecipientAddress = match[1];
-  var recipientAddress = match[0];
-  var match$1 = React.useState(function () {
-        return false;
-      });
-  var setIsWaitingForConfirmation = match$1[1];
-  var isWaitingForConfirmation = match$1[0];
+  var setRecipientAddress = match$1[1];
+  var recipientAddress = match$1[0];
   var match$2 = React.useState(function () {
         return false;
       });
-  var setAllStepsCompleted = match$2[1];
+  var setIsWaitingForConfirmation = match$2[1];
+  var isWaitingForConfirmation = match$2[0];
   var match$3 = React.useState(function () {
+        return false;
+      });
+  var setAllStepsCompleted = match$3[1];
+  var match$4 = React.useState(function () {
         return 0;
       });
-  var setCurrentStep = match$3[1];
-  var match$4 = React.useState(function () {
+  var setCurrentStep = match$4[1];
+  var match$5 = React.useState(function () {
         return [
                 {
                   label: "Set Address",
@@ -274,7 +277,7 @@ function TransferPanel(props) {
                 }
               ];
       });
-  var setStepStatuses = match$4[1];
+  var setStepStatuses = match$5[1];
   React.useEffect((function () {
           if (receiver !== undefined) {
             setRecipientAddress(function (param) {
@@ -345,10 +348,17 @@ function TransferPanel(props) {
                   };
           }));
     await executeStep(1, "Clear Name", (async function () {
-            var hash = await OnChainOperations.setName(walletClient, "");
+            if (Core__Option.isSome(primaryName) && Core__Option.getExn(primaryName, undefined).name === name) {
+              var hash = await OnChainOperations.setName(walletClient, "");
+              return {
+                      value: undefined,
+                      txHash: hash
+                    };
+            }
+            console.log("This name is not primary, skipping clear name step");
             return {
                     value: undefined,
-                    txHash: hash
+                    txHash: undefined
                   };
           }));
     await executeStep(2, "Reclaim Token", (async function () {
@@ -396,9 +406,9 @@ function TransferPanel(props) {
                       }, React.createElement("div", {
                             className: "fixed inset-0 bg-black bg-opacity-50"
                           }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
-                              steps: match$4[0],
-                              currentStep: match$3[0],
-                              allStepsCompleted: match$2[0],
+                              steps: match$5[0],
+                              currentStep: match$4[0],
+                              allStepsCompleted: match$3[0],
                               onClose: (function () {
                                   setIsWaitingForConfirmation(function (param) {
                                         return false;

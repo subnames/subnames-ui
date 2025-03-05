@@ -184,6 +184,7 @@ let make = (
   ~onSuccess: Types.actionResult => unit,
   ~buttonType: [#back | #close]=#back,
 ) => {
+  let {primaryName} = NameContext.use()
   let (recipientAddress, setRecipientAddress) = React.useState(_ => receiver->Option.getOr(""))
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
   let (allStepsCompleted, setAllStepsCompleted) = React.useState(() => false)
@@ -271,8 +272,13 @@ let make = (
 
       // Step 2: Clear Name
       await executeStep(1, "Clear Name", async () => {
-        let hash = await OnChainOperations.setName(walletClient, "")
-        {value: (), txHash: Some(hash)}
+        if primaryName->Option.isSome && (primaryName->Option.getExn).name == name {
+          let hash = await OnChainOperations.setName(walletClient, "")
+          {value: (), txHash: Some(hash)} 
+        } else {
+          Console.log(`This name is not primary, skipping clear name step`)
+          {value: (), txHash: None}
+        }
       })
 
       // Step 3: Reclaim Token
