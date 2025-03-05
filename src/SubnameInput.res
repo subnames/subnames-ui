@@ -3,6 +3,8 @@ type state = {
   panel: string,
   action: Types.action,
   result: option<Types.actionResult>,
+  // Preserve InputPanel state
+  inputPanelKey: string,
 }
 
 let initialState: state = {
@@ -10,6 +12,7 @@ let initialState: state = {
   panel: "input",
   action: Types.Register,
   result: None,
+  inputPanelKey: "initial",
 }
 
 @react.component
@@ -42,20 +45,19 @@ let make = (~isWalletConnected: bool) => {
 
   <div className="w-full max-w-xl mx-auto">
     {switch state.panel {
-    | "input" => <InputPanel onNext={onNext} isWalletConnected />
-    | "register" =>
+    | "input" => <InputPanel key={state.inputPanelKey} onNext={onNext} isWalletConnected initialValue={state.name} />
+    | "register" | "extend" =>
       <RegisterExtendPanel
         name={state.name}
         isWalletConnected
-        onBack={() => setState(prev => {...prev, panel: "input"})}
-        onSuccess={onSuccess}
-        action={state.action}
-      />
-    | "extend" =>
-      <RegisterExtendPanel
-        name={state.name}
-        isWalletConnected
-        onBack={() => setState(prev => {...prev, panel: "input"})}
+        onBack={() => {
+          setState(prev => {
+            Console.log(prev);
+            // Generate a new key to force the component to preserve its state
+            let newKey = Js.Date.now()->Js.Float.toString
+            {...prev, panel: "input", inputPanelKey: newKey}
+          })
+        }}
         onSuccess={onSuccess}
         action={state.action}
       />
@@ -63,7 +65,13 @@ let make = (~isWalletConnected: bool) => {
       <TransferPanel
         name={state.name}
         receiver={None}
-        onCancel={() => setState(prev => {...prev, panel: "input"})}
+        onCancel={() => {
+          setState(prev => {
+            // Generate a new key to force the component to preserve its state
+            let newKey = Js.Date.now()->Js.Float.toString
+            {...prev, panel: "input", inputPanelKey: newKey}
+          })
+        }}
         onSuccess={onSuccess}
         buttonType=#close
       />

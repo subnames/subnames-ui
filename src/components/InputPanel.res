@@ -69,8 +69,15 @@ let isOwnedByUser = async (owner: string) => {
 }
 
 @react.component
-let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) => {
-  let (state, setState) = React.useState(_ => initialState)
+let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~initialValue: string="") => {
+  // Initialize state with the provided initialValue if any
+  let initialStateWithValue = initialValue != "" ? {
+    ...initialState,
+    value: initialValue,
+    isValid: true, // We assume it's valid since it was previously validated
+  } : initialState
+  
+  let (state, setState) = React.useState(_ => initialStateWithValue)
 
   let checkNameAvailability = async value => {
     setState(prev => {...prev, isChecking: true, isAvailable: false, owner: None, expiryDate: None})
@@ -108,6 +115,15 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool) =
   }
 
 
+  // Check availability on initial render if we have an initialValue
+  React.useEffect0(() => {
+    if initialValue != "" {
+      checkNameAvailability(initialValue)->Promise.done
+    }
+    None
+  })
+
+  // Check availability when value or wallet connection changes
   React.useEffect2(() => {
     if state.value != "" && state.isValid {
       checkNameAvailability(state.value)->Promise.done

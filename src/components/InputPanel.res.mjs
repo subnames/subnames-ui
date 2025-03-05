@@ -75,10 +75,23 @@ async function isOwnedByUser(owner) {
 }
 
 function InputPanel(props) {
+  var __initialValue = props.initialValue;
   var isWalletConnected = props.isWalletConnected;
   var onNext = props.onNext;
+  var initialValue = __initialValue !== undefined ? __initialValue : "";
+  var initialStateWithValue = initialValue !== "" ? ({
+        value: initialValue,
+        isValid: true,
+        errorMessage: undefined,
+        isChecking: false,
+        isAvailable: false,
+        owner: undefined,
+        expiryDate: undefined,
+        isOwnedByUser: undefined,
+        isFocused: false
+      }) : initialState;
   var match = React.useState(function () {
-        return initialState;
+        return initialStateWithValue;
       });
   var setState = match[1];
   var state = match[0];
@@ -148,6 +161,12 @@ function InputPanel(props) {
                 });
     }
   };
+  React.useEffect((function () {
+          if (initialValue !== "") {
+            checkNameAvailability(initialValue);
+          }
+          
+        }), []);
   React.useEffect((function () {
           if (state.value !== "" && state.isValid) {
             checkNameAvailability(state.value);

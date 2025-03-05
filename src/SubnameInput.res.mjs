@@ -5,13 +5,15 @@ import * as InputPanel from "./components/InputPanel.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
 import * as ResultPanel from "./components/ResultPanel.res.mjs";
 import * as TransferPanel from "./components/TransferPanel.res.mjs";
+import * as JsxPPXReactSupportU from "rescript/lib/es6/jsxPPXReactSupportU.js";
 import * as RegisterExtendPanel from "./components/RegisterExtendPanel.res.mjs";
 
 var initialState = {
   name: "",
   panel: "input",
   action: "Register",
-  result: undefined
+  result: undefined,
+  inputPanelKey: "initial"
 };
 
 function SubnameInput(props) {
@@ -29,7 +31,8 @@ function SubnameInput(props) {
                   name: prev.name,
                   panel: "result",
                   action: prev.action,
-                  result: result
+                  result: result,
+                  inputPanelKey: prev.inputPanelKey
                 };
         });
     setForceRefresh(function (param) {
@@ -61,54 +64,25 @@ function SubnameInput(props) {
                   name: name,
                   panel: tmp,
                   action: action,
-                  result: prev.result
+                  result: prev.result,
+                  inputPanelKey: prev.inputPanelKey
                 };
         });
   };
   var match$2 = state.panel;
   var tmp;
+  var exit = 0;
   switch (match$2) {
-    case "extend" :
-        tmp = React.createElement(RegisterExtendPanel.make, {
-              name: state.name,
-              isWalletConnected: isWalletConnected,
-              onBack: (function () {
-                  setState(function (prev) {
-                        return {
-                                name: prev.name,
-                                panel: "input",
-                                action: prev.action,
-                                result: prev.result
-                              };
-                      });
-                }),
-              onSuccess: onSuccess,
-              action: state.action
-            });
-        break;
     case "input" :
-        tmp = React.createElement(InputPanel.make, {
+        tmp = JsxPPXReactSupportU.createElementWithKey(state.inputPanelKey, InputPanel.make, {
               onNext: onNext,
-              isWalletConnected: isWalletConnected
+              isWalletConnected: isWalletConnected,
+              initialValue: state.name
             });
         break;
+    case "extend" :
     case "register" :
-        tmp = React.createElement(RegisterExtendPanel.make, {
-              name: state.name,
-              isWalletConnected: isWalletConnected,
-              onBack: (function () {
-                  setState(function (prev) {
-                        return {
-                                name: prev.name,
-                                panel: "input",
-                                action: prev.action,
-                                result: prev.result
-                              };
-                      });
-                }),
-              onSuccess: onSuccess,
-              action: state.action
-            });
+        exit = 1;
         break;
     case "result" :
         tmp = React.createElement(ResultPanel.make, {
@@ -126,11 +100,13 @@ function SubnameInput(props) {
               name: state.name,
               onCancel: (function () {
                   setState(function (prev) {
+                        var newKey = Date.now().toString();
                         return {
                                 name: prev.name,
                                 panel: "input",
                                 action: prev.action,
-                                result: prev.result
+                                result: prev.result,
+                                inputPanelKey: newKey
                               };
                       });
                 }),
@@ -140,6 +116,27 @@ function SubnameInput(props) {
         break;
     default:
       tmp = React.createElement("div", undefined);
+  }
+  if (exit === 1) {
+    tmp = React.createElement(RegisterExtendPanel.make, {
+          name: state.name,
+          isWalletConnected: isWalletConnected,
+          onBack: (function () {
+              setState(function (prev) {
+                    console.log(prev);
+                    var newKey = Date.now().toString();
+                    return {
+                            name: prev.name,
+                            panel: "input",
+                            action: prev.action,
+                            result: prev.result,
+                            inputPanelKey: newKey
+                          };
+                  });
+            }),
+          onSuccess: onSuccess,
+          action: state.action
+        });
   }
   return React.createElement("div", {
               className: "w-full max-w-xl mx-auto"
