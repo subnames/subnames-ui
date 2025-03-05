@@ -81,12 +81,12 @@ module StatusIcon = {
 
 module StepProgress = {
   @react.component
-  let make = (~steps: array<transferStep>, ~currentStep: int, ~allStepsCompleted: bool, ~onClose: unit => unit) => {
+  let make = (~steps: array<transferStep>, ~currentStep: int, ~allStepsCompleted: bool, ~transactionRejected: bool, ~onClose: unit => unit) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white px-8 py-6 rounded-custom shadow-lg w-full max-w-sm mx-4">
         <div className="flex items-center justify-between mb-5">
           <h1 className="text-lg font-semibold text-gray-900"> {React.string("Transfer Progress")} </h1>
-          {if allStepsCompleted {
+          {if allStepsCompleted || transactionRejected {
             <button
               onClick={_ => onClose()}
               className="p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center"
@@ -163,7 +163,7 @@ module StepProgress = {
         <div className="border-t border-gray-200 mt-4 -mx-8"></div>
         
         <div className="mt-5 text-center">
-          {allStepsCompleted 
+          {allStepsCompleted || transactionRejected 
             ? <button
                 onClick={_ => onClose()}
                 className="w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium transition-colors shadow-sm hover:shadow-md"
@@ -198,6 +198,7 @@ let make = (
   let (recipientAddress, setRecipientAddress) = React.useState(_ => receiver->Option.getOr(""))
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
   let (allStepsCompleted, setAllStepsCompleted) = React.useState(() => false)
+  let (transactionRejected, setTransactionRejected) = React.useState(() => false)
 
   let (currentStep, setCurrentStep) = React.useState(() => 0)
   let (stepStatuses, setStepStatuses) = React.useState(() => [
@@ -251,8 +252,10 @@ let make = (
             Console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.")
             Console.log("You can safely try again or check the transaction status on the blockchain explorer.")
           }
-          
-          Js.Console.error(error)
+
+          setTransactionRejected(_ => true)
+
+          Console.error(error)
           raise(error)
         }
       }
@@ -342,7 +345,8 @@ let make = (
         <StepProgress 
           steps=stepStatuses 
           currentStep 
-          allStepsCompleted 
+          allStepsCompleted
+          transactionRejected
           onClose={() => {
             setIsWaitingForConfirmation(_ => false)
             onSuccess({

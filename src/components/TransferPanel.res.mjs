@@ -136,6 +136,7 @@ var StatusIcon = {
 
 function TransferPanel$StepProgress(props) {
   var onClose = props.onClose;
+  var transactionRejected = props.transactionRejected;
   var allStepsCompleted = props.allStepsCompleted;
   var steps = props.steps;
   return React.createElement("div", {
@@ -146,7 +147,7 @@ function TransferPanel$StepProgress(props) {
                       className: "flex items-center justify-between mb-5"
                     }, React.createElement("h1", {
                           className: "text-lg font-semibold text-gray-900"
-                        }, "Transfer Progress"), allStepsCompleted ? React.createElement("button", {
+                        }, "Transfer Progress"), allStepsCompleted || transactionRejected ? React.createElement("button", {
                             className: "p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center",
                             type: "button",
                             onClick: (function (param) {
@@ -219,7 +220,7 @@ function TransferPanel$StepProgress(props) {
                       className: "border-t border-gray-200 mt-4 -mx-8"
                     }), React.createElement("div", {
                       className: "mt-5 text-center"
-                    }, allStepsCompleted ? React.createElement("button", {
+                    }, allStepsCompleted || transactionRejected ? React.createElement("button", {
                             className: "w-full px-4 py-2 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-xl font-medium transition-colors shadow-sm hover:shadow-md",
                             type: "button",
                             onClick: (function (param) {
@@ -258,10 +259,14 @@ function TransferPanel(props) {
       });
   var setAllStepsCompleted = match$3[1];
   var match$4 = React.useState(function () {
+        return false;
+      });
+  var setTransactionRejected = match$4[1];
+  var match$5 = React.useState(function () {
         return 0;
       });
-  var setCurrentStep = match$4[1];
-  var match$5 = React.useState(function () {
+  var setCurrentStep = match$5[1];
+  var match$6 = React.useState(function () {
         return [
                 {
                   label: "Set Address",
@@ -285,7 +290,7 @@ function TransferPanel(props) {
                 }
               ];
       });
-  var setStepStatuses = match$5[1];
+  var setStepStatuses = match$6[1];
   React.useEffect((function () {
           if (receiver !== undefined) {
             setRecipientAddress(function (param) {
@@ -333,6 +338,9 @@ function TransferPanel(props) {
           console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.");
           console.log("You can safely try again or check the transaction status on the blockchain explorer.");
         }
+        setTransactionRejected(function (param) {
+              return true;
+            });
         console.error(error);
         throw error;
       }
@@ -414,9 +422,10 @@ function TransferPanel(props) {
                       }, React.createElement("div", {
                             className: "fixed inset-0 bg-black bg-opacity-50"
                           }), isWaitingForConfirmation ? React.createElement(TransferPanel$StepProgress, {
-                              steps: match$5[0],
-                              currentStep: match$4[0],
+                              steps: match$6[0],
+                              currentStep: match$5[0],
                               allStepsCompleted: match$3[0],
+                              transactionRejected: match$4[0],
                               onClose: (function () {
                                   setIsWaitingForConfirmation(function (param) {
                                         return false;
