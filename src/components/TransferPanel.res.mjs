@@ -3,6 +3,7 @@
 import * as Viem from "viem";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
+import * as Constants from "../Constants.res.mjs";
 import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
@@ -440,9 +441,9 @@ function TransferPanel(props) {
                             }, React.createElement("div", {
                                   className: "pt-6 pb-8 px-8 max-w-2xl mx-auto"
                                 }, React.createElement("div", {
-                                      className: "flex justify-between items-center mb-6"
+                                      className: "flex justify-between"
                                     }, React.createElement("div", {
-                                          className: "flex items-center gap-3"
+                                          className: "flex gap-3"
                                         }, buttonType === "close" ? null : React.createElement("button", {
                                                 className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
                                                 type: "button",
@@ -451,17 +452,23 @@ function TransferPanel(props) {
                                                   })
                                               }, React.createElement("div", {
                                                     className: "w-6 h-6 text-gray-600"
-                                                  }, React.createElement(Icons.Back.make, {}))), React.createElement("h2", {
-                                              className: "text-xl font-semibold text-gray-900"
-                                            }, "Transfer \`" + name + "\`")), buttonType === "close" ? React.createElement("button", {
-                                            className: "p-2 hover:bg-gray-100 rounded-full transition-colors",
-                                            type: "button",
-                                            onClick: (function (param) {
-                                                onCancel();
-                                              })
-                                          }, React.createElement("div", {
-                                                className: "w-6 h-6 text-gray-600"
+                                                  }, React.createElement(Icons.Back.make, {}))), React.createElement("div", undefined, React.createElement("h1", {
+                                                  className: "text-xl font-semibold text-gray-900 truncate"
+                                                }, "Transfer"), React.createElement("div", {
+                                                  className: "mt-0"
+                                                }, React.createElement("span", {
+                                                      className: "text-sm text-gray-500"
+                                                    }, name + "." + Constants.sld)))), buttonType === "close" ? React.createElement("div", {
+                                            className: "self-center"
+                                          }, React.createElement("button", {
+                                                className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                                                type: "button",
+                                                onClick: (function (param) {
+                                                    onCancel();
+                                                  })
                                               }, React.createElement(Icons.Close.make, {}))) : null), React.createElement("div", {
+                                      className: "border-t border-gray-200 my-4 -mx-8"
+                                    }), React.createElement("div", {
                                       className: "mb-8 mx-[1px]"
                                     }, React.createElement("label", {
                                           className: "block text-gray-700 text-sm font-medium mb-2"

@@ -112,6 +112,7 @@ let make = (
     <div className="fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm" />
     <div className="bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn">
       <div className="pt-6 pb-8 px-8">
+
         // header
         <div className="flex justify-between">
           <div className="flex gap-3">

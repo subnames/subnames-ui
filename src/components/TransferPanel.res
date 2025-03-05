@@ -359,8 +359,10 @@ let make = (
         <div
           className="bg-white rounded-custom shadow-lg overflow-hidden relative z-50 max-w-2xl w-full mx-4">
           <div className="pt-6 pb-8 px-8 max-w-2xl mx-auto">
-            <div className="flex justify-between items-center mb-6">
-              <div className="flex items-center gap-3">
+
+            // header
+            <div className="flex justify-between">
+              <div className="flex gap-3">
                 {switch buttonType {
                 | #back => 
                   <button
@@ -373,23 +375,31 @@ let make = (
                   </button>
                 | #close => React.null
                 }}
-                <h2 className="text-xl font-semibold text-gray-900">
-                  {React.string(`Transfer \`${name}\``)}
-                </h2>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900 truncate">
+                    {React.string(`Transfer`)}
+                  </h1>
+                  <div className="mt-0">
+                    <span className="text-sm text-gray-500">{React.string(`${name}.${Constants.sld}`)}</span>
+                  </div>
+                </div>
               </div>
               {switch buttonType {
               | #close => 
-                <button
-                  onClick={_ => onCancel()}
-                  className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                  type_="button">
-                  <div className="w-6 h-6 text-gray-600">
+                <div className="self-center">
+                  <button
+                    onClick={_ => onCancel()}
+                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                    type_="button">
                     <Icons.Close />
-                  </div>
-                </button>
+                  </button>
+                </div>
               | #back => React.null
               }}
             </div>
+
+            <div className="border-t border-gray-200 my-4 -mx-8"></div>
+
             <div className="mb-8 mx-[1px]">
               <label className="block text-gray-700 text-sm font-medium mb-2">{React.string("To:")}</label>
               <input
