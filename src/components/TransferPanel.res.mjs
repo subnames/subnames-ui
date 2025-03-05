@@ -474,6 +474,7 @@ function TransferPanel(props) {
                                           className: "block text-gray-700 text-sm font-medium mb-2"
                                         }, "To:"), React.createElement("input", {
                                           className: "w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 font-medium text-lg",
+                                          disabled: recipientAddress !== "",
                                           placeholder: "0x...",
                                           type: "text",
                                           value: recipientAddress,

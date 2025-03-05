@@ -408,6 +408,7 @@ let make = (
                 onChange={e => setRecipientAddress(ReactEvent.Form.target(e)["value"])}
                 className="w-full px-3 py-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-zinc-500 focus:border-zinc-500 font-medium text-lg"
                 placeholder="0x..."
+                disabled={recipientAddress != ""}
               />
             </div>
             <button
