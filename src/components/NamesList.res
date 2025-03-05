@@ -246,7 +246,7 @@ let make = () => {
             <div className="text-sm text-gray-500 flex items-center gap-2">
               {if isSynced {
                 <div className="flex items-center gap-1">
-                  {React.string("Indexer has been synced")}
+                  {React.string("Indexer is up to date.")}
                 </div>
               } else {
                 React.null
@@ -256,7 +256,7 @@ let make = () => {
               {if !isSynced {
                 <div className="flex items-center gap-1 text-amber-600 text-sm">
                   <Icons.Syncing className="text-amber-600" />
-                  {React.string("Indexer is syncing... Operations disabled")}
+                  {React.string("Syncing... Operations disabled")}
                 </div>
               } else {
                 React.null
