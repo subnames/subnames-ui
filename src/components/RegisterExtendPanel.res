@@ -258,25 +258,25 @@ let make = (
           }}
         </div>
 
-        {if isWaitingForConfirmation {
-          <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
-            <div className="flex items-start gap-3">
-              <div className="text-blue-500 mt-0.5">
-                <Icons.Spinner className="w-5 h-5" />
-              </div>
-              <div>
-                <p className="text-sm text-blue-800 font-medium">
-                  {React.string("Transaction in progress")}
-                </p>
-                <p className="text-xs text-blue-600 mt-1">
-                  {React.string("Please wait while your transaction is being processed. This may take a moment.")}
-                </p>
-              </div>
-            </div>
-          </div>
-        } else {
-          React.null
-        }}
+        // {if isWaitingForConfirmation {
+        //   <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100">
+        //     <div className="flex items-start gap-3">
+        //       <div className="text-blue-500 mt-0.5">
+        //         <Icons.Spinner className="w-5 h-5" />
+        //       </div>
+        //       <div>
+        //         <p className="text-sm text-blue-800 font-medium">
+        //           {React.string("Transaction in progress")}
+        //         </p>
+        //         <p className="text-xs text-blue-600 mt-1">
+        //           {React.string("Please wait while your transaction is being processed. This may take a moment.")}
+        //         </p>
+        //       </div>
+        //     </div>
+        //   </div>
+        // } else {
+        //   React.null
+        // }}
       </div>
     </div>
   </div>

@@ -304,19 +304,7 @@ function RegisterExtendPanel(props) {
                                                 className: "text-xs text-gray-500 mt-1"
                                               }, "Paid in RING tokens on Darwinia network")))))), React.createElement("div", {
                           className: "mt-2"
-                        }, tmp$1), isWaitingForConfirmation ? React.createElement("div", {
-                            className: "mt-4 p-4 bg-blue-50 rounded-lg border border-blue-100"
-                          }, React.createElement("div", {
-                                className: "flex items-start gap-3"
-                              }, React.createElement("div", {
-                                    className: "text-blue-500 mt-0.5"
-                                  }, React.createElement(Icons.Spinner.make, {
-                                        className: "w-5 h-5"
-                                      })), React.createElement("div", undefined, React.createElement("p", {
-                                        className: "text-sm text-blue-800 font-medium"
-                                      }, "Transaction in progress"), React.createElement("p", {
-                                        className: "text-xs text-blue-600 mt-1"
-                                      }, "Please wait while your transaction is being processed. This may take a moment.")))) : null)));
+                        }, tmp$1))));
 }
 
 var make = RegisterExtendPanel;
