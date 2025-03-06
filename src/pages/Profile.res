@@ -44,6 +44,8 @@ module ProfileForm = {
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
     let (githubError, setGithubError) = React.useState(() => None)
+    let (emailError, setEmailError) = React.useState(() => None)
+    let (websiteError, setWebsiteError) = React.useState(() => None)
 
     let {primaryName} = NameContext.use()
 
@@ -82,14 +84,14 @@ module ProfileForm = {
 
       // Reset all error states
       setGithubError(_ => None)
+      setEmailError(_ => None)
+      setWebsiteError(_ => None)
+      setError(_ => None)
 
       switch (validateEmail(email), validateWebsite(website), validateGithub(github)) {
-      | (false, _, _) => setError(_ => Some("Please enter a valid email address"))
-      | (_, false, _) => setError(_ => Some("Please enter a valid website URL"))
-      | (_, _, false) => {
-          setGithubError(_ => Some("Please enter a valid GitHub username"))
-          setError(_ => None)
-        }
+      | (false, _, _) => setEmailError(_ => Some("Please enter a valid email address"))
+      | (_, false, _) => setWebsiteError(_ => Some("Please enter a valid website URL"))
+      | (_, _, false) => setGithubError(_ => Some("Please enter a valid GitHub username"))
       | _ => {
           setError(_ => None)
           setLoading(_ => true)
@@ -295,6 +297,11 @@ module ProfileForm = {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="https://"
                   />
+                  {switch websiteError {
+                  | Some(message) =>
+                    <div className="mt-1 text-sm text-red-600"> {React.string(message)} </div>
+                  | None => React.null
+                  }}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700">
@@ -310,6 +317,11 @@ module ProfileForm = {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="your@email.com"
                   />
+                  {switch emailError {
+                  | Some(message) =>
+                    <div className="mt-1 text-sm text-red-600"> {React.string(message)} </div>
+                  | None => React.null
+                  }}
                 </div>
                 {switch error {
                 | Some(message) =>

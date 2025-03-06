@@ -90,8 +90,18 @@ function Profile$ProfileForm(props) {
       });
   var setGithubError = match$10[1];
   var githubError = match$10[0];
-  var match$11 = NameContext.use();
-  var primaryName = match$11.primaryName;
+  var match$11 = React.useState(function () {
+        
+      });
+  var setEmailError = match$11[1];
+  var emailError = match$11[0];
+  var match$12 = React.useState(function () {
+        
+      });
+  var setWebsiteError = match$12[1];
+  var websiteError = match$12[0];
+  var match$13 = NameContext.use();
+  var primaryName = match$13.primaryName;
   var validateEmail = function (email) {
     if (email === undefined) {
       return true;
@@ -124,98 +134,103 @@ function Profile$ProfileForm(props) {
     setGithubError(function (param) {
           
         });
+    setEmailError(function (param) {
+          
+        });
+    setWebsiteError(function (param) {
+          
+        });
+    setError(function (param) {
+          
+        });
     var match = validateEmail(email$1);
     var match$1 = validateWebsite(website$1);
     var match$2 = validateGithub(github$1);
     if (!match) {
-      return setError(function (param) {
+      return setEmailError(function (param) {
                   return "Please enter a valid email address";
                 });
     }
     if (!match$1) {
-      return setError(function (param) {
+      return setWebsiteError(function (param) {
                   return "Please enter a valid website URL";
                 });
     }
-    if (match$2) {
-      setError(function (param) {
-            
-          });
+    if (!match$2) {
+      return setGithubError(function (param) {
+                  return "Please enter a valid GitHub username";
+                });
+    }
+    setError(function (param) {
+          
+        });
+    setLoading(function (param) {
+          return true;
+        });
+    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
+    var match$3 = Core__Option.getExn(primaryName, undefined);
+    var initialAvatar = profile[7];
+    var initialEmail = profile[6];
+    var initialWebsite = profile[5];
+    var initialGithub = profile[4];
+    var initialTelegram = profile[3];
+    var initialTwitter = profile[2];
+    var initialLocation = profile[1];
+    var initialDescription = profile[0];
+    var name = match$3.name;
+    var calls = [];
+    if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
+      calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
+    }
+    if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
+      calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
+    }
+    if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
+      calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
+    }
+    if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
+      calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
+    }
+    if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
+      calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
+    }
+    if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
+      calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
+    }
+    if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
+      calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
+    }
+    if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
+      calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
+    }
+    try {
+      await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
       setLoading(function (param) {
-            return true;
+            return false;
           });
-      var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
-      var match$3 = Core__Option.getExn(primaryName, undefined);
-      var initialAvatar = profile[7];
-      var initialEmail = profile[6];
-      var initialWebsite = profile[5];
-      var initialGithub = profile[4];
-      var initialTelegram = profile[3];
-      var initialTwitter = profile[2];
-      var initialLocation = profile[1];
-      var initialDescription = profile[0];
-      var name = match$3.name;
-      var calls = [];
-      if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
-        calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
-      }
-      if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
-        calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
-      }
-      if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
-        calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
-      }
-      if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
-        calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
-      }
-      if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
-        calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
-      }
-      if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
-        calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
-      }
-      if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
-        calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
-      }
-      if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
-        calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
-      }
-      try {
-        await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
+      return onSave([
+                  description$1,
+                  $$location$1,
+                  twitter$1,
+                  telegram$1,
+                  github$1,
+                  website$1,
+                  email$1,
+                  avatar$1
+                ]);
+    }
+    catch (raw_e){
+      var e = Caml_js_exceptions.internalToOCamlException(raw_e);
+      if (e.RE_EXN_ID === Js_exn.$$Error) {
+        var e$1 = e._1;
         setLoading(function (param) {
               return false;
             });
-        return onSave([
-                    description$1,
-                    $$location$1,
-                    twitter$1,
-                    telegram$1,
-                    github$1,
-                    website$1,
-                    email$1,
-                    avatar$1
-                  ]);
+        return setError(function (param) {
+                    return Core__Option.getOr(e$1.message, "Failed to save profile");
+                  });
       }
-      catch (raw_e){
-        var e = Caml_js_exceptions.internalToOCamlException(raw_e);
-        if (e.RE_EXN_ID === Js_exn.$$Error) {
-          var e$1 = e._1;
-          setLoading(function (param) {
-                return false;
-              });
-          return setError(function (param) {
-                      return Core__Option.getOr(e$1.message, "Failed to save profile");
-                    });
-        }
-        throw e;
-      }
-    } else {
-      setGithubError(function (param) {
-            return "Please enter a valid GitHub username";
-          });
-      return setError(function (param) {
-                  
-                });
+      throw e;
     }
   };
   return React.createElement("div", {
@@ -355,7 +370,9 @@ function Profile$ProfileForm(props) {
                                                     }
                                                   });
                                             })
-                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                        }), websiteError !== undefined ? React.createElement("div", {
+                                            className: "mt-1 text-sm text-red-600"
+                                          }, websiteError) : null), React.createElement("div", undefined, React.createElement("label", {
                                           className: "block text-sm font-medium mb-2 text-gray-700"
                                         }, "Email"), React.createElement("input", {
                                           className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
@@ -372,7 +389,9 @@ function Profile$ProfileForm(props) {
                                                     }
                                                   });
                                             })
-                                        })), error !== undefined ? React.createElement("div", {
+                                        }), emailError !== undefined ? React.createElement("div", {
+                                            className: "mt-1 text-sm text-red-600"
+                                          }, emailError) : null), error !== undefined ? React.createElement("div", {
                                         className: "mt-4 text-sm text-red-600"
                                       }, error) : null, React.createElement("div", {
                                       className: "flex justify-end space-x-4 mt-8"
