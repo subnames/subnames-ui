@@ -3,6 +3,12 @@ open OnChainOperationsCommon
 @module("../assets/avatar.png") external avatarImage: string = "default"
 @module("../color.mjs") external stringToRgba: (string, float) => string = "default"
 
+type config = {
+  backColor: string,
+  padding: float
+}
+@module("jdenticon") external toSvg: (string, int, config) => string = "toSvg"
+
 module ProfileForm = {
   @react.component
   let make = (
@@ -368,6 +374,7 @@ module ViewProfile = {
 
     <div className="w-full max-w-xl mx-auto relative p-8">
 
+
       // profile card
       <div className="bg-white rounded-custom shadow-lg mt-16 relative">
         // header
@@ -412,34 +419,37 @@ module ViewProfile = {
               <div className="flex justify-center items-center absolute inset-0">
                 <Icons.Spinner className="w-5 h-5 text-zinc-600" />
               </div>
-              <img
-                src={switch avatar {
-                | Some(value) => value
-                | None => `https://ui-avatars.com/api/?uppercase=false&name=${name}`
-                }}
-                alt="Profile Avatar"
-                className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full"
-                onLoad={e => {
-                  let target = ReactEvent.Image.target(e)
-                  target["classList"]["remove"]("opacity-0")
-                }}
-              />
-            </div>
-          </div>
-          // name line
-          <div className="flex justify-center items-center w-full relative">
-            <h1
-              className="text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center"
-              title={`${name}`}>
-              {React.string(name)}
-            </h1>
-          </div>
-          <div className="text-xs text-gray-500 mt-1">
-            {React.string("Expiry: ")}
-            {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
-          </div>
-          <div className="text-center leading-relaxed  py-2">
-            {switch description {
+
+
+                  {
+                    switch avatar {
+                    | Some(value) => <img src={value} alt="Profile Avatar" className="w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full" onLoad={e => {
+                      let target = ReactEvent.Image.target(e)
+                      target["classList"]["remove"]("opacity-0")
+                    }}/>
+                    | None => <div
+                      dangerouslySetInnerHTML={"__html": toSvg(name, 120, {backColor: "#ffffff", padding: 0.13})}
+                      className="w-full h-full object-cover absolute inset-0 transition-opacity duration-300 rounded-full"
+                    />
+                  }
+                  }
+
+                </div>
+              </div>
+              // name line
+              <div className="flex justify-center items-center w-full relative">
+                <h1
+                  className="text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center"
+                  title={`${name}`}>
+                  {React.string(name)}
+                </h1>
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {React.string("Expiry: ")}
+                {React.string(expires->Utils.timestampToDate->Date.toLocaleDateString)}
+              </div>
+              <div className="text-center leading-relaxed  py-2">
+                {switch description {
             | Some(desc) => React.string(desc)
             | None => <div className="text-gray-400">{React.string("No description")}</div>
             }}

@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Router from "../Router.res.mjs";
+import * as Jdenticon from "jdenticon";
 import * as NameContext from "../NameContext.res.mjs";
 import ColorMjs from "../color.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -530,15 +531,23 @@ function Profile$ViewProfile(props) {
                                       className: "flex justify-center items-center absolute inset-0"
                                     }, React.createElement(Icons.Spinner.make, {
                                           className: "w-5 h-5 text-zinc-600"
-                                        })), React.createElement("img", {
-                                      className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full",
-                                      alt: "Profile Avatar",
-                                      src: avatar !== undefined ? avatar : "https://ui-avatars.com/api/?uppercase=false&name=" + name,
-                                      onLoad: (function (e) {
-                                          var target = e.target;
-                                          target.classList.remove("opacity-0");
-                                        })
-                                    }))), React.createElement("div", {
+                                        })), avatar !== undefined ? React.createElement("img", {
+                                        className: "w-full h-full object-cover absolute inset-0 opacity-0 transition-opacity duration-300 rounded-full",
+                                        alt: "Profile Avatar",
+                                        src: avatar,
+                                        onLoad: (function (e) {
+                                            var target = e.target;
+                                            target.classList.remove("opacity-0");
+                                          })
+                                      }) : React.createElement("div", {
+                                        className: "w-full h-full object-cover absolute inset-0 transition-opacity duration-300 rounded-full",
+                                        dangerouslySetInnerHTML: {
+                                          __html: Jdenticon.toSvg(name, 120, {
+                                                backColor: "#ffffff",
+                                                padding: 0.13
+                                              })
+                                        }
+                                      }))), React.createElement("div", {
                               className: "flex justify-center items-center w-full relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center",

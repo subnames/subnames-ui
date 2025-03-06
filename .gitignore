@@ -31,3 +31,5 @@ dist-ssr
 .env
 
 .windsurfrules
+.aider.chat.history.md
+.aider.tags.cache.v3
