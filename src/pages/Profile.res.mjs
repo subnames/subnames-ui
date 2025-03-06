@@ -14,6 +14,7 @@ import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import AvatarPng from "../assets/avatar.png";
+import GithubUsernameRegex from "github-username-regex";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
 var avatarImage = AvatarPng;
@@ -84,8 +85,13 @@ function Profile$ProfileForm(props) {
       });
   var setError = match$9[1];
   var error = match$9[0];
-  var match$10 = NameContext.use();
-  var primaryName = match$10.primaryName;
+  var match$10 = React.useState(function () {
+        
+      });
+  var setGithubError = match$10[1];
+  var githubError = match$10[0];
+  var match$11 = NameContext.use();
+  var primaryName = match$11.primaryName;
   var validateEmail = function (email) {
     if (email === undefined) {
       return true;
@@ -106,10 +112,21 @@ function Profile$ProfileForm(props) {
     var urlRegex = new RegExp("^(https?:\\/\\/)?([\\da-z\\.-]+)\\.([a-z\\.]{2,6})([\\/\\w \\.-]*)*\\/?$");
     return urlRegex.test(website);
   };
+  var validateGithub = function (github) {
+    if (github !== undefined && github !== "") {
+      return GithubUsernameRegex.test(github);
+    } else {
+      return true;
+    }
+  };
   var handleSubmit = async function ($$event) {
     $$event.preventDefault();
+    setGithubError(function (param) {
+          
+        });
     var match = validateEmail(email$1);
     var match$1 = validateWebsite(website$1);
+    var match$2 = validateGithub(github$1);
     if (!match) {
       return setError(function (param) {
                   return "Please enter a valid email address";
@@ -120,76 +137,85 @@ function Profile$ProfileForm(props) {
                   return "Please enter a valid website URL";
                 });
     }
-    setError(function (param) {
-          
-        });
-    setLoading(function (param) {
-          return true;
-        });
-    var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
-    var match$2 = Core__Option.getExn(primaryName, undefined);
-    var initialAvatar = profile[7];
-    var initialEmail = profile[6];
-    var initialWebsite = profile[5];
-    var initialGithub = profile[4];
-    var initialTelegram = profile[3];
-    var initialTwitter = profile[2];
-    var initialLocation = profile[1];
-    var initialDescription = profile[0];
-    var name = match$2.name;
-    var calls = [];
-    if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
-      calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
-    }
-    if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
-      calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
-    }
-    if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
-      calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
-    }
-    if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
-      calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
-    }
-    if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
-      calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
-    }
-    if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
-      calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
-    }
-    if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
-      calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
-    }
-    if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
-      calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
-    }
-    try {
-      await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
-      setLoading(function (param) {
-            return false;
+    if (match$2) {
+      setError(function (param) {
+            
           });
-      return onSave([
-                  description$1,
-                  $$location$1,
-                  twitter$1,
-                  telegram$1,
-                  github$1,
-                  website$1,
-                  email$1,
-                  avatar$1
-                ]);
-    }
-    catch (raw_e){
-      var e = Caml_js_exceptions.internalToOCamlException(raw_e);
-      if (e.RE_EXN_ID === Js_exn.$$Error) {
-        var e$1 = e._1;
+      setLoading(function (param) {
+            return true;
+          });
+      var walletClient = Core__Option.getExn(OnChainOperationsCommon.buildWalletClient(), undefined);
+      var match$3 = Core__Option.getExn(primaryName, undefined);
+      var initialAvatar = profile[7];
+      var initialEmail = profile[6];
+      var initialWebsite = profile[5];
+      var initialGithub = profile[4];
+      var initialTelegram = profile[3];
+      var initialTwitter = profile[2];
+      var initialLocation = profile[1];
+      var initialDescription = profile[0];
+      var name = match$3.name;
+      var calls = [];
+      if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
+        calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
+      }
+      if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
+        calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
+      }
+      if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
+        calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
+      }
+      if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
+        calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
+      }
+      if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
+        calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
+      }
+      if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
+        calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
+      }
+      if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
+        calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
+      }
+      if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
+        calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
+      }
+      try {
+        await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
         setLoading(function (param) {
               return false;
             });
-        return setError(function (param) {
-                    return Core__Option.getOr(e$1.message, "Failed to save profile");
-                  });
+        return onSave([
+                    description$1,
+                    $$location$1,
+                    twitter$1,
+                    telegram$1,
+                    github$1,
+                    website$1,
+                    email$1,
+                    avatar$1
+                  ]);
       }
-      throw e;
+      catch (raw_e){
+        var e = Caml_js_exceptions.internalToOCamlException(raw_e);
+        if (e.RE_EXN_ID === Js_exn.$$Error) {
+          var e$1 = e._1;
+          setLoading(function (param) {
+                return false;
+              });
+          return setError(function (param) {
+                      return Core__Option.getOr(e$1.message, "Failed to save profile");
+                    });
+        }
+        throw e;
+      }
+    } else {
+      setGithubError(function (param) {
+            return "Please enter a valid GitHub username";
+          });
+      return setError(function (param) {
+                  
+                });
     }
   };
   return React.createElement("div", {
@@ -310,7 +336,9 @@ function Profile$ProfileForm(props) {
                                                     }
                                                   });
                                             })
-                                        })), React.createElement("div", undefined, React.createElement("label", {
+                                        }), githubError !== undefined ? React.createElement("div", {
+                                            className: "mt-1 text-sm text-red-600"
+                                          }, githubError) : null), React.createElement("div", undefined, React.createElement("label", {
                                           className: "block text-sm font-medium mb-2 text-gray-700"
                                         }, "Website"), React.createElement("input", {
                                           className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
@@ -383,7 +411,7 @@ function Profile$ProfileField(props) {
                 className: "text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all",
                 href: "https://github.com/" + value,
                 target: "_blank"
-              }, "https://github.com/" + value);
+              }, value);
         } else {
           exit = 1;
         }

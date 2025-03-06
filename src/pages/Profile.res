@@ -9,6 +9,13 @@ type config = {
 }
 @module("jdenticon") external toSvg: (string, int, config) => string = "toSvg"
 
+type p = {
+  test: string => bool
+}
+@module("github-username-regex") external githubUsernameRegex: p = "default"
+
+// Console.log(githubUsernameRegex.test("akiwu"))
+
 module ProfileForm = {
   @react.component
   let make = (
@@ -36,6 +43,7 @@ module ProfileForm = {
     let (avatar, setAvatar) = React.useState(() => avatar)
     let (loading, setLoading) = React.useState(() => false)
     let (error, setError) = React.useState(() => None)
+    let (githubError, setGithubError) = React.useState(() => None)
 
     let {primaryName} = NameContext.use()
 
@@ -61,12 +69,27 @@ module ProfileForm = {
       }
     }
 
+    let validateGithub = github => {
+      switch github {
+      | Some(name) if name !== "" => githubUsernameRegex.test(name)
+      | None => true
+      | Some(_) => true
+      }
+    }
+
     let handleSubmit = async event => {
       ReactEvent.Form.preventDefault(event)
 
-      switch (validateEmail(email), validateWebsite(website)) {
-      | (false, _) => setError(_ => Some("Please enter a valid email address"))
-      | (_, false) => setError(_ => Some("Please enter a valid website URL"))
+      // Reset all error states
+      setGithubError(_ => None)
+
+      switch (validateEmail(email), validateWebsite(website), validateGithub(github)) {
+      | (false, _, _) => setError(_ => Some("Please enter a valid email address"))
+      | (_, false, _) => setError(_ => Some("Please enter a valid website URL"))
+      | (_, _, false) => {
+          setGithubError(_ => Some("Please enter a valid GitHub username"))
+          setError(_ => None)
+        }
       | _ => {
           setError(_ => None)
           setLoading(_ => true)
@@ -252,6 +275,11 @@ module ProfileForm = {
                     className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                     placeholder="username"
                   />
+                  {switch githubError {
+                  | Some(message) =>
+                    <div className="mt-1 text-sm text-red-600"> {React.string(message)} </div>
+                  | None => React.null
+                  }}
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-2 text-gray-700">
@@ -331,7 +359,7 @@ module ProfileField = {
             | ("Telegram", Some(v)) => 
                 <a href={`https://t.me/${v->String.replace("@", "")}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
             | ("GitHub", Some(v)) =>
-              <a href={`https://github.com/${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(`https://github.com/${v}`)}</a>
+              <a href={`https://github.com/${v}`} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
             | ("Website", Some(v)) when String.startsWith(v, "http") =>
               <a href={v} className="text-gray-600 text-zinc-800 hover:text-zinc-600 transition-colors underline break-all" target="_blank">{React.string(v)}</a>
             | ("Email", Some(v)) when String.indexOf(v, "@") > 0 =>
