@@ -486,7 +486,7 @@ function Profile$ProfileForm(props) {
                                           className: "block text-sm font-medium mb-2 text-gray-700"
                                         }, "Avatar"), React.createElement("input", {
                                           className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
-                                          placeholder: "Avatar URL",
+                                          placeholder: "https://",
                                           type: "text",
                                           value: Core__Option.getOr(avatar$1, ""),
                                           onChange: (function ($$event) {
@@ -494,7 +494,14 @@ function Profile$ProfileForm(props) {
                                                     return $$event.target.value;
                                                   });
                                             })
-                                        }), avatarError !== undefined ? React.createElement("div", {
+                                        }), React.createElement("div", {
+                                          className: "text-xs text-gray-400 mt-2"
+                                        }, " (Optional) Upload your avatar using an IPFS pinning service such as ", React.createElement("a", {
+                                              className: "hover:text-gray-600 underline",
+                                              href: "https://pinata.cloud/",
+                                              rel: "noopener noreferrer",
+                                              target: "_blank"
+                                            }, "https://pinata.cloud/"), "."), avatarError !== undefined ? React.createElement("div", {
                                             className: "mt-1 text-sm text-red-600"
                                           }, avatarError) : null), React.createElement("div", undefined, React.createElement("label", {
                                           className: "block text-sm font-medium mb-2 text-gray-700"
@@ -542,14 +549,8 @@ function Profile$ProfileForm(props) {
                                         }), telegramError !== undefined ? React.createElement("div", {
                                             className: "mt-1 text-sm text-red-600"
                                           }, telegramError) : null), React.createElement("div", undefined, React.createElement("label", {
-                                          className: "block text-sm font-medium text-gray-700"
-                                        }, "GitHub Username"), React.createElement("div", {
-                                          className: "mb-2"
-                                        }, React.createElement("span", {
-                                              className: "text-gray-400 text-xs"
-                                            }, "https://github.com/"), React.createElement("span", {
-                                              className: "text-gray-600 text-xs font-bold"
-                                            }, "username")), React.createElement("input", {
+                                          className: "block text-sm font-medium mb-2 text-gray-700"
+                                        }, "GitHub Username"), React.createElement("input", {
                                           className: "w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors",
                                           placeholder: "username",
                                           type: "text",
@@ -564,7 +565,11 @@ function Profile$ProfileForm(props) {
                                                     }
                                                   });
                                             })
-                                        }), githubError !== undefined ? React.createElement("div", {
+                                        }), React.createElement("div", {
+                                          className: "text-xs text-gray-400 mt-2"
+                                        }, "https://github.com/", React.createElement("span", {
+                                              className: "text-gray-600 font-bold"
+                                            }, "username")), githubError !== undefined ? React.createElement("div", {
                                             className: "mt-1 text-sm text-red-600"
                                           }, githubError) : null), React.createElement("div", undefined, React.createElement("label", {
                                           className: "block text-sm font-medium mb-2 text-gray-700"

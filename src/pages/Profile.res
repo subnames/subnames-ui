@@ -384,8 +384,15 @@ module ProfileForm = {
                       value={avatar->Option.getOr("")}
                       onChange={event => setAvatar(_ => ReactEvent.Form.target(event)["value"])}
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
-                      placeholder="Avatar URL"
+                      placeholder="https://"
                     />
+                    <div className="text-xs text-gray-400 mt-2">
+                      {React.string(" (Optional) Upload your avatar using an IPFS pinning service such as ")}
+                      <a href="https://pinata.cloud/" target="_blank" rel="noopener noreferrer" className="hover:text-gray-600 underline">
+                        {React.string("https://pinata.cloud/")}
+                      </a>
+                      {React.string(".")}
+                    </div>
                     {switch avatarError {
                       | Some(message) =>
                         <div className="mt-1 text-sm text-red-600"> {React.string(message)} </div>
@@ -442,13 +449,9 @@ module ProfileForm = {
                     }}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium mb-2 text-gray-700">
                       {React.string("GitHub Username")} 
                     </label>
-                    <div className="mb-2">
-                      <span className="text-gray-400 text-xs">{React.string("https://github.com/")}</span>
-                      <span className="text-gray-600 text-xs font-bold">{React.string("username")}</span>
-                    </div>
                     <input
                       type_="text"
                       value={github->Option.getOr("")}
@@ -459,6 +462,10 @@ module ProfileForm = {
                       className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
                       placeholder="username"
                     />
+                    <div className="text-xs text-gray-400 mt-2">
+                      {React.string("https://github.com/")}
+                      <span className="text-gray-600 font-bold">{React.string("username")}</span>
+                    </div>
                     {switch githubError {
                       | Some(message) =>
                         <div className="mt-1 text-sm text-red-600"> {React.string(message)} </div>
