@@ -402,28 +402,33 @@ function Profile$ProfileForm(props) {
       catch (raw_e){
         var e = Caml_js_exceptions.internalToOCamlException(raw_e);
         if (e.RE_EXN_ID === Js_exn.$$Error) {
-          var e$1 = e._1;
-          console.log("Error saving to blockchain: " + Core__Option.getOr(e$1.message, "Unknown error"));
+          var errorMessage = Core__Option.getOr(e._1.message, "Unknown error");
+          console.log("Error saving to blockchain: " + errorMessage);
           setLoading(function (param) {
                 return false;
               });
-          return setError(function (param) {
-                      return Core__Option.getOr(e$1.message, "Failed to save profile");
-                    });
+          var isUserRejection = errorMessage.includes("User denied") || errorMessage.includes("user rejected") || errorMessage.includes("User rejected") || errorMessage.includes("rejected transaction") || errorMessage.includes("cancelled") || errorMessage.includes("canceled") ? true : false;
+          if (!isUserRejection) {
+            return setError(function (param) {
+                        return errorMessage;
+                      });
+          } else {
+            return ;
+          }
         }
         throw e;
       }
     }
     catch (raw_e$1){
-      var e$2 = Caml_js_exceptions.internalToOCamlException(raw_e$1);
-      if (e$2.RE_EXN_ID === Js_exn.$$Error) {
-        var e$3 = e$2._1;
-        console.log("Unexpected error in form submission: " + Core__Option.getOr(e$3.message, "Unknown error"));
+      var e$1 = Caml_js_exceptions.internalToOCamlException(raw_e$1);
+      if (e$1.RE_EXN_ID === Js_exn.$$Error) {
+        var e$2 = e$1._1;
+        console.log("Unexpected error in form submission: " + Core__Option.getOr(e$2.message, "Unknown error"));
         setLoading(function (param) {
               return false;
             });
         return setError(function (param) {
-                    return Core__Option.getOr(e$3.message, "An unexpected error occurred");
+                    return Core__Option.getOr(e$2.message, "An unexpected error occurred");
                   });
       }
       console.log("Unknown error type in form submission");

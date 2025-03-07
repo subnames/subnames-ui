@@ -305,18 +305,34 @@ module ProfileForm = {
               // Call onSave with the updated profile data
               onSave((description, location, twitter, telegram, github, website, email, avatar))
             } catch {
-            | Js.Exn.Error(e) => {
-                Console.log("Error saving to blockchain: " ++ Js.Exn.message(e)->Option.getOr("Unknown error"))
+            | Exn.Error(e) => {
+                let errorMessage = Exn.message(e)->Option.getOr("Unknown error")
+                Console.log("Error saving to blockchain: " ++ errorMessage)
                 setLoading(_ => false)
-                setError(_ => Some(Js.Exn.message(e)->Option.getOr("Failed to save profile")))
+                
+                // Check if the error is a user rejection
+                let isUserRejection = switch errorMessage {
+                | message if String.includes(message, "User denied") => true
+                | message if String.includes(message, "user rejected") => true
+                | message if String.includes(message, "User rejected") => true
+                | message if String.includes(message, "rejected transaction") => true
+                | message if String.includes(message, "cancelled") => true
+                | message if String.includes(message, "canceled") => true
+                | _ => false
+                }
+                
+                // Only set error if it's not a user rejection
+                if (!isUserRejection) {
+                  setError(_ => Some(errorMessage))
+                }
               }
             }
-        }
+          }
         } catch {
-        | Js.Exn.Error(e) => {
-            Console.log("Unexpected error in form submission: " ++ Js.Exn.message(e)->Option.getOr("Unknown error"))
+        | Exn.Error(e) => {
+            Console.log("Unexpected error in form submission: " ++ Exn.message(e)->Option.getOr("Unknown error"))
             setLoading(_ => false)
-            setError(_ => Some(Js.Exn.message(e)->Option.getOr("An unexpected error occurred")))
+            setError(_ => Some(Exn.message(e)->Option.getOr("An unexpected error occurred")))
           }
         | _ => {
             Console.log("Unknown error type in form submission")
