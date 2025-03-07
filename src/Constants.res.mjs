@@ -3,15 +3,15 @@
 
 var sld = "darwinia.eth";
 
-var registryContractAddress = "0xBe695aD687677B939ceE5dAf1B63f140698ea1E8";
+var registryContractAddress = "0x807a3e011DF1785c538Ac6F65252bf740678Ff99";
 
-var controllerContractAddress = "0x017D8C573a54cc43e2D23EC8Fa756D92777c3217";
+var baseRegistrarContractAddress = "0x74b673e8cb4894D926d5c7bD35B472f88E998468";
 
-var resolverContractAddress = "0x4b74a4a9b88eF4cE5F9BB42e28e358974251BE63";
+var reverseRegistrarContractAddress = "0x0222fC117531519Ff9F4941F1299b1e222645166";
 
-var baseRegistrarContractAddress = "0xAFb5F12C5F379431253159fae464572999E78485";
+var controllerContractAddress = "0xa9EA0B4Fc053c68977F535Ea67e3f0062B363443";
 
-var reverseRegistrarContractAddress = "0xc4848453278116613F6CC1660BffAD5a4ac2182E";
+var resolverContractAddress = "0xf761709777A4aa1b71570524869B1876fEafCB2e";
 
 var parentNode = "0xa00b30653aa21de4caea57dc656dcab595a7f3a936e0564ffc5dd8448b945581";
 
@@ -24,10 +24,10 @@ var metricsUrl = "https://g2d.site/metrics";
 export {
   sld ,
   registryContractAddress ,
-  controllerContractAddress ,
-  resolverContractAddress ,
   baseRegistrarContractAddress ,
   reverseRegistrarContractAddress ,
+  controllerContractAddress ,
+  resolverContractAddress ,
   parentNode ,
   rpcUrl ,
   indexerUrl ,
