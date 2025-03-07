@@ -14,11 +14,8 @@ var ConnectButton = {
 };
 
 function updatePrimaryName(account, setPrimaryName) {
-  console.log("------------------");
   return Core__Option.map(account, (async function (acc) {
-                console.log("1------------------");
                 var resolvedName = await OnChainOperations.name(acc.address);
-                console.log("2------------------");
                 if (resolvedName === "") {
                   return setPrimaryName(function (param) {
                               

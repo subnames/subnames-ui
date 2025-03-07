@@ -29,12 +29,9 @@ module ConnectButton = {
 }
 
 let updatePrimaryName = (account, setPrimaryName) => {
-  Console.log("------------------")
   account->Option.map(async acc => {
-    Console.log("1------------------")
     let resolvedName = await OnChainOperations.name(acc.address)
 
-    Console.log("2------------------")
     if resolvedName == "" {
       setPrimaryName(_ => None)
     } else {
@@ -59,7 +56,7 @@ let displayName = (account, primaryName: option<NameContext.primaryName>) => {
 
 @react.component
 let make = () => {
-  <ConnectButton.Custom>
+  <ConnectButton.Custom >
     {props => {
       let {forceRefresh, setForceRefresh, primaryName, setPrimaryName} = NameContext.use()
 
