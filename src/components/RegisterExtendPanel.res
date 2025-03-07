@@ -203,7 +203,7 @@ let make = (
                 } else {
                   <div className="flex flex-col items-center">
                     <div className="text-3xl font-bold text-gray-900">
-                      {React.string(`${fee.feeAmount->Float.toExponential(~digits=2)}`)}
+                      {React.string(`${fee.feeAmount->Float.toFixed}`)}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
                       {React.string("Paid in RING tokens on Darwinia network")}
