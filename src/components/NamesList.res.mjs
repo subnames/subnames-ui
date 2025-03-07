@@ -320,7 +320,7 @@ function NamesList(props) {
                               className: "p-8 py-6 border-b border-gray-200 relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900"
-                                }, "Your names"), React.createElement("div", {
+                                }, "Your Names"), React.createElement("div", {
                                   className: "text-sm text-gray-500 flex items-center gap-2"
                                 }, isSynced ? React.createElement("div", {
                                         className: "flex items-center gap-1"

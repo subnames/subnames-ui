@@ -242,7 +242,7 @@ let make = () => {
 
           // Header
           <div className="p-8 py-6 border-b border-gray-200 relative">
-            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your names")} </h1>
+            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Names")} </h1>
             <div className="text-sm text-gray-500 flex items-center gap-2">
               {if isSynced {
                 <div className="flex items-center gap-1">
