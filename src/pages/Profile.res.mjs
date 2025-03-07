@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Router from "../Router.res.mjs";
+import * as Constants from "../Constants.res.mjs";
 import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Jdenticon from "jdenticon";
 import * as NameContext from "../NameContext.res.mjs";
@@ -805,8 +806,8 @@ function Profile$ViewProfile(props) {
                               className: "flex justify-center items-center w-full relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center",
-                                  title: name
-                                }, name)), React.createElement("div", {
+                                  title: name + "." + Constants.sld
+                                }, name + "." + Constants.sld)), React.createElement("div", {
                               className: "text-xs text-gray-500 mt-1"
                             }, "Expiry: ", Utils.timestampToDate(match$2.expires).toLocaleDateString()), React.createElement("div", {
                               className: "text-center leading-relaxed  py-2"

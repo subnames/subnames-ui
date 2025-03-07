@@ -646,8 +646,8 @@ module ViewProfile = {
               <div className="flex justify-center items-center w-full relative">
                 <h1
                   className="text-3xl font-bold text-gray-900 max-w-[90%] truncate text-center"
-                  title={`${name}`}>
-                  {React.string(name)}
+                  title={`${name}.${Constants.sld}`}>
+                  {React.string(`${name}.${Constants.sld}`)}
                 </h1>
               </div>
               <div className="text-xs text-gray-500 mt-1">
