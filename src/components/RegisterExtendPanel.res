@@ -206,7 +206,7 @@ let make = (
                       {React.string(`${fee.feeAmount->Float.toFixed}`)}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">
-                      {React.string("Paid in RING tokens on Darwinia network")}
+                      {React.string("Paid in RING tokens on Darwinia Network")}
                     </div>
                   </div>
                 }}

@@ -302,7 +302,7 @@ function RegisterExtendPanel(props) {
                                                 className: "text-3xl font-bold text-gray-900"
                                               }, fee.feeAmount.toFixed()), React.createElement("div", {
                                                 className: "text-xs text-gray-500 mt-1"
-                                              }, "Paid in RING tokens on Darwinia network")))))), React.createElement("div", {
+                                              }, "Paid in RING tokens on Darwinia Network")))))), React.createElement("div", {
                           className: "mt-2"
                         }, tmp$1))));
 }
