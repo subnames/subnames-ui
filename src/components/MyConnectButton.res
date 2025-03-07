@@ -35,13 +35,15 @@ let updatePrimaryName = (account, setPrimaryName) => {
     if resolvedName == "" {
       setPrimaryName(_ => None)
     } else {
-      let fixedName = if String.endsWith(resolvedName, Constants.sld) {
-        String.split(resolvedName, ".")->Array.get(0)->Option.getExn
-      } else {
+      let fullName = if String.endsWith(resolvedName, Constants.sld) {
         resolvedName
+      } else {
+        `${resolvedName}.${Constants.sld}`
       }
-      let expiresInt = await OnChainOperations.nameExpires(fixedName)
-      let primaryName: NameContext.primaryName = {name: fixedName, expires: expiresInt}
+
+      let subname = fullName->String.split(".")->Array.get(0)->Option.getExn
+      let expiresInt = await OnChainOperations.nameExpires(subname)
+      let primaryName: NameContext.primaryName = {name: subname, expires: expiresInt, fullName}
       setPrimaryName(_ => Some(primaryName))
     }
   })
@@ -49,7 +51,7 @@ let updatePrimaryName = (account, setPrimaryName) => {
 
 let displayName = (account, primaryName: option<NameContext.primaryName>) => {
   switch primaryName {
-  | Some({name, _}) => name
+  | Some({fullName, _}) => fullName
   | None => Option.getExn(account).displayName
   }
 }

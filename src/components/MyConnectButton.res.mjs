@@ -21,10 +21,12 @@ function updatePrimaryName(account, setPrimaryName) {
                               
                             });
                 }
-                var fixedName = resolvedName.endsWith(Constants.sld) ? Core__Option.getExn(resolvedName.split(".")[0], undefined) : resolvedName;
-                var expiresInt = await OnChainOperations.nameExpires(fixedName);
+                var fullName = resolvedName.endsWith(Constants.sld) ? resolvedName : resolvedName + "." + Constants.sld;
+                var subname = Core__Option.getExn(fullName.split(".")[0], undefined);
+                var expiresInt = await OnChainOperations.nameExpires(subname);
                 var primaryName = {
-                  name: fixedName,
+                  fullName: fullName,
+                  name: subname,
                   expires: expiresInt
                 };
                 return setPrimaryName(function (param) {
@@ -35,7 +37,7 @@ function updatePrimaryName(account, setPrimaryName) {
 
 function displayName(account, primaryName) {
   if (primaryName !== undefined) {
-    return primaryName.name;
+    return primaryName.fullName;
   } else {
     return Core__Option.getExn(account, undefined).displayName;
   }

@@ -598,7 +598,7 @@ module ViewProfile = {
 
       let {name, expires} = switch primaryName {
         | Some(pn) => pn
-        | None => {name: "", expires: 0}
+        | None => {name: "", expires: 0, fullName: ""}
       }
 
       <div className="w-full max-w-xl mx-auto relative p-8">

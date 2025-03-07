@@ -1,4 +1,5 @@
 type primaryName = {
+  fullName: string,
   name: string,
   expires: int,
 }

@@ -736,6 +736,7 @@ function Profile$ViewProfile(props) {
   var match$1 = NameContext.use();
   var primaryName = match$1.primaryName;
   var match$2 = primaryName !== undefined ? primaryName : ({
+        fullName: "",
         name: "",
         expires: 0
       });
