@@ -164,7 +164,7 @@ let make = () => {
             
           // Check if the difference is more than 3 blocks
           let diff = chainHeight - lastBlock
-          setIsSynced(_ => diff <= 3)
+          setIsSynced(_ => diff <= 1)
         }
       | _ => setIsSynced(_ => true) // Default to synced if can't parse
       }

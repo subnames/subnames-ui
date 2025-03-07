@@ -191,7 +191,7 @@ function NamesList(props) {
           console.log("Chain height: " + chainHeight.toString() + ", Last block: " + lastBlock.toString());
           var diff = chainHeight - lastBlock | 0;
           return setIsSynced(function (param) {
-                      return diff <= 3;
+                      return diff <= 1;
                     });
         }
         exit = 1;
