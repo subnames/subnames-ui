@@ -47,11 +47,11 @@ let waitForTransactionReceiptWithRetry = async (publicClient, hash, ~maxRetries=
       Console.log(`Transaction ${hash} confirmed in block ${BigInt.toString(receipt.blockNumber)}, status: ${receipt.status}`)
       receipt
     } catch {
-    | error => {
+    | _ => {
         if (retryCount < maxRetries) {
           Console.log(`Receipt not found yet, retrying in ${delayMs->Int.toString}ms...`)
           // Sleep for delayMs
-          await Js.Promise.make((~resolve, ~reject) => {
+          await Promise.make((resolve, _) => {
             let _ = setTimeout(() => resolve(. ()), delayMs)
           })
           await attempt(retryCount + 1)

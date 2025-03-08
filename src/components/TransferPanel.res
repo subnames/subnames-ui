@@ -243,12 +243,13 @@ let make = (
         setCurrentStep(_ => stepIndex + 1)
         result.value
       } catch {
-        | error => {
-          Console.log(`Error in step ${Int.toString(stepIndex)} (${stepName}): ${error->Js.String.make}`)
+        | Exn.Error(error) => {
+          let errorMessage = Exn.message(error)->Option.getOr("Unknown error")
+          Console.log(`Error in step ${Int.toString(stepIndex)} (${stepName}): ${errorMessage}`)
           updateStepStatus(stepIndex, #Failed)
           
           // Check if it's a transaction receipt error
-          if (Js.String.includes("TransactionReceiptNotFoundError", Js.String.make(error))) {
+          if (String.includes(errorMessage, "TransactionReceiptNotFoundError")) {
             Console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.")
             Console.log("You can safely try again or check the transaction status on the blockchain explorer.")
           }
@@ -256,7 +257,7 @@ let make = (
           setTransactionRejected(_ => true)
 
           Console.error(error)
-          raise(error)
+          Exn.raiseError(errorMessage)
         }
       }
     }

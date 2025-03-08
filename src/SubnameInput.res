@@ -54,7 +54,7 @@ let make = (~isWalletConnected: bool) => {
           setState(prev => {
             Console.log(prev);
             // Generate a new key to force the component to preserve its state
-            let newKey = Js.Date.now()->Js.Float.toString
+            let newKey = Date.now()->Float.toString
             {...prev, panel: "input", inputPanelKey: newKey}
           })
         }}
@@ -68,7 +68,7 @@ let make = (~isWalletConnected: bool) => {
         onCancel={() => {
           setState(prev => {
             // Generate a new key to force the component to preserve its state
-            let newKey = Js.Date.now()->Js.Float.toString
+            let newKey = Date.now()->Float.toString
             {...prev, panel: "input", inputPanelKey: newKey}
           })
         }}

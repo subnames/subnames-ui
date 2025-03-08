@@ -100,9 +100,9 @@ module ProfileForm = {
           // Simplified URL validation to avoid regex issues
           let isValid = try {
             // Check if it starts with http:// or https://
-            let startsWithHttp = Js.String.startsWith("http://", url) || Js.String.startsWith("https://", url)
+            let startsWithHttp = String.startsWith(url, "http://") || String.startsWith(url, "https://")
             // Check if it has at least one dot (for domain)
-            let hasDot = Js.String.indexOf(".", url) > 0
+            let hasDot = String.indexOf(url, ".") > 0
             startsWithHttp && hasDot
           } catch {
           | _ => false
@@ -122,14 +122,14 @@ module ProfileForm = {
         let result = switch twitter {
         | Some(username) if username !== "" => {
           // Ensure username starts with @
-          let startsWithAt = Js.String.startsWith("@", username)
+          let startsWithAt = String.startsWith(username, "@")
           if (!startsWithAt) {
             Console.log("Twitter username must start with @")
             false
           } else {
             // Remove @ for length check (should be 1-15 chars without @)
-            let usernameWithoutAt = Js.String.substringToEnd(~from=1, username)
-            let validLength = usernameWithoutAt->Js.String.length >= 1 && usernameWithoutAt->Js.String.length <= 15
+            let usernameWithoutAt = String.substringToEnd(username, ~start=1)
+            let validLength = String.length(usernameWithoutAt) >= 1 && String.length(usernameWithoutAt) <= 15
             let validChars = Js.Re.test_(Js.Re.fromString("^[a-zA-Z0-9_]+$"), usernameWithoutAt)
             let isValid = validLength && validChars
             Console.log("Twitter validation details - starts with @: true, valid length: " ++ (validLength ? "true" : "false") ++ ", valid chars: " ++ (validChars ? "true" : "false"))
@@ -148,14 +148,14 @@ module ProfileForm = {
         let result = switch telegram {
         | Some(username) if username !== "" => {
           // Ensure username starts with @
-          let startsWithAt = Js.String.startsWith("@", username)
+          let startsWithAt = String.startsWith(username, "@")
           if (!startsWithAt) {
             Console.log("Telegram username must start with @")
             false
           } else {
             // Remove @ for length check (should be 5-32 chars without @)
-            let usernameWithoutAt = Js.String.substringToEnd(~from=1, username)
-            let validLength = usernameWithoutAt->Js.String.length >= 5 && usernameWithoutAt->Js.String.length <= 32
+            let usernameWithoutAt = String.substringToEnd(username, ~start=1)
+            let validLength = String.length(usernameWithoutAt) >= 5 && String.length(usernameWithoutAt) <= 32
             let validChars = Js.Re.test_(Js.Re.fromString("^[a-zA-Z0-9_]+$"), usernameWithoutAt)
             let isValid = validLength && validChars
             Console.log("Telegram validation details - starts with @: true, valid length: " ++ (validLength ? "true" : "false") ++ ", valid chars: " ++ (validChars ? "true" : "false"))

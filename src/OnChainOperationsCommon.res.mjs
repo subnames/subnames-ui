@@ -18,10 +18,10 @@ async function waitForTransactionReceiptWithRetry(publicClient, hash, maxRetries
       console.log("Transaction " + hash + " confirmed in block " + receipt.blockNumber.toString() + ", status: " + receipt.status);
       return receipt;
     }
-    catch (error){
+    catch (exn){
       if (retryCount < maxRetries) {
         console.log("Receipt not found yet, retrying in " + delayMs.toString() + "ms...");
-        await new Promise((function (resolve, reject) {
+        await new Promise((function (resolve, param) {
                 setTimeout((function () {
                         resolve();
                       }), delayMs);

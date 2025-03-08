@@ -3,8 +3,8 @@
 import * as Viem from "viem";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
+import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
-import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as NameContext from "../NameContext.res.mjs";
@@ -333,16 +333,21 @@ function TransferPanel(props) {
       }
       catch (raw_error){
         var error = Caml_js_exceptions.internalToOCamlException(raw_error);
-        console.log("Error in step " + stepIndex.toString() + " (" + stepName + "): " + String(error));
-        updateStepStatus(stepIndex, "Failed", undefined);
-        if (Js_string.includes("TransactionReceiptNotFoundError", String(error))) {
-          console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.");
-          console.log("You can safely try again or check the transaction status on the blockchain explorer.");
+        if (error.RE_EXN_ID === Js_exn.$$Error) {
+          var error$1 = error._1;
+          var errorMessage = Core__Option.getOr(error$1.message, "Unknown error");
+          console.log("Error in step " + stepIndex.toString() + " (" + stepName + "): " + errorMessage);
+          updateStepStatus(stepIndex, "Failed", undefined);
+          if (errorMessage.includes("TransactionReceiptNotFoundError")) {
+            console.log("This is a transaction receipt error. The transaction might have actually succeeded on-chain.");
+            console.log("You can safely try again or check the transaction status on the blockchain explorer.");
+          }
+          setTransactionRejected(function (param) {
+                return true;
+              });
+          console.error(error$1);
+          return Js_exn.raiseError(errorMessage);
         }
-        setTransactionRejected(function (param) {
-              return true;
-            });
-        console.error(error);
         throw error;
       }
     };

@@ -7,7 +7,6 @@ import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Router from "../Router.res.mjs";
 import * as Constants from "../Constants.res.mjs";
-import * as Js_string from "rescript/lib/es6/js_string.js";
 import * as Jdenticon from "jdenticon";
 import * as NameContext from "../NameContext.res.mjs";
 import ColorMjs from "../color.mjs";
@@ -170,8 +169,8 @@ function Profile$ProfileForm(props) {
     if (avatar !== undefined && avatar !== "") {
       var isValid;
       try {
-        var startsWithHttp = Js_string.startsWith("http://", avatar) || Js_string.startsWith("https://", avatar);
-        var hasDot = Js_string.indexOf(".", avatar) > 0;
+        var startsWithHttp = avatar.startsWith("http://") || avatar.startsWith("https://");
+        var hasDot = avatar.indexOf(".") > 0;
         isValid = startsWithHttp && hasDot;
       }
       catch (exn){
@@ -193,9 +192,9 @@ function Profile$ProfileForm(props) {
     console.log("Validating twitter: " + Core__Option.getOr(twitter, "None"));
     var result;
     if (twitter !== undefined && twitter !== "") {
-      var startsWithAt = Js_string.startsWith("@", twitter);
+      var startsWithAt = twitter.startsWith("@");
       if (startsWithAt) {
-        var usernameWithoutAt = Js_string.substringToEnd(1, twitter);
+        var usernameWithoutAt = twitter.substring(1);
         var validLength = usernameWithoutAt.length >= 1 && usernameWithoutAt.length <= 15;
         var validChars = new RegExp("^[a-zA-Z0-9_]+$").test(usernameWithoutAt);
         var isValid = validLength && validChars;
@@ -221,9 +220,9 @@ function Profile$ProfileForm(props) {
     console.log("Validating telegram: " + Core__Option.getOr(telegram, "None"));
     var result;
     if (telegram !== undefined && telegram !== "") {
-      var startsWithAt = Js_string.startsWith("@", telegram);
+      var startsWithAt = telegram.startsWith("@");
       if (startsWithAt) {
-        var usernameWithoutAt = Js_string.substringToEnd(1, telegram);
+        var usernameWithoutAt = telegram.substring(1);
         var validLength = usernameWithoutAt.length >= 5 && usernameWithoutAt.length <= 32;
         var validChars = new RegExp("^[a-zA-Z0-9_]+$").test(usernameWithoutAt);
         var isValid = validLength && validChars;
