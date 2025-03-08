@@ -161,7 +161,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
     setState(prev => {...prev, isFocused: false})
   }
 
-  <div className={`bg-white rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
+  <div className={`bg-white dark:bg-zinc-800 dark:border-zinc-300 border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
     <div
       className={`relative ${state.errorMessage->Option.isSome ||
           (state.isValid && state.value != "")
@@ -174,13 +174,13 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder="SEARCH FOR A NAME"
-        className="w-full px-6 py-4 text-lg focus:outline-none"
+        className="w-full px-6 py-4 text-lg focus:outline-none dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400"
       />
       <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
         {if state.value != "" {
           <button
             onClick={handleClear}
-            className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors"
             type_="button">
             <Icons.Close />
           </button>
@@ -188,7 +188,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
           React.null
         }}
         {if state.value == "" {
-          <div className="p-1 rounded-full transition-colors">
+          <div className="p-1 rounded-full transition-colors dark:text-zinc-400">
             <Icons.Search />
           </div>
         } else {
@@ -199,21 +199,21 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
     {switch state.errorMessage {
     | Some(error) =>
       <div className="px-6 py-4">
-        <div className="text-gray-600 text-md"> {React.string(error)} </div>
+        <div className="text-gray-600 dark:text-zinc-400 text-md"> {React.string(error)} </div>
       </div>
     | None =>
       if state.isValid && state.value != "" {
         <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-gray-800"> {React.string(`${state.value}.${Constants.sld}`)} </p>
+              <p className="text-gray-800 dark:text-white"> {React.string(`${state.value}.${Constants.sld}`)} </p>
               {switch (state.owner, state.expiryDate, state.isOwnedByUser) {
               | (Some(_owner), Some(date), Some(true)) =>
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
                   {React.string(`Your name will expire ${distanceToExpiry(date)}`)}
                 </p>
               | (Some(owner), Some(_date), None | Some(false)) => {
-                <p className="text-xs text-gray-400 mt-1">
+                <p className="text-xs text-gray-400 dark:text-zinc-500 mt-1">
                   {React.string(
                     String.concatMany(
                       String.slice(owner, ~start=0, ~end=6), 
@@ -234,7 +234,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
                 <button
                   onClick={_ => onNext(state.value, Types.Register)}
                   type_="button"
-                  className="rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700">
+                  className="rounded-xl bg-zinc-800 dark:bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:hover:bg-zinc-600">
                   {React.string("Register")}
                 </button>
               | false =>
@@ -244,18 +244,18 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
                     <button
                       onClick={_ => onNext(state.value, Types.Transfer)}
                       type_="button"
-                      className="rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
+                      className="rounded-xl bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 px-3 py-1.5 text-sm font-medium text-zinc-800 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-600">
                       {React.string("Transfer")}
                     </button>
                     <button
                       onClick={_ => onNext(state.value, Types.Extend)}
                       type_="button"
-                      className="rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50">
+                      className="rounded-xl bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 px-3 py-1.5 text-sm font-medium text-zinc-800 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-600">
                       {React.string("Extend")}
                     </button>
                   </div>
                 | Some(false) | None =>
-                  <span className="text-red-500 text-sm"> {React.string("Not available")} </span>
+                  <span className="text-red-500 dark:text-red-400 text-sm"> {React.string("Not available")} </span>
                 }
               }
             }}

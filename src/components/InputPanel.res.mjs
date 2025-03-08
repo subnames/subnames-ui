@@ -257,7 +257,7 @@ function InputPanel(props) {
     tmp = React.createElement("div", {
           className: "px-6 py-4"
         }, React.createElement("div", {
-              className: "text-gray-600 text-md"
+              className: "text-gray-600 dark:text-zinc-400 text-md"
             }, error));
   } else if (state.isValid && state.value !== "") {
     var match$1 = state.owner;
@@ -268,14 +268,14 @@ function InputPanel(props) {
       var exit = 0;
       if (match$3 !== undefined && match$3) {
         tmp$1 = React.createElement("p", {
-              className: "text-xs text-gray-400 mt-1"
+              className: "text-xs text-gray-400 dark:text-zinc-500 mt-1"
             }, "Your name will expire " + Utils.distanceToExpiry(Caml_option.valFromOption(match$2)));
       } else {
         exit = 1;
       }
       if (exit === 1) {
         tmp$1 = React.createElement("p", {
-              className: "text-xs text-gray-400 mt-1"
+              className: "text-xs text-gray-400 dark:text-zinc-500 mt-1"
             }, match$1.slice(0, 6).concat("..", match$1.slice(38)));
       }
       
@@ -289,7 +289,7 @@ function InputPanel(props) {
           });
     } else if (state.isAvailable) {
       tmp$2 = React.createElement("button", {
-            className: "rounded-xl bg-zinc-800 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700",
+            className: "rounded-xl bg-zinc-800 dark:bg-zinc-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-zinc-700 dark:hover:bg-zinc-600",
             type: "button",
             onClick: (function (param) {
                 onNext(state.value, "Register");
@@ -302,13 +302,13 @@ function InputPanel(props) {
         tmp$2 = React.createElement("div", {
               className: "flex gap-2"
             }, React.createElement("button", {
-                  className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                  className: "rounded-xl bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 px-3 py-1.5 text-sm font-medium text-zinc-800 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-600",
                   type: "button",
                   onClick: (function (param) {
                       onNext(state.value, "Transfer");
                     })
                 }, "Transfer"), React.createElement("button", {
-                  className: "rounded-xl bg-white border border-zinc-300 px-3 py-1.5 text-sm font-medium text-zinc-800 hover:bg-zinc-50",
+                  className: "rounded-xl bg-white dark:bg-zinc-700 border border-zinc-300 dark:border-zinc-600 px-3 py-1.5 text-sm font-medium text-zinc-800 dark:text-white hover:bg-zinc-50 dark:hover:bg-zinc-600",
                   type: "button",
                   onClick: (function (param) {
                       onNext(state.value, "Extend");
@@ -319,7 +319,7 @@ function InputPanel(props) {
       }
       if (exit$1 === 1) {
         tmp$2 = React.createElement("span", {
-              className: "text-red-500 text-sm"
+              className: "text-red-500 dark:text-red-400 text-sm"
             }, "Not available");
       }
       
@@ -329,13 +329,13 @@ function InputPanel(props) {
         }, React.createElement("div", {
               className: "flex items-center justify-between"
             }, React.createElement("div", undefined, React.createElement("p", {
-                      className: "text-gray-800"
+                      className: "text-gray-800 dark:text-white"
                     }, state.value + "." + Constants.sld), tmp$1), tmp$2));
   } else {
     tmp = null;
   }
   return React.createElement("div", {
-              className: "bg-white rounded-custom " + (
+              className: "bg-white dark:bg-zinc-800 dark:border-zinc-300 border rounded-custom " + (
                 state.isFocused ? "shadow-xl" : "shadow-lg"
               ) + " overflow-hidden transition-shadow duration-200"
             }, React.createElement("div", {
@@ -343,7 +343,7 @@ function InputPanel(props) {
                     Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "divide-y-short" : ""
                   )
                 }, React.createElement("input", {
-                      className: "w-full px-6 py-4 text-lg focus:outline-none",
+                      className: "w-full px-6 py-4 text-lg focus:outline-none dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400",
                       placeholder: "SEARCH FOR A NAME",
                       type: "text",
                       value: state.value,
@@ -353,11 +353,11 @@ function InputPanel(props) {
                     }), React.createElement("div", {
                       className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
                     }, state.value !== "" ? React.createElement("button", {
-                            className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                            className: "p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors",
                             type: "button",
                             onClick: handleClear
                           }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement("div", {
-                            className: "p-1 rounded-full transition-colors"
+                            className: "p-1 rounded-full transition-colors dark:text-zinc-400"
                           }, React.createElement(Icons.Search.make, {})) : null)), tmp);
 }
 
