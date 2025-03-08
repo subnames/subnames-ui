@@ -266,11 +266,11 @@ function NamesList(props) {
     var tmp$1;
     if (settingPrimaryName) {
       tmp$1 = React.createElement("div", {
-            className: "flex items-center gap-3 py-4 px-6 bg-gray-100 rounded-2xl shadow-sm"
+            className: "flex items-center gap-3 py-4 px-6 bg-gray-100 dark:bg-dark-primary rounded-2xl shadow-sm transition-colors"
           }, React.createElement(Icons.Spinner.make, {
-                className: "h-6 w-6 text-gray-900"
+                className: "h-6 w-6 text-gray-900 dark:text-dark-text"
               }), React.createElement("p", {
-                className: "text-gray-900 text-lg font-medium"
+                className: "text-gray-900 dark:text-dark-text text-lg font-medium transition-colors"
               }, "Setting primary name..."));
     } else if (Core__Option.isSome(showTransferPanel)) {
       var match$8 = Core__Option.getExn(showTransferPanel, undefined);
@@ -305,7 +305,7 @@ function NamesList(props) {
     tmp = React.createElement("div", {
           className: "fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
         }, React.createElement("div", {
-              className: "bg-white rounded-2xl shadow-xl"
+              className: "bg-white dark:bg-dark-secondary rounded-2xl shadow-xl transition-colors"
             }, tmp$1));
   } else {
     tmp = null;
@@ -315,13 +315,13 @@ function NamesList(props) {
                 }, React.createElement("div", {
                       className: "w-full max-w-xl mx-auto"
                     }, React.createElement("div", {
-                          className: "bg-white rounded-custom shadow-lg"
+                          className: "bg-white dark:bg-dark-secondary rounded-custom shadow-lg transition-colors"
                         }, React.createElement("div", {
-                              className: "p-8 py-6 border-b border-gray-200 relative"
+                              className: "p-8 py-6 border-b border-gray-200 dark:border-dark-accent relative"
                             }, React.createElement("h1", {
-                                  className: "text-3xl font-bold text-gray-900"
+                                  className: "text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"
                                 }, "Your Names"), React.createElement("div", {
-                                  className: "text-sm text-gray-500 flex items-center gap-2"
+                                  className: "text-sm text-gray-500 dark:text-dark-muted flex items-center gap-2 transition-colors"
                                 }, isSynced ? React.createElement("div", {
                                         className: "flex items-center gap-1"
                                       }, "Indexer is up to date.") : null), React.createElement("div", undefined, isSynced ? null : React.createElement("div", {
@@ -329,7 +329,7 @@ function NamesList(props) {
                                       }, React.createElement(Icons.Syncing.make, {
                                             className: "text-amber-600"
                                           }), "Syncing... Operations disabled")), React.createElement("button", {
-                                  className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
+                                  className: "p-1 hover:bg-gray-100 dark:hover:bg-dark-accent rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");
                                     })
@@ -337,10 +337,10 @@ function NamesList(props) {
                             match$2[0] ? React.createElement("div", {
                                     className: "flex justify-center items-center py-4"
                                   }, React.createElement(Icons.Spinner.make, {
-                                        className: "w-5 h-5 text-zinc-600"
+                                        className: "w-5 h-5 text-zinc-600 dark:text-dark-muted"
                                       })) : (
                                 names.length === 0 ? React.createElement("div", {
-                                        className: "text-center py-4 text-gray-500"
+                                        className: "text-center py-4 text-gray-500 dark:text-dark-muted transition-colors"
                                       }, "You don't have any names yet") : React.createElement("div", undefined, React.createElement("div", {
                                             className: "py-1"
                                           }, names.map(function (subname, index) {
@@ -427,9 +427,9 @@ function NamesList(props) {
                                                                   }, React.createElement("div", undefined, React.createElement("div", {
                                                                             className: "flex items-center gap-2"
                                                                           }, React.createElement("p", {
-                                                                                className: "text-gray-800"
+                                                                                className: "text-gray-800 dark:text-dark-text transition-colors"
                                                                               }, subname.underTransfer ? React.createElement("span", {
-                                                                                      className: "text-gray-400"
+                                                                                      className: "text-gray-400 dark:text-gray-500 transition-colors"
                                                                                     }, React.createElement("span", {
                                                                                           className: "font-bold"
                                                                                         }, subname.name), "." + Constants.sld) : React.createElement(React.Fragment, {}, React.createElement("span", {
@@ -468,12 +468,12 @@ function NamesList(props) {
                                                                                     strokeLinejoin: "round",
                                                                                     strokeWidth: "2"
                                                                                   }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
-                                                                  className: "border-b border-gray-100 mx-6"
+                                                                  className: "border-b border-gray-100 dark:border-dark-accent mx-6 transition-colors"
                                                                 }) : null);
                                               })))
                               )
                           ) : React.createElement("div", {
-                                className: "text-center py-4 text-gray-500"
+                                className: "text-center py-4 text-gray-500 dark:text-dark-muted transition-colors"
                               }, "Please connect your wallet to see your names")))), tmp);
 }
 

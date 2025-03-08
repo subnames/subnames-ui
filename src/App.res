@@ -1,4 +1,6 @@
 open OnChainOperationsCommon
+open ThemeContext
+
 type chain = {
   id: int,
   name: string,
@@ -43,6 +45,9 @@ type themeParams = {
 }
 @module("@rainbow-me/rainbowkit")
 external lightTheme: themeParams => 'theme = "lightTheme"
+
+@module("@rainbow-me/rainbowkit")
+external darkTheme: themeParams => 'theme = "darkTheme"
 
 let queryClient = makeQueryClient()
 
@@ -114,16 +119,23 @@ module Layout = {
     let (primaryName, setPrimaryName) = React.useState(() => None)
     let url = RescriptReactRouter.useUrl()
     let account = UseAccount.use()
+    let {theme} = useTheme()
+
+    // Apply theme effect
+    React.useEffect1(() => {
+      applyTheme(theme)
+      None
+    }, [theme])
 
     <NameContext.Provider value={forceRefresh, setForceRefresh, primaryName, setPrimaryName}>
-      <div className="min-h-screen bg-gray-50">
-        <header>
+      <div className="min-h-screen bg-gray-50 dark:bg-dark-primary text-gray-900 dark:text-dark-text transition-colors">
+        <header className="bg-white dark:bg-dark-secondary shadow transition-colors">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex-shrink-0">
                 <button
                   onClick={_ => RescriptReactRouter.push("/")}
-                  className="text-xl font-bold text-gray-900">
+                  className="text-xl font-bold text-gray-900 dark:text-dark-text transition-colors">
                   {React.string("Darwinia Names")}
                 </button>
               </div>
@@ -132,18 +144,19 @@ module Layout = {
                   <>
                   <button
                     onClick={_ => RescriptReactRouter.push("/profile")}
-                    className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
+                    className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
                     {React.string("Profile")}
                   </button>
                   <button
                     onClick={_ => RescriptReactRouter.push("/names")}
-                    className="text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline">
+                    className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
                     {React.string("Your Names")}
                   </button>
                   </>
                 } else {
                   React.null
                 }}
+                <ThemeToggle />
                 <MyConnectButton />
               </div>
             </div>
@@ -168,16 +181,39 @@ module Layout = {
 
 @react.component
 let make = () => {
-  <WagmiProvider config={config}>
-    <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider
-        theme={lightTheme({
-          accentColor: "rgb(39, 39, 42)",
-          accentColorForeground: "white",
-          borderRadius: "large",
-        })}>
-        <Layout />
-      </RainbowKitProvider>
-    </QueryClientProvider>
-  </WagmiProvider>
+  let (theme, setTheme) = React.useState(() => getInitialTheme())
+
+  // Save theme to localStorage when it changes
+  React.useEffect1(() => {
+    let themeString = switch theme {
+    | Light => "light"
+    | Dark => "dark"
+    }
+    // Window.localStorage->Storage.setItem("theme", themeString)
+    None
+  }, [theme])
+
+  // Get the appropriate RainbowKit theme based on our app theme
+  let rainbowTheme = switch theme {
+  | Light => lightTheme({
+      accentColor: "rgb(39, 39, 42)",
+      accentColorForeground: "white",
+      borderRadius: "large",
+    })
+  | Dark => darkTheme({
+      accentColor: "rgb(147, 197, 253)", // blue-300
+      accentColorForeground: "black",
+      borderRadius: "large",
+    })
+  }
+
+  <ThemeContext.Provider value={{theme: theme, setTheme: setTheme}}>
+    <WagmiProvider config={config}>
+      <QueryClientProvider client={queryClient}>
+        <RainbowKitProvider theme={rainbowTheme}>
+          <Layout />
+        </RainbowKitProvider>
+      </QueryClientProvider>
+    </WagmiProvider>
+  </ThemeContext.Provider>
 }

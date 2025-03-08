@@ -2,14 +2,6 @@ open Utils
 open ReverseRegistrar
 open OnChainOperationsCommon
 
-type document
-type event = ReactEvent.Mouse.t
-@val external doc: document = "document"
-@send external getElementById: (document, string) => Dom.element = "getElementById"
-@send external addEventListener: (document, string, event => unit) => unit = "addEventListener"
-@send
-external removeEventListener: (document, string, event => unit) => unit = "removeEventListener"
-
 @get external target: ReactEvent.Mouse.t => Dom.element = "target"
 @send external contains: (Dom.element, Dom.element) => bool = "contains"
 
@@ -238,12 +230,12 @@ let make = () => {
   <>
     <div className="p-8">
       <div className="w-full max-w-xl mx-auto">
-        <div className="bg-white rounded-custom shadow-lg">
+        <div className="bg-white dark:bg-dark-secondary rounded-custom shadow-lg transition-colors">
 
           // Header
-          <div className="p-8 py-6 border-b border-gray-200 relative">
-            <h1 className="text-3xl font-bold text-gray-900"> {React.string("Your Names")} </h1>
-            <div className="text-sm text-gray-500 flex items-center gap-2">
+          <div className="p-8 py-6 border-b border-gray-200 dark:border-dark-accent relative">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"> {React.string("Your Names")} </h1>
+            <div className="text-sm text-gray-500 dark:text-dark-muted flex items-center gap-2 transition-colors">
               {if isSynced {
                 <div className="flex items-center gap-1">
                   {React.string("Indexer is up to date.")}
@@ -264,21 +256,21 @@ let make = () => {
             </div>
             <button
               onClick={_ => RescriptReactRouter.push("/")}
-              className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
+              className="p-1 hover:bg-gray-100 dark:hover:bg-dark-accent rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
               <Icons.Close />
             </button>
           </div>
 
           {if !account.isConnected {
-            <div className="text-center py-4 text-gray-500">
+            <div className="text-center py-4 text-gray-500 dark:text-dark-muted transition-colors">
               {React.string("Please connect your wallet to see your names")}
             </div>
           } else if loading {
             <div className="flex justify-center items-center py-4">
-              <Icons.Spinner className="w-5 h-5 text-zinc-600" />
+              <Icons.Spinner className="w-5 h-5 text-zinc-600 dark:text-dark-muted" />
             </div>
           } else if names->Array.length == 0 {
-            <div className="text-center py-4 text-gray-500">
+            <div className="text-center py-4 text-gray-500 dark:text-dark-muted transition-colors">
               {React.string("You don't have any names yet")}
             </div>
           } else {
@@ -291,9 +283,9 @@ let make = () => {
                       <div className="flex items-center justify-between">
                         <div>
                           <div className="flex items-center gap-2">
-                            <p className="text-gray-800">
+                            <p className="text-gray-800 dark:text-dark-text transition-colors">
                               {if subname.underTransfer {
-                                <span className="text-gray-400">
+                                <span className="text-gray-400 dark:text-gray-500 transition-colors">
                                   <span className="font-bold"> {React.string(subname.name)} </span>
                                   {React.string(`.${Constants.sld}`)}
                                 </span>
@@ -415,7 +407,7 @@ let make = () => {
                       </div>
                     </div>
                     {if index < names->Array.length - 1 {
-                      <div className="border-b border-gray-100 mx-6" />
+                      <div className="border-b border-gray-100 dark:border-dark-accent mx-6 transition-colors" />
                     } else {
                       React.null
                     }}
@@ -430,11 +422,11 @@ let make = () => {
     </div>
     {if settingPrimaryName || Option.isSome(showTransferPanel) || Option.isSome(showExtendPanel) {
       <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-        <div className="bg-white rounded-2xl shadow-xl">
+        <div className="bg-white dark:bg-dark-secondary rounded-2xl shadow-xl transition-colors">
           {if settingPrimaryName {
-            <div className="flex items-center gap-3 py-4 px-6 bg-gray-100 rounded-2xl shadow-sm">
-              <Icons.Spinner className="h-6 w-6 text-gray-900" />
-              <p className="text-gray-900 text-lg font-medium">
+            <div className="flex items-center gap-3 py-4 px-6 bg-gray-100 dark:bg-dark-primary rounded-2xl shadow-sm transition-colors">
+              <Icons.Spinner className="h-6 w-6 text-gray-900 dark:text-dark-text" />
+              <p className="text-gray-900 dark:text-dark-text text-lg font-medium transition-colors">
                 {React.string("Setting primary name...")}
               </p>
             </div>

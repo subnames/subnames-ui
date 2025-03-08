@@ -6,8 +6,10 @@ import * as Router from "./Router.res.mjs";
 import * as Profile from "./pages/Profile.res.mjs";
 import * as NamesList from "./components/NamesList.res.mjs";
 import * as NameContext from "./NameContext.res.mjs";
+import * as ThemeToggle from "./components/ThemeToggle.res.mjs";
 import * as Chains from "viem/chains";
 import * as SubnameInput from "./SubnameInput.res.mjs";
+import * as ThemeContext from "./ThemeContext.res.mjs";
 import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
@@ -74,9 +76,14 @@ function App$Layout(props) {
       });
   var url = RescriptReactRouter.useUrl(undefined, undefined);
   var account = Wagmi.useAccount();
-  var match$2 = Router.fromUrl(url);
+  var match$2 = ThemeContext.useTheme();
+  var theme = match$2.theme;
+  React.useEffect((function () {
+          ThemeContext.applyTheme(theme);
+        }), [theme]);
+  var match$3 = Router.fromUrl(url);
   var tmp;
-  switch (match$2) {
+  switch (match$3) {
     case "Home" :
         tmp = React.createElement(App$Subname, {});
         break;
@@ -99,47 +106,68 @@ function App$Layout(props) {
                 setPrimaryName: match$1[1]
               },
               children: React.createElement("div", {
-                    className: "min-h-screen bg-gray-50"
-                  }, React.createElement("header", undefined, React.createElement("div", {
+                    className: "min-h-screen bg-gray-50 dark:bg-dark-primary text-gray-900 dark:text-dark-text transition-colors"
+                  }, React.createElement("header", {
+                        className: "bg-white dark:bg-dark-secondary shadow transition-colors"
+                      }, React.createElement("div", {
                             className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
                           }, React.createElement("div", {
                                 className: "flex justify-between items-center h-16"
                               }, React.createElement("div", {
                                     className: "flex-shrink-0"
                                   }, React.createElement("button", {
-                                        className: "text-xl font-bold text-gray-900",
+                                        className: "text-xl font-bold text-gray-900 dark:text-dark-text transition-colors",
                                         onClick: (function (param) {
                                             RescriptReactRouter.push("/");
                                           })
                                       }, "Darwinia Names")), React.createElement("div", {
                                     className: "flex items-center gap-4"
                                   }, account.isConnected ? React.createElement(React.Fragment, {}, React.createElement("button", {
-                                              className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
+                                              className: "text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline",
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/profile");
                                                 })
                                             }, "Profile"), React.createElement("button", {
-                                              className: "text-sm font-medium text-zinc-800 hover:text-zinc-600 transition-colors underline",
+                                              className: "text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline",
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/names");
                                                 })
-                                            }, "Your Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                                            }, "Your Names")) : null, React.createElement(ThemeToggle.make, {}), React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
                             className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                           }, tmp)))
             });
 }
 
 function App(props) {
-  return React.createElement(Wagmi.WagmiProvider, {
-              config: config,
-              children: React.createElement(ReactQuery.QueryClientProvider, {
-                    client: queryClient,
-                    children: React.createElement(Rainbowkit.RainbowKitProvider, {
-                          children: React.createElement(App$Layout, {}),
-                          theme: Rainbowkit.lightTheme({
-                                accentColor: "rgb(39, 39, 42)",
-                                accentColorForeground: "white",
-                                borderRadius: "large"
+  var match = React.useState(function () {
+        return ThemeContext.getInitialTheme();
+      });
+  var theme = match[0];
+  React.useEffect((function () {
+          theme === "Light";
+        }), [theme]);
+  var rainbowTheme;
+  rainbowTheme = theme === "Light" ? Rainbowkit.lightTheme({
+          accentColor: "rgb(39, 39, 42)",
+          accentColorForeground: "white",
+          borderRadius: "large"
+        }) : Rainbowkit.darkTheme({
+          accentColor: "rgb(147, 197, 253)",
+          accentColorForeground: "black",
+          borderRadius: "large"
+        });
+  return React.createElement(ThemeContext.Provider.make, {
+              value: {
+                theme: theme,
+                setTheme: match[1]
+              },
+              children: React.createElement(Wagmi.WagmiProvider, {
+                    config: config,
+                    children: React.createElement(ReactQuery.QueryClientProvider, {
+                          client: queryClient,
+                          children: React.createElement(Rainbowkit.RainbowKitProvider, {
+                                children: React.createElement(App$Layout, {}),
+                                theme: rainbowTheme
                               })
                         })
                   })

@@ -84,3 +84,12 @@ let getArrayExn = (jsonObj, fieldName, f) => {
   ->getArray(fieldName, f)
   ->Option.getExn(~message="Failed to get ${fieldName}")
 }
+
+
+type document
+type event = ReactEvent.Mouse.t
+@val external doc: document = "document"
+@send external getElementById: (document, string) => Dom.element = "getElementById"
+@send external addEventListener: (document, string, event => unit) => unit = "addEventListener"
+@send
+external removeEventListener: (document, string, event => unit) => unit = "removeEventListener"
