@@ -335,7 +335,7 @@ function InputPanel(props) {
     tmp = null;
   }
   return React.createElement("div", {
-              className: "bg-white dark:bg-zinc-800 dark:border-[#ffffff14] border rounded-custom " + (
+              className: "bg-white dark:bg-zinc-800 dark:border-[#ffffff14] dark:border rounded-custom " + (
                 state.isFocused ? "shadow-xl" : "shadow-lg"
               ) + " overflow-hidden transition-shadow duration-200"
             }, React.createElement("div", {
@@ -353,7 +353,7 @@ function InputPanel(props) {
                     }), React.createElement("div", {
                       className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
                     }, state.value !== "" ? React.createElement("button", {
-                            className: "p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors",
+                            className: "p-1 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors",
                             type: "button",
                             onClick: handleClear
                           }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement("div", {

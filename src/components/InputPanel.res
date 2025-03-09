@@ -161,7 +161,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
     setState(prev => {...prev, isFocused: false})
   }
 
-  <div className={`bg-white dark:bg-zinc-800 dark:border-[#ffffff14] border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
+  <div className={`bg-white dark:bg-zinc-800 dark:border-[#ffffff14] dark:border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
     <div
       className={`relative ${state.errorMessage->Option.isSome ||
           (state.isValid && state.value != "")
@@ -180,7 +180,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
         {if state.value != "" {
           <button
             onClick={handleClear}
-            className="p-1 hover:bg-gray-100 dark:hover:bg-zinc-700 rounded-full transition-colors"
+            className="p-1 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors"
             type_="button">
             <Icons.Close />
           </button>

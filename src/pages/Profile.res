@@ -353,7 +353,7 @@ module ProfileForm = {
               </div>
               <button
                 onClick={_ => onCancel()}
-                className="p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
+                className="hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2">
                 <Icons.Close />
               </button>
             </div>

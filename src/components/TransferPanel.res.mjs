@@ -149,13 +149,13 @@ function TransferPanel$StepProgress(props) {
                     }, React.createElement("h1", {
                           className: "text-lg font-semibold text-gray-900"
                         }, "Transfer Progress"), allStepsCompleted || transactionRejected ? React.createElement("button", {
-                            className: "p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center",
+                            className: "rounded-full transition-colors duration-150 flex items-center justify-center",
                             type: "button",
                             onClick: (function (param) {
                                 onClose();
                               })
                           }, React.createElement("div", {
-                                className: "w-4 h-4 text-gray-600 flex items-center justify-center"
+                                className: "hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300  flex items-center justify-center"
                               }, React.createElement(Icons.Close.make, {}))) : React.createElement("div", {
                             className: "text-xs font-medium text-gray-500"
                           }, (props.currentStep + 1 | 0).toString() + "/" + steps.length.toString())), React.createElement("div", {
@@ -466,7 +466,7 @@ function TransferPanel(props) {
                                                     }, name + "." + Constants.sld)))), buttonType === "close" ? React.createElement("div", {
                                             className: "self-center"
                                           }, React.createElement("button", {
-                                                className: "p-1 hover:bg-gray-100 rounded-full transition-colors",
+                                                className: "rounded-full transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300",
                                                 type: "button",
                                                 onClick: (function (param) {
                                                     onCancel();

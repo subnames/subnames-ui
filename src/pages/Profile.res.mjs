@@ -452,7 +452,7 @@ function Profile$ProfileForm(props) {
                             }, "Edit Profile"), React.createElement("div", {
                               className: "text-sm text-gray-500"
                             }, "All fields are optional"), React.createElement("button", {
-                              className: "p-1 hover:bg-gray-100 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
+                              className: "hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                               onClick: (function (param) {
                                   onCancel();
                                 })

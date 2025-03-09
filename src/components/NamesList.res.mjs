@@ -329,7 +329,7 @@ function NamesList(props) {
                                       }, React.createElement(Icons.Syncing.make, {
                                             className: "text-amber-600"
                                           }), "Syncing... Operations disabled")), React.createElement("button", {
-                                  className: "p-1 hover:bg-gray-100 dark:hover:bg-dark-accent rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
+                                  className: "hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors absolute right-8 top-1/2 -translate-y-1/2",
                                   onClick: (function (param) {
                                       RescriptReactRouter.push("/");
                                     })

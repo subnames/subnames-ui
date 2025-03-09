@@ -89,9 +89,9 @@ module StepProgress = {
           {if allStepsCompleted || transactionRejected {
             <button
               onClick={_ => onClose()}
-              className="p-1.5 hover:bg-gray-100 rounded-full transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-gray-200 flex items-center justify-center"
+              className="rounded-full transition-colors duration-150 flex items-center justify-center"
               type_="button">
-              <div className="w-4 h-4 text-gray-600 flex items-center justify-center">
+              <div className="hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300  flex items-center justify-center">
                 <Icons.Close />
               </div>
             </button>
@@ -390,7 +390,7 @@ let make = (
                 <div className="self-center">
                   <button
                     onClick={_ => onCancel()}
-                    className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+                    className="rounded-full transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300"
                     type_="button">
                     <Icons.Close />
                   </button>

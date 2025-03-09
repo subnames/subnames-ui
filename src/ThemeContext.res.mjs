@@ -28,7 +28,7 @@ function applyTheme(theme) {
 }
 
 function getInitialTheme() {
-  return "Dark";
+  return "Light";
 }
 
 export {
