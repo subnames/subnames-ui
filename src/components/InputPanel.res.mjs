@@ -335,7 +335,7 @@ function InputPanel(props) {
     tmp = null;
   }
   return React.createElement("div", {
-              className: "bg-white dark:bg-zinc-800 dark:border-zinc-300 border rounded-custom " + (
+              className: "bg-white dark:bg-zinc-800 dark:border-[#ffffff14] border rounded-custom " + (
                 state.isFocused ? "shadow-xl" : "shadow-lg"
               ) + " overflow-hidden transition-shadow duration-200"
             }, React.createElement("div", {

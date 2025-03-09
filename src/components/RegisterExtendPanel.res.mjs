@@ -165,7 +165,7 @@ function RegisterExtendPanel(props) {
     }
     tmp$1 = React.createElement("button", {
           className: "w-full py-4 px-6 " + (
-            isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed dark:bg-[#ffffff0a]" : "bg-zinc-800 hover:bg-zinc-700 dark:bg-[#ffffff0a] dark:hover:bg-[#ffffff14] "
+            isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed dark:border dark:active:bg-[#ffffff0a] dark:bg-[#ffffff0a] dark:hover:bg-[#ffffff14] " : "bg-zinc-800 hover:bg-zinc-700 dark:border dark:active:bg-[#ffffff0a] dark:bg-[#ffffff0a] dark:hover:bg-[#ffffff14] "
           ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
           disabled: isCalculatingFee || isWaitingForConfirmation,
           onClick: (function (param) {
