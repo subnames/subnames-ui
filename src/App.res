@@ -156,7 +156,7 @@ module Layout = {
                 } else {
                   React.null
                 }}
-                <ThemeToggle />
+                // <ThemeToggle />
                 <MyConnectButton />
               </div>
             </div>
