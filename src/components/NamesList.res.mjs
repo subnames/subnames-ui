@@ -359,7 +359,7 @@ function NamesList(props) {
                                                     }
                                                     if (exit === 1) {
                                                       tmp$2 = React.createElement("button", {
-                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                            className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 dark:text-dark-text dark:hover:bg-dark-primary transition-colors duration-150 ease-in-out text-left",
                                                             disabled: !isSynced,
                                                             type: "button",
                                                             onClick: (function (param) {
@@ -371,7 +371,7 @@ function NamesList(props) {
                                                           }, "Set primary");
                                                     }
                                                     tmp$1 = React.createElement(React.Fragment, {}, tmp$2, React.createElement("button", {
-                                                              className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                              className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 dark:text-dark-text dark:hover:bg-dark-primary transition-colors duration-150 ease-in-out text-left",
                                                               disabled: !isSynced,
                                                               type: "button",
                                                               onClick: (function (param) {
@@ -393,7 +393,7 @@ function NamesList(props) {
                                                   }
                                                   if (exit$1 === 1) {
                                                     tmp$3 = React.createElement("button", {
-                                                          className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 transition-colors duration-150 ease-in-out text-left",
+                                                          className: "block w-full px-4 py-2.5 text-sm text-gray-700 hover:bg-gray-50 dark:text-dark-text dark:hover:bg-dark-primary transition-colors duration-150 ease-in-out text-left",
                                                           disabled: !isSynced,
                                                           type: "button",
                                                           onClick: (function (param) {
@@ -411,7 +411,7 @@ function NamesList(props) {
                                                   }
                                                   tmp = React.createElement("div", {
                                                         ref: Caml_option.some(dropdownRef),
-                                                        className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 z-50"
+                                                        className: "absolute right-0 mt-2 w-48 rounded-lg shadow-xl bg-white/95 backdrop-blur-sm border border-gray-100 dark:bg-dark-secondary dark:border-[#ffffff14] z-50"
                                                       }, React.createElement("div", {
                                                             className: "py-1"
                                                           }, tmp$1, tmp$3));
@@ -444,7 +444,7 @@ function NamesList(props) {
                                                                         className: "relative"
                                                                       }, React.createElement("button", {
                                                                             className: "p-2 rounded-lg focus:outline-none " + (
-                                                                              isSynced ? "hover:bg-gray-100" : "opacity-50 cursor-not-allowed"
+                                                                              isSynced ? "hover:bg-gray-100 dark:hover:bg-[#ffffff0f] dark:bg-dark-primary" : "opacity-50 cursor-not-allowed"
                                                                             ),
                                                                             disabled: !isSynced,
                                                                             type: "button",

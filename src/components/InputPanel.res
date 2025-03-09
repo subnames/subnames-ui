@@ -161,7 +161,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
     setState(prev => {...prev, isFocused: false})
   }
 
-  <div className={`bg-white dark:bg-[#1b1b1b] dark:border-[#ffffff14] dark:border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
+  <div className={`bg-white dark:bg-[#36383ab3] dark:border-[#ffffff14] dark:border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
     <div
       className={`relative ${state.errorMessage->Option.isSome ||
           (state.isValid && state.value != "")
@@ -174,7 +174,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
         onFocus={handleFocus}
         onBlur={handleBlur}
         placeholder="SEARCH FOR A NAME"
-        className="w-full px-6 py-4 text-lg focus:outline-none dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400"
+className="w-full px-6 py-4 text-lg focus:outline-none focus:bg-blue-50 dark:bg-[#36383ab3] dark:hover:bg-[#36383ae6] dark:text-white dark:placeholder-zinc-400"
       />
       <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2">
         {if state.value != "" {

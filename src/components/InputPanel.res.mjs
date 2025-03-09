@@ -335,7 +335,7 @@ function InputPanel(props) {
     tmp = null;
   }
   return React.createElement("div", {
-              className: "bg-white dark:bg-[#1b1b1b] dark:border-[#ffffff14] dark:border rounded-custom " + (
+              className: "bg-white dark:bg-[#36383ab3] dark:border-[#ffffff14] dark:border rounded-custom " + (
                 state.isFocused ? "shadow-xl" : "shadow-lg"
               ) + " overflow-hidden transition-shadow duration-200"
             }, React.createElement("div", {
@@ -343,7 +343,7 @@ function InputPanel(props) {
                     Core__Option.isSome(state.errorMessage) || state.isValid && state.value !== "" ? "border-b border-zinc-200 dark:border-zinc-700" : ""
                   )
                 }, React.createElement("input", {
-                      className: "w-full px-6 py-4 text-lg focus:outline-none dark:bg-zinc-800 dark:text-white dark:placeholder-zinc-400",
+                      className: "w-full px-6 py-4 text-lg focus:outline-none focus:bg-blue-50 dark:bg-[#36383ab3] dark:hover:bg-[#36383ae6] dark:text-white dark:placeholder-zinc-400",
                       placeholder: "SEARCH FOR A NAME",
                       type: "text",
                       value: state.value,
