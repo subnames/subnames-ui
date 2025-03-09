@@ -353,7 +353,7 @@ function InputPanel(props) {
                     }), React.createElement("div", {
                       className: "absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2"
                     }, state.value !== "" ? React.createElement("button", {
-                            className: "p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors",
+                            className: "p-1 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors",
                             type: "button",
                             onClick: handleClear
                           }, React.createElement(Icons.Close.make, {})) : null, state.value === "" ? React.createElement("div", {
