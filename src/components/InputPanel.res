@@ -180,7 +180,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
         {if state.value != "" {
           <button
             onClick={handleClear}
-            className="p-1 hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors"
+            className="p-1 text-gray-400 hover:text-gray-600 dark:text-gray-500 dark:hover:text-gray-300 rounded-full transition-colors"
             type_="button">
             <Icons.Close />
           </button>
