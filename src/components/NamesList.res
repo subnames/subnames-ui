@@ -230,10 +230,10 @@ let make = () => {
   <>
     <div className="p-8">
       <div className="w-full max-w-xl mx-auto">
-        <div className="bg-white dark:bg-dark-secondary rounded-custom shadow-lg transition-colors">
+        <div className="bg-white dark:bg-dark-secondary dark:border dark:border-[#ffffff14] rounded-custom shadow-lg transition-colors">
 
           // Header
-          <div className="p-8 py-6 border-b border-gray-200 dark:border-dark-accent relative">
+          <div className="p-8 py-6 border-b border-zinc-200 dark:border-zinc-700 relative">
             <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"> {React.string("Your Names")} </h1>
             <div className="text-sm text-gray-500 dark:text-dark-muted flex items-center gap-2 transition-colors">
               {if isSynced {
@@ -407,7 +407,7 @@ let make = () => {
                       </div>
                     </div>
                     {if index < names->Array.length - 1 {
-                      <div className="border-b border-gray-100 dark:border-dark-accent mx-6 transition-colors" />
+                      <div className="border-b border-zinc-100 dark:border-zinc-800 mx-6 transition-colors" />
                     } else {
                       React.null
                     }}

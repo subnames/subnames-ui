@@ -315,9 +315,9 @@ function NamesList(props) {
                 }, React.createElement("div", {
                       className: "w-full max-w-xl mx-auto"
                     }, React.createElement("div", {
-                          className: "bg-white dark:bg-dark-secondary rounded-custom shadow-lg transition-colors"
+                          className: "bg-white dark:bg-dark-secondary dark:border dark:border-[#ffffff14] rounded-custom shadow-lg transition-colors"
                         }, React.createElement("div", {
-                              className: "p-8 py-6 border-b border-gray-200 dark:border-dark-accent relative"
+                              className: "p-8 py-6 border-b border-zinc-200 dark:border-zinc-700 relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"
                                 }, "Your Names"), React.createElement("div", {
@@ -468,7 +468,7 @@ function NamesList(props) {
                                                                                     strokeLinejoin: "round",
                                                                                     strokeWidth: "2"
                                                                                   }))), tmp))), index < (names.length - 1 | 0) ? React.createElement("div", {
-                                                                  className: "border-b border-gray-100 dark:border-dark-accent mx-6 transition-colors"
+                                                                  className: "border-b border-zinc-100 dark:border-zinc-800 mx-6 transition-colors"
                                                                 }) : null);
                                               })))
                               )

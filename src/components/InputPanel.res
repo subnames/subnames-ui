@@ -161,11 +161,11 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
     setState(prev => {...prev, isFocused: false})
   }
 
-  <div className={`bg-white dark:bg-zinc-800 dark:border-[#ffffff14] dark:border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
+  <div className={`bg-white dark:bg-[#1b1b1b] dark:border-[#ffffff14] dark:border rounded-custom ${state.isFocused ? "shadow-xl" : "shadow-lg"} overflow-hidden transition-shadow duration-200`}>
     <div
       className={`relative ${state.errorMessage->Option.isSome ||
           (state.isValid && state.value != "")
-          ? "divide-y-short"
+          ? "border-b border-zinc-200 dark:border-zinc-700"
           : ""}`}>
       <input
         type_="text"

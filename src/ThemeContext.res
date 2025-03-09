@@ -27,5 +27,5 @@ let applyTheme = (theme: theme) => {
 
 // Helper function to get initial theme from localStorage or system preference
 let getInitialTheme = () => {
-  Light 
+  Light
 }
