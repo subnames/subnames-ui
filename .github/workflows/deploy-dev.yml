@@ -1,0 +1,24 @@
+name: Deploy development
+
+on:
+  push:
+ branches: [master]
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: darwinia-network/devops/actions/smart-vercel@main
+        name: Deploy to Vercel
+        with:
+          node_version: 22
+          vercel_token: ${{ secrets.VERCEL_TOKEN }}
+          vercel_group: Akira
+          script_install: npm i
+          script_build: npm run res:build && npm run build
+          dist_path: dist
+          preview_output: true
+          project_name: subnames-ui
+          alias_domain: "subnames-ui-dev"
