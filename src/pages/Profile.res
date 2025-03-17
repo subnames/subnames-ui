@@ -657,7 +657,7 @@ module ViewProfile = {
                       target["classList"]["remove"]("opacity-0")
                     }}/>
                     | None => <div
-                      dangerouslySetInnerHTML={"__html": toSvg(name, 120, {backColor: "#ffffff", padding: 0.13})}
+                      dangerouslySetInnerHTML={"__html": toSvg(name, 120, {backColor: "#ffffff", padding: 0.15})}
                       className="w-full h-full object-cover absolute inset-0 transition-opacity duration-300 rounded-full"
                     />
                   }

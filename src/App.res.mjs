@@ -19,12 +19,12 @@ var queryClient = new ReactQuery.QueryClient();
 
 var transports = new Map();
 
-transports.set(Chains.crab.id, Wagmi.http());
+transports.set(Chains.darwinia.id, Wagmi.http());
 
 var config = Rainbowkit.getDefaultConfig({
       appName: "Subnames App",
       projectId: "873f70fa626990b1ee3c14d55130a573",
-      chains: [Chains.crab],
+      chains: [Chains.darwinia],
       transports: transports,
       ssr: false
     });

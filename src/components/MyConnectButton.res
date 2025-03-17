@@ -30,7 +30,9 @@ module ConnectButton = {
 
 let updatePrimaryName = (account, setPrimaryName) => {
   account->Option.map(async acc => {
+    // Js.log(`Resolving name for address: ${acc.address}`)
     let resolvedName = await OnChainOperations.name(acc.address)
+    // Js.log(`Resolved name: ${resolvedName}`)
 
     if resolvedName == "" {
       setPrimaryName(_ => None)

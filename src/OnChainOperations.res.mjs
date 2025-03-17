@@ -322,7 +322,7 @@ async function name(address) {
             "bytes32",
             "bytes32"
           ], [
-            "0x8b4150cc3554db98a2f60cb8c5a4cc48659d17a536ff9fe540be66d3307ee7a7",
+            "0x32347c1de91cbc71535aee17456bbe8987cc116a2782950e2697c6fc411ba53f",
             OnChainOperationsCommon.sha3HexAddress(address)
           ]));
   return await OnChainOperationsCommon.publicClient.readContract({

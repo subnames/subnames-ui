@@ -809,7 +809,7 @@ function Profile$ViewProfile(props) {
                                         dangerouslySetInnerHTML: {
                                           __html: Jdenticon.toSvg(name, 120, {
                                                 backColor: "#ffffff",
-                                                padding: 0.13
+                                                padding: 0.15
                                               })
                                         }
                                       }))), React.createElement("div", {

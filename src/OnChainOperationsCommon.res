@@ -12,7 +12,7 @@ type walletClient
 @module("viem") external encodePacked: (array<string>, array<string>) => string = "encodePacked"
 @module("viem") external custom: 'a => 'b = "custom"
 @module("viem") external encodeFunctionData: 'a => string = "encodeFunctionData"
-@module("viem/chains") external targetChain: 'chain = "crab"
+@module("viem/chains") external targetChain: 'chain = "darwinia"
 @module("viem/ens") external namehash: string => string = "namehash"
 
 @unboxed type argType = String(string) | Int(int) | BigInt(bigint) | Array(array<string>)

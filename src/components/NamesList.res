@@ -152,7 +152,7 @@ let make = () => {
             ->Option.getOr(0)
 
           // let lastBlock = 1
-          Console.log(`Chain height: ${chainHeight->Int.toString}, Last block: ${lastBlock->Int.toString}`)
+          // Console.log(`Chain height: ${chainHeight->Int.toString}, Last block: ${lastBlock->Int.toString}`)
             
           // Check if the difference is more than 3 blocks
           let diff = chainHeight - lastBlock
@@ -208,7 +208,7 @@ let make = () => {
           }
         `
 
-        Console.log(query)
+        // Console.log(query)
         let result = await GraphQLClient.makeRequest(~endpoint=Constants.indexerUrl, ~query, ())
 
         switch result {

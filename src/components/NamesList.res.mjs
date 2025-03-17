@@ -188,7 +188,6 @@ function NamesList(props) {
           var lastBlock = Core__Option.getOr(Core__Option.flatMap(lastBlockLine.split(" ")[1], (function (str) {
                       return Core__Int.fromString(str, undefined);
                     })), 0);
-          console.log("Chain height: " + chainHeight.toString() + ", Last block: " + lastBlock.toString());
           var diff = chainHeight - lastBlock | 0;
           return setIsSynced(function (param) {
                       return diff <= 1;
@@ -227,7 +226,6 @@ function NamesList(props) {
                           return prim.toLowerCase();
                         })), "No address found");
               var query = "\n          query {\n            subnames(where: {\n              owner: {id_eq: \"" + address + "\"}\n            }) {\n              label\n              name\n              expires\n              owner {\n                id\n              }\n              resolvedTo {\n                id\n              }\n              reverseResolvedFrom {\n                id\n              }\n            }\n          }\n        ";
-              console.log(query);
               var result = await GraphQLClient.makeRequest(Constants.indexerUrl, query, undefined, undefined);
               var data = result.data;
               var exit = 0;

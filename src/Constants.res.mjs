@@ -3,23 +3,23 @@
 
 var sld = "darwinia.eth";
 
-var registryContractAddress = "0x807a3e011DF1785c538Ac6F65252bf740678Ff99";
+var registryContractAddress = "0xBD9058bed767E006dbE4Ab1ba85446401b1daafC";
 
-var baseRegistrarContractAddress = "0x74b673e8cb4894D926d5c7bD35B472f88E998468";
+var baseRegistrarContractAddress = "0x607A819b8406A5E00F6FC649D67A11DFE2d57efd";
 
-var reverseRegistrarContractAddress = "0x0222fC117531519Ff9F4941F1299b1e222645166";
+var reverseRegistrarContractAddress = "0x030E8E087e6e8358c24F8e39d628af7393618BDc";
 
-var controllerContractAddress = "0xa9EA0B4Fc053c68977F535Ea67e3f0062B363443";
+var controllerContractAddress = "0x0Fc565C7B8dD952281eB3829A3e95067d41363e5";
 
-var resolverContractAddress = "0xf761709777A4aa1b71570524869B1876fEafCB2e";
+var resolverContractAddress = "0xB483A20cd7482EBEf468c970953BDdb6faf3c03e";
 
 var parentNode = "0xa00b30653aa21de4caea57dc656dcab595a7f3a936e0564ffc5dd8448b945581";
 
-var rpcUrl = "https://crab-rpc.darwinia.network";
+var rpcUrl = "https://rpc.darwinia.network";
 
-var indexerUrl = "https://g2d.site/graphql";
+var indexerUrl = "https://031625.xyz/graphql";
 
-var metricsUrl = "https://g2d.site/metrics";
+var metricsUrl = "https://031625.xyz/metrics";
 
 export {
   sld ,
