@@ -6,6 +6,7 @@ import * as React from "react";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as Core__Promise from "@rescript/core/src/Core__Promise.res.mjs";
 import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
 
@@ -174,34 +175,52 @@ function RegisterExtendPanel(props) {
                     return true;
                   });
               var walletClient = OnChainOperationsCommon.buildWalletClient();
+              var handleTransactionError = function (exn) {
+                console.error("Transaction error");
+                console.error(exn);
+                setIsWaitingForConfirmation(function (param) {
+                      return false;
+                    });
+                setOnChainStatus(function (param) {
+                      return {
+                              TAG: "Failed",
+                              _0: "Transaction rejected or failed"
+                            };
+                    });
+                return Promise.resolve();
+              };
               switch (action) {
                 case "Register" :
-                    OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
-                              setOnChainStatus(function (param) {
-                                    return status;
-                                  });
-                            })).then(function () {
-                          return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                      var newExpiryDate = new Date(expiryInt * 1000.0);
-                                      onSuccess({
-                                            action: action,
-                                            newExpiryDate: Caml_option.some(newExpiryDate)
-                                          });
-                                      return Promise.resolve();
-                                    });
-                        });
+                    Core__Promise.$$catch(OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
+                                  setOnChainStatus(function (param) {
+                                        return status;
+                                      });
+                                })).then(function () {
+                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                                          onSuccess({
+                                                action: action,
+                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                              });
+                                          return Promise.resolve();
+                                        });
+                            }), (function (exn) {
+                            return handleTransactionError(exn);
+                          }));
                     return ;
                 case "Extend" :
-                    OnChainOperations.renew(walletClient, name, years).then(function () {
-                          return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                      var newExpiryDate = new Date(expiryInt * 1000.0);
-                                      onSuccess({
-                                            action: action,
-                                            newExpiryDate: Caml_option.some(newExpiryDate)
-                                          });
-                                      return Promise.resolve();
-                                    });
-                        });
+                    Core__Promise.$$catch(OnChainOperations.renew(walletClient, name, years).then(function () {
+                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
+                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                                          onSuccess({
+                                                action: action,
+                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                              });
+                                          return Promise.resolve();
+                                        });
+                            }), (function (exn) {
+                            return handleTransactionError(exn);
+                          }));
                     return ;
                 case "Transfer" :
                 case "Reclaim" :

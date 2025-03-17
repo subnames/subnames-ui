@@ -406,61 +406,85 @@ let register: (
   option<string>,
   transactionStatus => unit,
 ) => promise<unit> = async (walletClient, name, years, owner, onStatusChange) => {
-  Console.log(`Registering ${name}`)
-  onStatusChange(Simulating)
-  let duration = years * 31536000
-  let currentAddress = await currentAddress(walletClient)
-  let resolvedAddress = owner->Option.getOr(currentAddress)
-  let setAddrData = encodeSetAddr(name, resolvedAddress)
-  let priceInWei = await registerPrice(name, duration)
-  let {request} = await simulateContract(
-    publicClient,
-    {
-      "account": currentAddress,
-      "address": controllerContract["address"],
-      "abi": [controllerContract["register"]],
-      "functionName": "register",
-      "args": [
-        {
-          "name": name,
-          "owner": resolvedAddress,
-          "duration": duration,
-          "resolver": Constants.resolverContractAddress,
-          "data": [setAddrData],
-          "reverseRecord": true,
-        },
-      ],
-      "value": priceInWei,
-    },
-  )
+  try {
+    Console.log(`Registering ${name}`)
+    onStatusChange(Simulating)
+    let duration = years * 31536000
+    let currentAddress = await currentAddress(walletClient)
+    let resolvedAddress = owner->Option.getOr(currentAddress)
+    let setAddrData = encodeSetAddr(name, resolvedAddress)
+    let priceInWei = await registerPrice(name, duration)
+    let {request} = await simulateContract(
+      publicClient,
+      {
+        "account": currentAddress,
+        "address": controllerContract["address"],
+        "abi": [controllerContract["register"]],
+        "functionName": "register",
+        "args": [
+          {
+            "name": name,
+            "owner": resolvedAddress,
+            "duration": duration,
+            "resolver": Constants.resolverContractAddress,
+            "data": [setAddrData],
+            "reverseRecord": true,
+          },
+        ],
+        "value": priceInWei,
+      },
+    )
 
-  onStatusChange(WaitingForSignature)
-  let hash = await writeContract(walletClient, request)
+    onStatusChange(WaitingForSignature)
+    let hash = await writeContract(walletClient, request)
 
-  onStatusChange(Broadcasting)
-  // Wait for transaction confirmation
-  let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
-  onStatusChange(Confirmed)
+    onStatusChange(Broadcasting)
+    // Wait for transaction confirmation
+    let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
+    onStatusChange(Confirmed)
+  } catch {
+    | Exn.Error(e) => {
+      Console.error("Error in register function")
+      Console.error(e)
+      onStatusChange(Failed("Transaction failed or was rejected"))
+      Exn.raiseError("Transaction failed or was rejected") // Re-throw the exception to be caught by the caller
+    }
+  }
 }
 
 let renew: (walletClient, string, int) => promise<unit> = async (walletClient, name, years) => {
-  let duration = years * 31536000
-  let currentAddress = await currentAddress(walletClient)
-  let priceInWei = await rentPrice(name, duration)
-  let {request} = await simulateContract(
-    publicClient,
-    {
-      "account": currentAddress,
-      "address": controllerContract["address"],
-      "abi": [controllerContract["renew"]],
-      "functionName": "renew",
-      "args": [String(name), Int(duration)],
-      "value": priceInWei,
-    },
-  )
-  let hash = await writeContract(walletClient, request)
-  let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
-  Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  try {
+    let duration = years * 31536000
+    let currentAddress = await currentAddress(walletClient)
+    let priceInWei = await rentPrice(name, duration)
+    let {request} = await simulateContract(
+      publicClient,
+      {
+        "account": currentAddress,
+        "address": controllerContract["address"],
+        "abi": [controllerContract["renew"]],
+        "functionName": "renew",
+        "args": [String(name), Int(duration)],
+        "value": priceInWei,
+      },
+    )
+    let hash = await writeContract(walletClient, request)
+    let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
+    Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
+  } catch {
+    | Exn.Error(e) => {
+      switch Exn.message(e) {
+      | Some(m) => {
+        Console.error("Error in renew function! Message: " ++ m)
+        Exn.raiseError(m)
+      }
+      | None => {
+        Console.error("Error in renew function")
+        Exn.raiseError("Transaction failed or was rejected")
+      }
+      }
+    }
+  }
 }
 
 let setAddr = async (walletClient, name, a) => {

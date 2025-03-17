@@ -76,29 +76,43 @@ let make = (
   let handleClick = (~years: int) => {
     setIsWaitingForConfirmation(_ => true)
     let walletClient = OnChainOperationsCommon.buildWalletClient()
+    
+    // Helper function to handle transaction errors and re-enable the button
+    let handleTransactionError = exn => {
+      Console.error("Transaction error")
+      Console.error(exn)
+      setIsWaitingForConfirmation(_ => false)
+      setOnChainStatus(_ => OnChainOperations.Failed("Transaction rejected or failed"))
+      Promise.resolve()
+    }
+    
     switch action {
     | Types.Register =>
-      let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))->Promise.then(_ => {
-        OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-          let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
-          onSuccess({
-            action,
-            newExpiryDate: Some(newExpiryDate),
+      let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))
+        ->Promise.then(_ => {
+          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
+            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+            onSuccess({
+              action,
+              newExpiryDate: Some(newExpiryDate),
+            })
+            Promise.resolve()
           })
-          Promise.resolve()
         })
-      })
+        ->Promise.catch(exn => handleTransactionError(exn))
     | Types.Extend =>
-      let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)->Promise.then(_ => {
-        OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-          let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
-          onSuccess({
-            action,
-            newExpiryDate: Some(newExpiryDate),
+      let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)
+        ->Promise.then(_ => {
+          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
+            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+            onSuccess({
+              action,
+              newExpiryDate: Some(newExpiryDate),
+            })
+            Promise.resolve()
           })
-          Promise.resolve()
         })
-      })
+        ->Promise.catch(exn => handleTransactionError(exn))
     | _ => Exn.raiseError("Unreachable")
     }
   }
