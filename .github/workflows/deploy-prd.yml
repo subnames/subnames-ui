@@ -16,7 +16,7 @@ jobs:
         with:
           node_version: 22
           vercel_token: ${{ secrets.VERCEL_TOKEN }}
-          vercel_group: Akira
+          vercel_group: akis-projects-7deadb1c
           script_install: npm i
           script_build: npm run res:build && npm run build
           dist_path: dist
