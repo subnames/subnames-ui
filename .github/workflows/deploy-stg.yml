@@ -1,8 +1,8 @@
 name: Deploy development
 
 on:
-  pull_request:
-  workflow_dispatch:
+  push:
+    branches: [main]
 
 jobs:
   deploy:
@@ -21,4 +21,4 @@ jobs:
           dist_path: dist
           preview_output: true
           project_name: subnames-ui
-          alias_domain: "subnames-dev"
+          alias_domain: "subnames-stg"

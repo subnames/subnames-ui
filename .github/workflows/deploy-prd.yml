@@ -23,4 +23,4 @@ jobs:
           preview_output: true
           project_name: subnames-ui
           prod_mode: true
-          alias_domain: "subnames-ui-prd"
+          alias_domain: "subnames-prd"
