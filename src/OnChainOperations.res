@@ -316,7 +316,7 @@ let encodeSetText = (name: string, key: string, value: string): string => {
   })
 }
 
-let nameExpires: string => promise<int> = async name => {
+let nameExpires: string => promise<bigint> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
   let result = await readContract(
     publicClient,
@@ -327,7 +327,7 @@ let nameExpires: string => promise<int> = async name => {
       "args": [BigInt(tokenId)],
     },
   )
-  BigInt.toInt(result)
+  result
 }
 
 let getTokenOwner: string => promise<string> = async name => {

@@ -737,7 +737,7 @@ function Profile$ViewProfile(props) {
   var match$2 = primaryName !== undefined ? primaryName : ({
         fullName: "",
         name: "",
-        expires: 0
+        expires: 0n
       });
   var name = match$2.name;
   return React.createElement("div", {

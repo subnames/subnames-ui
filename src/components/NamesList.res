@@ -9,7 +9,7 @@ type owner = {id: string}
 type subname = {
   label: string,
   name: string,
-  expires: int,
+  expires: bigint,
   resolvedTo: owner,
   owner: owner,
   reverseResolvedFrom: option<owner>,
@@ -98,7 +98,7 @@ let make = () => {
     ->Option.map(obj => {
       let label = getStringExn(obj, "label")
       let name = getStringExn(obj, "name")
-      let expires = getStringExn(obj, "expires")->Int.fromString->Option.getExn
+      let expires = getStringExn(obj, "expires")->BigInt.fromString
       let resolvedTo: owner = getObjectExn(obj, "resolvedTo", o => {id: getStringExn(o, "id")})
       let owner: owner = getObjectExn(obj, "owner", o => {id: getStringExn(o, "id")})
       let reverseResolvedFrom: option<owner> = getObject(obj, "reverseResolvedFrom", o => {
@@ -214,7 +214,7 @@ let make = () => {
         switch result {
         | {data: Some(data), errors: None} => {
             let subnames: array<subname> = getArrayExn(data, "subnames", buildSubname)
-            subnames->Array.sort((a, b) => float(a.expires - b.expires))
+            subnames->Array.sort((a, b) => BigInt.toFloat(BigInt.sub(a.expires, b.expires)))
             setNames(_ => subnames)
           }
         | {errors: Some(errors)} => Console.log2("Errors:", errors)

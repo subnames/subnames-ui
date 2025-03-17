@@ -227,11 +227,11 @@ function RegisterExtendPanel(props) {
                                         return status;
                                       });
                                 })).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                                          var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,
-                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                                newExpiryDate: Caml_option.some(expiryDate)
                                               });
                                           return Promise.resolve();
                                         });
@@ -241,11 +241,11 @@ function RegisterExtendPanel(props) {
                     return ;
                 case "Extend" :
                     Core__Promise.$$catch(OnChainOperations.renew(walletClient, name, years).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                                          var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,
-                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                                newExpiryDate: Caml_option.some(expiryDate)
                                               });
                                           return Promise.resolve();
                                         });

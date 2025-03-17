@@ -5,7 +5,6 @@ import * as Ens from "viem/ens";
 import * as Constants from "./Constants.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Array from "@rescript/core/src/Core__Array.res.mjs";
-import * as Core__BigInt from "@rescript/core/src/Core__BigInt.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
 import * as OnChainOperationsCommon from "./OnChainOperationsCommon.res.mjs";
 
@@ -386,13 +385,12 @@ function encodeSetText(name, key, value) {
 
 async function nameExpires(name) {
   var tokenId = BigInt(Viem.keccak256(name));
-  var result = await OnChainOperationsCommon.publicClient.readContract({
-        address: baseRegistrarContract.address,
-        abi: baseRegistrarContract.abi,
-        functionName: "nameExpires",
-        args: [tokenId]
-      });
-  return Core__BigInt.toInt(result);
+  return await OnChainOperationsCommon.publicClient.readContract({
+              address: baseRegistrarContract.address,
+              abi: baseRegistrarContract.abi,
+              functionName: "nameExpires",
+              args: [tokenId]
+            });
 }
 
 async function getTokenOwner(name) {

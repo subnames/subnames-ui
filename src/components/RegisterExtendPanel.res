@@ -104,11 +104,14 @@ let make = (
     | Types.Register =>
       let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+            let expiryDate = expiry
+            ->BigInt.mul(1000n)
+            ->BigInt.toFloat
+            ->Date.fromTime
             onSuccess({
               action,
-              newExpiryDate: Some(newExpiryDate),
+              newExpiryDate: Some(expiryDate),
             })
             Promise.resolve()
           })
@@ -117,11 +120,14 @@ let make = (
     | Types.Extend =>
       let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+            let expiryDate = expiry
+            ->BigInt.mul(1000n)
+            ->BigInt.toFloat
+            ->Date.fromTime
             onSuccess({
               action,
-              newExpiryDate: Some(newExpiryDate),
+              newExpiryDate: Some(expiryDate),
             })
             Promise.resolve()
           })

@@ -3,6 +3,7 @@
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
+import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import ConfettiReact from "confetti-react";
 
 function ResultPanel(props) {
@@ -23,6 +24,7 @@ function ResultPanel(props) {
         break;
     
   }
+  var expiryDate = actionResult.newExpiryDate;
   return React.createElement("div", {
               className: "bg-white rounded-custom shadow-lg overflow-hidden"
             }, React.createElement("div", {
@@ -39,7 +41,7 @@ function ResultPanel(props) {
                           className: "text-lg text-gray-700 mb-6"
                         }, React.createElement(ConfettiReact, {
                               recycle: false
-                            }), React.createElement("p", undefined, props.name + "." + Constants.sld), React.createElement("div", undefined, "until " + actionResult.newExpiryDate.toUTCString())), React.createElement("button", {
+                            }), React.createElement("p", undefined, props.name + "." + Constants.sld), React.createElement("div", undefined, expiryDate !== undefined ? "Until " + Caml_option.valFromOption(expiryDate).toUTCString() : null)), React.createElement("button", {
                           className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
                           onClick: (function (param) {
                               onRegisterAnother();

@@ -2,7 +2,6 @@
 
 import * as React from "react";
 import * as DateFns from "date-fns";
-import * as Core__Int from "@rescript/core/src/Core__Int.res.mjs";
 import * as Core__JSON from "@rescript/core/src/Core__JSON.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
@@ -30,12 +29,11 @@ function distanceToExpiry(date) {
 }
 
 function timestampToDate(timestamp) {
-  return new Date(timestamp * 1000.0);
+  return new Date(Number(timestamp * 1000n));
 }
 
-function timestampStringToDate(timestamp) {
-  var intTimestamp = Core__Option.getExn(Core__Int.fromString(timestamp, undefined), undefined);
-  return timestampToDate(intTimestamp);
+function timestampStringToDate(timestampStr) {
+  return timestampToDate(BigInt(timestampStr));
 }
 
 function getString(jsonObj, fieldName) {

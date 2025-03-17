@@ -19,7 +19,10 @@ let make = (~name: string, ~onRegisterAnother: unit => unit, ~actionResult: Type
             {React.string(`${name}.${Constants.sld}`)}
           </p>
           <div>
-            {React.string(`until ${Date.toUTCString(actionResult.newExpiryDate->Option.getUnsafe)}`)}
+            {switch actionResult.newExpiryDate {
+            | Some(expiryDate) => React.string(`Until ${Date.toUTCString(expiryDate)}`)
+            | None => React.null
+            }}
           </div>
         </div>
         <button
