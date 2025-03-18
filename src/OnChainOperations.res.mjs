@@ -720,6 +720,8 @@ async function getOwner(tokenId) {
             });
 }
 
+var getNameExpiry = nameExpires;
+
 export {
   baseRegistrarContract ,
   resolverContract ,
@@ -733,6 +735,7 @@ export {
   multicallWithNodeCheck ,
   encodeSetText ,
   nameExpires ,
+  getNameExpiry ,
   getTokenOwner ,
   owner ,
   encodeSetAddr ,

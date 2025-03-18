@@ -169,6 +169,7 @@ module Layout = {
             | Router.Home => <Subname />
             | Router.Names => <NamesList />
             | Router.Profile => <Profile />
+            | Router.ProfileView(name) => <Profile profileName=name />
             | _ => <div> {React.string("Page Not Found")} </div>
             }
             }

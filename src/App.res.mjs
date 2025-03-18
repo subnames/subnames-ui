@@ -80,22 +80,28 @@ function App$Layout(props) {
   React.useEffect((function () {
           ThemeContext.applyTheme(theme);
         }), [theme]);
-  var match$3 = Router.fromUrl(url);
+  var name = Router.fromUrl(url);
   var tmp;
-  switch (match$3) {
-    case "Home" :
-        tmp = React.createElement(App$Subname, {});
-        break;
-    case "Names" :
-        tmp = React.createElement(NamesList.make, {});
-        break;
-    case "Profile" :
-        tmp = React.createElement(Profile.make, {});
-        break;
-    case "NotFound" :
-        tmp = React.createElement("div", undefined, "Page Not Found");
-        break;
-    
+  if (typeof name !== "object") {
+    switch (name) {
+      case "Home" :
+          tmp = React.createElement(App$Subname, {});
+          break;
+      case "Names" :
+          tmp = React.createElement(NamesList.make, {});
+          break;
+      case "Profile" :
+          tmp = React.createElement(Profile.make, {});
+          break;
+      case "NotFound" :
+          tmp = React.createElement("div", undefined, "Page Not Found");
+          break;
+      
+    }
+  } else {
+    tmp = React.createElement(Profile.make, {
+          profileName: name._0
+        });
   }
   return React.createElement(NameContext.Provider.make, {
               value: {

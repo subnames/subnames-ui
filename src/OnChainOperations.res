@@ -330,6 +330,9 @@ let nameExpires: string => promise<bigint> = async name => {
   result
 }
 
+// Alias for nameExpires to be used in public profile view
+let getNameExpiry = nameExpires
+
 let getTokenOwner: string => promise<string> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
   await readContract(
