@@ -3,7 +3,6 @@
 import * as Constants from "./Constants.res.mjs";
 
 function fromUrl(url) {
-  console.log(url.path);
   var match = url.path;
   if (!match) {
     return "Home";
@@ -29,7 +28,6 @@ function fromUrl(url) {
       if (!new RegExp("^@.+" + Constants.sld + "$").test(name)) {
         return "NotFound";
       }
-      console.log(name);
       var name$1 = name.substring(1).split(".")[0];
       return {
               TAG: "ProfileView",

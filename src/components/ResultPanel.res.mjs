@@ -9,44 +9,99 @@ import ConfettiReact from "confetti-react";
 function ResultPanel(props) {
   var actionResult = props.actionResult;
   var onRegisterAnother = props.onRegisterAnother;
+  var name = props.name;
   var match = actionResult.action;
   var tmp;
   switch (match) {
     case "Register" :
-        tmp = "Registration Successful!";
+        tmp = "Registration Complete";
         break;
     case "Extend" :
-        tmp = "Extension Successful!";
+        tmp = "Extension Complete";
         break;
     case "Transfer" :
     case "Reclaim" :
-        tmp = null;
+        tmp = "Operation Complete";
+        break;
+    
+  }
+  var match$1 = actionResult.action;
+  var tmp$1;
+  switch (match$1) {
+    case "Register" :
+        tmp$1 = "Congratulations!";
+        break;
+    case "Extend" :
+        tmp$1 = "Success!";
+        break;
+    case "Transfer" :
+    case "Reclaim" :
+        tmp$1 = "Complete!";
         break;
     
   }
   var expiryDate = actionResult.newExpiryDate;
   return React.createElement("div", {
-              className: "bg-white rounded-custom shadow-lg overflow-hidden"
+              className: "fixed inset-0 flex items-center justify-center z-40"
             }, React.createElement("div", {
-                  className: "p-6"
+                  className: "fixed inset-0 bg-black bg-opacity-60 backdrop-blur-sm dark:bg-opacity-80"
+                }), React.createElement("div", {
+                  className: "bg-white rounded-custom shadow-2xl overflow-hidden relative z-50 max-w-md w-full mx-4 animate-fadeIn dark:bg-[#1b1b1b] dark:border dark:border-[rgba(255,255,255,0.08)]"
                 }, React.createElement("div", {
-                      className: "flex flex-col items-center text-center"
+                      className: "pt-6 pb-8 px-8"
                     }, React.createElement("div", {
-                          className: "mb-4"
-                        }, React.createElement(Icons.Success.make, {
-                              className: "w-16 h-16 text-green-500"
-                            })), React.createElement("h2", {
-                          className: "text-2xl font-bold mb-2"
-                        }, tmp), React.createElement("div", {
-                          className: "text-lg text-gray-700 mb-6"
+                          className: "flex justify-between"
+                        }, React.createElement("div", undefined, React.createElement("h1", {
+                                  className: "text-xl font-semibold text-gray-900 dark:text-white"
+                                }, tmp), React.createElement("div", {
+                                  className: "mt-0"
+                                }, React.createElement("span", {
+                                      className: "text-sm text-gray-500 dark:text-gray-400"
+                                    }, name + "." + Constants.sld))), React.createElement("div", {
+                              className: "self-center"
+                            }, React.createElement("button", {
+                                  className: "rounded-full transition-colors hover:text-gray-500 dark:text-gray-500 dark:hover:text-gray-300",
+                                  type: "button",
+                                  onClick: (function (param) {
+                                      onRegisterAnother();
+                                    })
+                                }, React.createElement(Icons.Close.make, {})))), React.createElement("div", {
+                          className: "border-t border-gray-200 my-4 -mx-8 dark:border-[rgba(255,255,255,0.08)]"
+                        }), React.createElement("div", {
+                          className: "flex flex-col items-center text-center p-6"
                         }, React.createElement(ConfettiReact, {
                               recycle: false
-                            }), React.createElement("p", undefined, props.name + "." + Constants.sld), React.createElement("div", undefined, expiryDate !== undefined ? "Until " + Caml_option.valFromOption(expiryDate).toUTCString() : null)), React.createElement("button", {
-                          className: "py-3 px-6 bg-zinc-800 hover:bg-zinc-700 text-white rounded-2xl font-medium",
-                          onClick: (function (param) {
-                              onRegisterAnother();
-                            })
-                        }, "Go Home"))));
+                            }), React.createElement("div", {
+                              className: "mb-6 p-4 bg-green-50 rounded-full dark:bg-green-900/20"
+                            }, React.createElement(Icons.Success.make, {
+                                  className: "w-16 h-16 text-green-500 dark:text-green-400"
+                                })), React.createElement("h2", {
+                              className: "text-2xl font-bold mb-4 text-gray-900 dark:text-white"
+                            }, tmp$1), React.createElement("div", {
+                              className: "text-lg mb-6"
+                            }, React.createElement("p", {
+                                  className: "font-medium text-gray-800 dark:text-gray-200 mb-2"
+                                }, name + "." + Constants.sld), React.createElement("div", {
+                                  className: "text-gray-600 dark:text-gray-400"
+                                }, expiryDate !== undefined ? React.createElement("div", {
+                                        className: "flex items-center justify-center gap-2"
+                                      }, React.createElement("svg", {
+                                            className: "w-5 h-5",
+                                            fill: "none",
+                                            stroke: "currentColor",
+                                            strokeWidth: "1.5",
+                                            viewBox: "0 0 24 24",
+                                            xmlns: "http://www.w3.org/2000/svg"
+                                          }, React.createElement("path", {
+                                                d: "M6.75 3v2.25M17.25 3v2.25M3 18.75V7.5a2.25 2.25 0 0 1 2.25-2.25h13.5A2.25 2.25 0 0 1 21 7.5v11.25m-18 0A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75m-18 0v-7.5A2.25 2.25 0 0 1 5.25 9h13.5A2.25 2.25 0 0 1 21 11.25v7.5",
+                                                strokeLinecap: "round",
+                                                strokeLinejoin: "round"
+                                              })), "Valid until " + Caml_option.valFromOption(expiryDate).toLocaleDateString()) : null)), React.createElement("button", {
+                              className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:active:bg-zinc-800",
+                              onClick: (function (param) {
+                                  onRegisterAnother();
+                                })
+                            }, "Register Another")))));
 }
 
 var make = ResultPanel;
