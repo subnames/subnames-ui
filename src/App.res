@@ -145,12 +145,12 @@ module Layout = {
                   <button
                     onClick={_ => RescriptReactRouter.push("/profile")}
                     className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
-                    {React.string("Profile")}
+                    {React.string("My Profile")}
                   </button>
                   <button
                     onClick={_ => RescriptReactRouter.push("/names")}
                     className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
-                    {React.string("Your Names")}
+                    {React.string("My Names")}
                   </button>
                   </>
                 } else {

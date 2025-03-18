@@ -234,7 +234,7 @@ let make = () => {
 
           // Header
           <div className="p-8 py-6 border-b border-zinc-200 dark:border-zinc-700 relative">
-            <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"> {React.string("Your Names")} </h1>
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"> {React.string("My Names")} </h1>
             <div className="text-sm text-gray-500 dark:text-dark-muted flex items-center gap-2 transition-colors">
               {if isSynced {
                 <div className="flex items-center gap-1">
