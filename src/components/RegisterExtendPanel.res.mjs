@@ -39,6 +39,7 @@ function RegisterExtendPanel(props) {
         return "Simulating";
       });
   var setOnChainStatus = match$3[1];
+  var onChainStatus = match$3[0];
   var calculateFee = async function (years) {
     switch (action) {
       case "Register" :
@@ -123,38 +124,39 @@ function RegisterExtendPanel(props) {
     
   }
   var tmp$1;
+  tmp$1 = typeof onChainStatus !== "object" ? null : React.createElement("div", {
+          className: "mb-4 mx-1 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800/30"
+        }, React.createElement("div", {
+              className: "flex items-start gap-3"
+            }, React.createElement("div", {
+                  className: "text-red-500 dark:text-red-400 mt-0.5"
+                }, React.createElement("svg", {
+                      className: "w-5 h-5",
+                      fill: "none",
+                      stroke: "currentColor",
+                      strokeWidth: "1.5",
+                      viewBox: "0 0 24 24",
+                      xmlns: "http://www.w3.org/2000/svg"
+                    }, React.createElement("path", {
+                          d: "M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z",
+                          strokeLinecap: "round",
+                          strokeLinejoin: "round"
+                        }))), React.createElement("div", undefined, React.createElement("h3", {
+                      className: "font-medium text-red-800 dark:text-red-300"
+                    }, "Transaction Failed"), React.createElement("p", {
+                      className: "mt-1 text-sm text-red-700 dark:text-red-400"
+                    }, onChainStatus._0))));
+  var tmp$2;
   if (props.isWalletConnected) {
-    var tmp$2;
+    var tmp$3;
     if (isWaitingForConfirmation) {
-      var tmp$3;
-      switch (action) {
-        case "Register" :
-            tmp$3 = "Registering...";
-            break;
-        case "Extend" :
-            tmp$3 = "Extending...";
-            break;
-        case "Transfer" :
-        case "Reclaim" :
-            tmp$3 = Js_exn.raiseError("Unreachable");
-            break;
-        
-      }
-      tmp$2 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
-                className: "w-5 h-5 text-white"
-              }), React.createElement("span", undefined, tmp$3));
-    } else if (isCalculatingFee) {
-      tmp$2 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
-                className: "w-5 h-5 text-white"
-              }), React.createElement("span", undefined, "Calculating..."));
-    } else {
       var tmp$4;
       switch (action) {
         case "Register" :
-            tmp$4 = "Register Now";
+            tmp$4 = "Registering...";
             break;
         case "Extend" :
-            tmp$4 = "Extend Now";
+            tmp$4 = "Extending...";
             break;
         case "Transfer" :
         case "Reclaim" :
@@ -162,9 +164,31 @@ function RegisterExtendPanel(props) {
             break;
         
       }
-      tmp$2 = React.createElement("span", undefined, tmp$4);
+      tmp$3 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
+                className: "w-5 h-5 text-white"
+              }), React.createElement("span", undefined, tmp$4));
+    } else if (isCalculatingFee) {
+      tmp$3 = React.createElement(React.Fragment, {}, React.createElement(Icons.Spinner.make, {
+                className: "w-5 h-5 text-white"
+              }), React.createElement("span", undefined, "Calculating..."));
+    } else {
+      var tmp$5;
+      switch (action) {
+        case "Register" :
+            tmp$5 = "Register Now";
+            break;
+        case "Extend" :
+            tmp$5 = "Extend Now";
+            break;
+        case "Transfer" :
+        case "Reclaim" :
+            tmp$5 = Js_exn.raiseError("Unreachable");
+            break;
+        
+      }
+      tmp$3 = React.createElement("span", undefined, tmp$5);
     }
-    tmp$1 = React.createElement("button", {
+    tmp$2 = React.createElement("button", {
           className: "w-full py-4 px-6 " + (
             isCalculatingFee || isWaitingForConfirmation ? "bg-zinc-400 cursor-not-allowed dark:border dark:active:bg-[#ffffff0a] dark:bg-[#ffffff0a] dark:hover:bg-[#ffffff14] " : "bg-zinc-800 hover:bg-zinc-700 dark:border dark:active:bg-[#ffffff0a] dark:bg-[#ffffff0a] dark:hover:bg-[#ffffff14] "
           ) + " text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2",
@@ -176,15 +200,22 @@ function RegisterExtendPanel(props) {
                   });
               var walletClient = OnChainOperationsCommon.buildWalletClient();
               var handleTransactionError = function (exn) {
-                console.error("Transaction error");
-                console.error(exn);
                 setIsWaitingForConfirmation(function (param) {
                       return false;
                     });
+                var errorMessage;
+                try {
+                  var exnStr = (JSON.stringify(exn));
+                  console.error("Transaction error:", exnStr);
+                  errorMessage = exnStr.includes("OutOfFund") ? "Insufficient funds. Please make sure you have enough RING tokens to cover the transaction fee and the registration cost." : "Transaction rejected or failed";
+                }
+                catch (exn$1){
+                  errorMessage = "Transaction rejected or failed";
+                }
                 setOnChainStatus(function (param) {
                       return {
                               TAG: "Failed",
-                              _0: "Transaction rejected or failed"
+                              _0: errorMessage
                             };
                     });
                 return Promise.resolve();
@@ -196,11 +227,11 @@ function RegisterExtendPanel(props) {
                                         return status;
                                       });
                                 })).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                                          var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,
-                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                                newExpiryDate: Caml_option.some(expiryDate)
                                               });
                                           return Promise.resolve();
                                         });
@@ -210,11 +241,11 @@ function RegisterExtendPanel(props) {
                     return ;
                 case "Extend" :
                     Core__Promise.$$catch(OnChainOperations.renew(walletClient, name, years).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiryInt) {
-                                          var newExpiryDate = new Date(expiryInt * 1000.0);
+                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                                          var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,
-                                                newExpiryDate: Caml_option.some(newExpiryDate)
+                                                newExpiryDate: Caml_option.some(expiryDate)
                                               });
                                           return Promise.resolve();
                                         });
@@ -228,9 +259,9 @@ function RegisterExtendPanel(props) {
                 
               }
             })
-        }, tmp$2);
+        }, tmp$3);
   } else {
-    tmp$1 = React.createElement("button", {
+    tmp$2 = React.createElement("button", {
           className: "w-full py-4 px-6 bg-zinc-800 hover:bg-zinc-700 active:bg-zinc-900 text-white rounded-2xl font-medium text-lg transition-colors shadow-sm hover:shadow-md flex items-center justify-center gap-2 dark:bg-zinc-700 dark:hover:bg-zinc-600 dark:active:bg-zinc-800",
           onClick: (function (param) {
               handleConnectWallet();
@@ -321,9 +352,9 @@ function RegisterExtendPanel(props) {
                                                 className: "text-3xl font-bold text-gray-900 dark:text-white"
                                               }, fee.feeAmount.toFixed()), React.createElement("div", {
                                                 className: "text-xs text-gray-500 mt-1 dark:text-gray-400"
-                                              }, "Paid in RING tokens on Darwinia Network")))))), React.createElement("div", {
+                                              }, "Paid in RING tokens on Darwinia Network")))))), tmp$1, React.createElement("div", {
                           className: "mt-2"
-                        }, tmp$1))));
+                        }, tmp$2))));
 }
 
 var make = RegisterExtendPanel;

@@ -22,7 +22,7 @@ let make = (
   })
   let (isCalculatingFee, setIsCalculatingFee) = React.useState(_ => false)
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
-  let (_, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
+  let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
 
   let calculateFee = async years => {
     switch action {
@@ -79,10 +79,24 @@ let make = (
     
     // Helper function to handle transaction errors and re-enable the button
     let handleTransactionError = exn => {
-      Console.error("Transaction error")
-      Console.error(exn)
       setIsWaitingForConfirmation(_ => false)
-      setOnChainStatus(_ => OnChainOperations.Failed("Transaction rejected or failed"))
+      
+      // Check if the error is related to insufficient funds
+      let errorMessage = 
+        try {
+          // Convert exception to string by using JSON.stringify
+          let exnStr = %raw(`JSON.stringify(exn)`)
+          Console.error2("Transaction error:", exnStr)
+          if String.includes(exnStr, "OutOfFund") {
+            "Insufficient funds. Please make sure you have enough RING tokens to cover the transaction fee and the registration cost."
+          } else {
+            "Transaction rejected or failed"
+          }
+        } catch {
+        | _ => "Transaction rejected or failed"
+        }
+      
+      setOnChainStatus(_ => OnChainOperations.Failed(errorMessage))
       Promise.resolve()
     }
     
@@ -90,11 +104,14 @@ let make = (
     | Types.Register =>
       let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+            let expiryDate = expiry
+            ->BigInt.mul(1000n)
+            ->BigInt.toFloat
+            ->Date.fromTime
             onSuccess({
               action,
-              newExpiryDate: Some(newExpiryDate),
+              newExpiryDate: Some(expiryDate),
             })
             Promise.resolve()
           })
@@ -103,11 +120,14 @@ let make = (
     | Types.Extend =>
       let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiryInt => {
-            let newExpiryDate = Date.fromTime(Int.toFloat(expiryInt) *. 1000.0)
+          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+            let expiryDate = expiry
+            ->BigInt.mul(1000n)
+            ->BigInt.toFloat
+            ->Date.fromTime
             onSuccess({
               action,
-              newExpiryDate: Some(newExpiryDate),
+              newExpiryDate: Some(expiryDate),
             })
             Promise.resolve()
           })
@@ -221,6 +241,36 @@ let make = (
           </div>
         </div>
       </div>
+
+      {switch onChainStatus {
+      | OnChainOperations.Failed(errorMessage) => 
+          <div className="mb-4 mx-1 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800/30">
+            <div className="flex items-start gap-3">
+              <div className="text-red-500 dark:text-red-400 mt-0.5">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-5 h-5">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126zM12 15.75h.007v.008H12v-.008z" />
+                </svg>
+              </div>
+              <div>
+                <h3 className="font-medium text-red-800 dark:text-red-300">{React.string("Transaction Failed")}</h3>
+                <p className="mt-1 text-sm text-red-700 dark:text-red-400">{React.string(errorMessage)}</p>
+                // {(if String.includes(errorMessage, "Insufficient") {
+                //   <div className="mt-2 text-sm text-red-700 dark:text-red-400">
+                //     <p className="font-medium">{React.string("Tips:")}</p>
+                //     <ul className="list-disc pl-5 mt-1 space-y-1">
+                //       <li>{React.string("Make sure you have enough RING tokens in your wallet")}</li>
+                //       <li>{React.string("You need tokens for both gas fees and registration cost")}</li>
+                //       <li>{React.string("Try registering for a shorter period to reduce cost")}</li>
+                //     </ul>
+                //   </div>
+                // } else {
+                //   React.null
+                // })}
+              </div>
+            </div>
+          </div>
+      | _ => React.null
+      }}
 
       <div className="mt-2">
         {if !isWalletConnected {

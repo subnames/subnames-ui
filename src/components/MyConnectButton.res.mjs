@@ -23,11 +23,11 @@ function updatePrimaryName(account, setPrimaryName) {
                 }
                 var fullName = resolvedName.endsWith(Constants.sld) ? resolvedName : resolvedName + "." + Constants.sld;
                 var subname = Core__Option.getExn(fullName.split(".")[0], undefined);
-                var expiresInt = await OnChainOperations.nameExpires(subname);
+                var expiresBigInt = await OnChainOperations.nameExpires(subname);
                 var primaryName = {
                   fullName: fullName,
                   name: subname,
-                  expires: expiresInt
+                  expires: expiresBigInt
                 };
                 return setPrimaryName(function (param) {
                             return primaryName;

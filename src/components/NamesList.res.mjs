@@ -135,7 +135,7 @@ function NamesList(props) {
     return Core__Option.getExn(Core__Option.map(Core__JSON.Decode.object(subnameObj), (function (obj) {
                       var label = Utils.getStringExn(obj, "label");
                       var name = Utils.getStringExn(obj, "name");
-                      var expires = Core__Option.getExn(Core__Int.fromString(Utils.getStringExn(obj, "expires"), undefined), undefined);
+                      var expires = BigInt(Utils.getStringExn(obj, "expires"));
                       var resolvedTo = Utils.getObjectExn(obj, "resolvedTo", (function (o) {
                               return {
                                       id: Utils.getStringExn(o, "id")
@@ -232,7 +232,7 @@ function NamesList(props) {
               if (data !== undefined && result.errors === undefined) {
                 var subnames = Utils.getArrayExn(data, "subnames", buildSubname);
                 subnames.sort(function (a, b) {
-                      return a.expires - b.expires | 0;
+                      return Number(a.expires - b.expires);
                     });
                 setNames(function (param) {
                       return subnames;
@@ -318,7 +318,7 @@ function NamesList(props) {
                               className: "p-8 py-6 border-b border-zinc-200 dark:border-zinc-700 relative"
                             }, React.createElement("h1", {
                                   className: "text-3xl font-bold text-gray-900 dark:text-dark-text transition-colors"
-                                }, "Your Names"), React.createElement("div", {
+                                }, "My Names"), React.createElement("div", {
                                   className: "text-sm text-gray-500 dark:text-dark-muted flex items-center gap-2 transition-colors"
                                 }, isSynced ? React.createElement("div", {
                                         className: "flex items-center gap-1"

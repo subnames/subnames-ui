@@ -80,22 +80,28 @@ function App$Layout(props) {
   React.useEffect((function () {
           ThemeContext.applyTheme(theme);
         }), [theme]);
-  var match$3 = Router.fromUrl(url);
+  var name = Router.fromUrl(url);
   var tmp;
-  switch (match$3) {
-    case "Home" :
-        tmp = React.createElement(App$Subname, {});
-        break;
-    case "Names" :
-        tmp = React.createElement(NamesList.make, {});
-        break;
-    case "Profile" :
-        tmp = React.createElement(Profile.make, {});
-        break;
-    case "NotFound" :
-        tmp = React.createElement("div", undefined, "Page Not Found");
-        break;
-    
+  if (typeof name !== "object") {
+    switch (name) {
+      case "Home" :
+          tmp = React.createElement(App$Subname, {});
+          break;
+      case "Names" :
+          tmp = React.createElement(NamesList.make, {});
+          break;
+      case "Profile" :
+          tmp = React.createElement(Profile.make, {});
+          break;
+      case "NotFound" :
+          tmp = React.createElement("div", undefined, "Page Not Found");
+          break;
+      
+    }
+  } else {
+    tmp = React.createElement(Profile.make, {
+          profileName: name._0
+        });
   }
   return React.createElement(NameContext.Provider.make, {
               value: {
@@ -126,12 +132,12 @@ function App$Layout(props) {
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/profile");
                                                 })
-                                            }, "Profile"), React.createElement("button", {
+                                            }, "My Profile"), React.createElement("button", {
                                               className: "text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline",
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/names");
                                                 })
-                                            }, "Your Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                                            }, "My Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
                             className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                           }, tmp)))
             });

@@ -316,7 +316,7 @@ let encodeSetText = (name: string, key: string, value: string): string => {
   })
 }
 
-let nameExpires: string => promise<int> = async name => {
+let nameExpires: string => promise<bigint> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
   let result = await readContract(
     publicClient,
@@ -327,8 +327,11 @@ let nameExpires: string => promise<int> = async name => {
       "args": [BigInt(tokenId)],
     },
   )
-  BigInt.toInt(result)
+  result
 }
+
+// Alias for nameExpires to be used in public profile view
+let getNameExpiry = nameExpires
 
 let getTokenOwner: string => promise<string> = async name => {
   let tokenId = BigInt.fromString(keccak256(name))
@@ -406,7 +409,6 @@ let register: (
   option<string>,
   transactionStatus => unit,
 ) => promise<unit> = async (walletClient, name, years, owner, onStatusChange) => {
-  try {
     Console.log(`Registering ${name}`)
     onStatusChange(Simulating)
     let duration = years * 31536000
@@ -442,18 +444,9 @@ let register: (
     // Wait for transaction confirmation
     let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
     onStatusChange(Confirmed)
-  } catch {
-    | Exn.Error(e) => {
-      Console.error("Error in register function")
-      Console.error(e)
-      onStatusChange(Failed("Transaction failed or was rejected"))
-      Exn.raiseError("Transaction failed or was rejected") // Re-throw the exception to be caught by the caller
-    }
-  }
 }
 
 let renew: (walletClient, string, int) => promise<unit> = async (walletClient, name, years) => {
-  try {
     let duration = years * 31536000
     let currentAddress = await currentAddress(walletClient)
     let priceInWei = await rentPrice(name, duration)
@@ -471,20 +464,6 @@ let renew: (walletClient, string, int) => promise<unit> = async (walletClient, n
     let hash = await writeContract(walletClient, request)
     let {blockNumber, status} = await waitForTransactionReceiptWithRetry(publicClient, hash)
     Console.log(`${hash} confirmed in block ${BigInt.toString(blockNumber)}, status: ${status}`)
-  } catch {
-    | Exn.Error(e) => {
-      switch Exn.message(e) {
-      | Some(m) => {
-        Console.error("Error in renew function! Message: " ++ m)
-        Exn.raiseError(m)
-      }
-      | None => {
-        Console.error("Error in renew function")
-        Exn.raiseError("Transaction failed or was rejected")
-      }
-      }
-    }
-  }
 }
 
 let setAddr = async (walletClient, name, a) => {

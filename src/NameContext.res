@@ -1,7 +1,7 @@
 type primaryName = {
   fullName: string,
   name: string,
-  expires: int,
+  expires: bigint,
 }
 
 // Why here the set functions signature is (.. => ..) => unit?

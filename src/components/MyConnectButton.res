@@ -44,8 +44,8 @@ let updatePrimaryName = (account, setPrimaryName) => {
       }
 
       let subname = fullName->String.split(".")->Array.get(0)->Option.getExn
-      let expiresInt = await OnChainOperations.nameExpires(subname)
-      let primaryName: NameContext.primaryName = {name: subname, expires: expiresInt, fullName}
+      let expiresBigInt = await OnChainOperations.nameExpires(subname)
+      let primaryName: NameContext.primaryName = {name: subname, expires: expiresBigInt, fullName}
       setPrimaryName(_ => Some(primaryName))
     }
   })

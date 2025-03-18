@@ -36,14 +36,17 @@ let distanceToExpiry: Date.t => string = date => {
   formatDistanceToNow(date, {"addSuffix": true})
 }
 
-let timestampToDate: int => Date.t = timestamp => {
-  let floatTimestamp = Int.toFloat(timestamp)
-  Date.fromTime(floatTimestamp *. 1000.0)
+let timestampToDate: bigint => Date.t = timestamp => {
+  timestamp
+    ->BigInt.mul(1000n)
+    ->BigInt.toFloat
+    ->Date.fromTime
 }
 
-let timestampStringToDate: string => Date.t = timestamp => {
-  let intTimestamp = Int.fromString(timestamp)->Option.getExn
-  timestampToDate(intTimestamp)
+let timestampStringToDate: string => Date.t = timestampStr => {
+  timestampStr
+    ->BigInt.fromString
+    ->timestampToDate
 }
 
 let getString = (jsonObj, fieldName) => {
