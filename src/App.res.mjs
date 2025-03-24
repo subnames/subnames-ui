@@ -117,17 +117,23 @@ function App$Layout(props) {
                       }, React.createElement("div", {
                             className: "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
                           }, React.createElement("div", {
-                                className: "flex justify-between items-center h-16"
+                                className: "flex flex-wrap justify-between items-center py-2"
                               }, React.createElement("div", {
-                                    className: "flex-shrink-0"
-                                  }, React.createElement("button", {
-                                        className: "text-xl font-bold text-gray-900 dark:text-dark-text transition-colors",
-                                        onClick: (function (param) {
-                                            RescriptReactRouter.push("/");
-                                          })
-                                      }, "Darwinia Names")), React.createElement("div", {
-                                    className: "flex items-center gap-4"
-                                  }, account.isConnected ? React.createElement(React.Fragment, {}, React.createElement("button", {
+                                    className: "flex w-full sm:w-auto justify-between items-center"
+                                  }, React.createElement("div", {
+                                        className: "flex-shrink-0"
+                                      }, React.createElement("button", {
+                                            className: "text-xl font-bold text-gray-900 dark:text-dark-text transition-colors",
+                                            onClick: (function (param) {
+                                                RescriptReactRouter.push("/");
+                                              })
+                                          }, "Darwinia Names")), React.createElement("div", {
+                                        className: "sm:hidden"
+                                      }, React.createElement(MyConnectButton.make, {}))), React.createElement("div", {
+                                    className: "flex flex-col sm:flex-row sm:items-center w-full sm:w-auto mt-2 sm:mt-0"
+                                  }, account.isConnected ? React.createElement("div", {
+                                          className: "flex flex-row gap-4 mb-2 sm:mb-0 sm:mr-4"
+                                        }, React.createElement("button", {
                                               className: "text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline",
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/profile");
@@ -137,7 +143,9 @@ function App$Layout(props) {
                                               onClick: (function (param) {
                                                   RescriptReactRouter.push("/names");
                                                 })
-                                            }, "My Names")) : null, React.createElement(MyConnectButton.make, {}))))), React.createElement("main", undefined, React.createElement("div", {
+                                            }, "My Names")) : null, React.createElement("div", {
+                                        className: "hidden sm:block"
+                                      }, React.createElement(MyConnectButton.make, {})))))), React.createElement("main", undefined, React.createElement("div", {
                             className: "max-w-7xl mx-auto py-6 sm:px-6 lg:px-8"
                           }, tmp)))
             });
