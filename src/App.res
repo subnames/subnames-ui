@@ -131,33 +131,39 @@ module Layout = {
       <div className="min-h-screen bg-gray-50 dark:bg-dark-primary text-gray-900 dark:text-dark-text transition-colors">
         <header className="">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
-              <div className="flex-shrink-0">
-                <button
-                  onClick={_ => RescriptReactRouter.push("/")}
-                  className="text-xl font-bold text-gray-900 dark:text-dark-text transition-colors">
-                  {React.string("Darwinia Names")}
-                </button>
+            <div className="flex flex-wrap justify-between items-center py-2">
+              <div className="flex w-full sm:w-auto justify-between items-center">
+                <div className="flex-shrink-0">
+                  <button
+                    onClick={_ => RescriptReactRouter.push("/")}
+                    className="text-xl font-bold text-gray-900 dark:text-dark-text transition-colors">
+                    {React.string("Darwinia Names")}
+                  </button>
+                </div>
+                <div className="sm:hidden">
+                  <MyConnectButton />
+                </div>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center w-full sm:w-auto mt-2 sm:mt-0">
                 {if account.isConnected {
-                  <>
-                  <button
-                    onClick={_ => RescriptReactRouter.push("/profile")}
-                    className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
-                    {React.string("My Profile")}
-                  </button>
-                  <button
-                    onClick={_ => RescriptReactRouter.push("/names")}
-                    className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
-                    {React.string("My Names")}
-                  </button>
-                  </>
+                  <div className="flex flex-row gap-4 mb-2 sm:mb-0 sm:mr-4">
+                    <button
+                      onClick={_ => RescriptReactRouter.push("/profile")}
+                      className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
+                      {React.string("My Profile")}
+                    </button>
+                    <button
+                      onClick={_ => RescriptReactRouter.push("/names")}
+                      className="text-sm font-medium text-zinc-800 dark:text-dark-text hover:text-zinc-600 dark:hover:text-dark-muted transition-colors underline">
+                      {React.string("My Names")}
+                    </button>
+                  </div>
                 } else {
                   React.null
                 }}
-                // <ThemeToggle />
-                <MyConnectButton />
+                <div className="hidden sm:block">
+                  <MyConnectButton />
+                </div>
               </div>
             </div>
           </div>
