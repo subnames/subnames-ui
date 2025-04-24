@@ -7,12 +7,13 @@ import * as Wagmi from "wagmi";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
 import * as Jdenticon from "jdenticon";
+import * as L2Resolver from "../contracts/L2Resolver.res.mjs";
 import * as ProfileForm from "./ProfileForm.res.mjs";
 import ColorMjs from "../color.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as BaseRegistrar from "../contracts/BaseRegistrar.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 function stringToRgba(prim0, prim1) {
   return ColorMjs(prim0, prim1);
@@ -21,14 +22,14 @@ function stringToRgba(prim0, prim1) {
 var UseAccount = {};
 
 async function loadProfile(name) {
-  var description = await OnChainOperations.getText(name, "description");
-  var $$location = await OnChainOperations.getText(name, "location");
-  var twitter = await OnChainOperations.getText(name, "twitter");
-  var telegram = await OnChainOperations.getText(name, "telegram");
-  var github = await OnChainOperations.getText(name, "github");
-  var website = await OnChainOperations.getText(name, "website");
-  var email = await OnChainOperations.getText(name, "email");
-  var avatar = await OnChainOperations.getText(name, "avatar");
+  var description = await L2Resolver.getText(name, "description");
+  var $$location = await L2Resolver.getText(name, "location");
+  var twitter = await L2Resolver.getText(name, "twitter");
+  var telegram = await L2Resolver.getText(name, "telegram");
+  var github = await L2Resolver.getText(name, "github");
+  var website = await L2Resolver.getText(name, "website");
+  var email = await L2Resolver.getText(name, "email");
+  var avatar = await L2Resolver.getText(name, "avatar");
   return [
           description,
           $$location,
@@ -43,7 +44,7 @@ async function loadProfile(name) {
 
 async function getNameExpiry(name) {
   try {
-    return await OnChainOperations.nameExpires(name);
+    return await BaseRegistrar.nameExpires(name);
   }
   catch (raw_e){
     var e = Caml_js_exceptions.internalToOCamlException(raw_e);
@@ -195,7 +196,7 @@ function ProfileView(props) {
                         });
             }
             try {
-              var owner = await OnChainOperations.getTokenOwner(name);
+              var owner = await BaseRegistrar.getTokenOwner(name);
               var currentAddress = await OnChainOperationsCommon.getCurrentAddress();
               if (currentAddress === undefined) {
                 return setIsOwner(function (param) {

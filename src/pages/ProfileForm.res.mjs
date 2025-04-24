@@ -3,12 +3,12 @@
 import * as Icons from "../components/Icons.res.mjs";
 import * as React from "react";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
+import * as L2Resolver from "../contracts/L2Resolver.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import GithubUsernameRegex from "github-username-regex";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 function ProfileForm(props) {
   var profile = props.profile;
@@ -343,32 +343,32 @@ function ProfileForm(props) {
       var name = match.name;
       var calls = [];
       if (description$1 !== undefined && !(initialDescription !== undefined && description$1 === initialDescription)) {
-        calls.push(OnChainOperations.encodeSetText(name, "description", description$1));
+        calls.push(L2Resolver.encodeSetText(name, "description", description$1));
       }
       if ($$location$1 !== undefined && !(initialLocation !== undefined && $$location$1 === initialLocation)) {
-        calls.push(OnChainOperations.encodeSetText(name, "location", $$location$1));
+        calls.push(L2Resolver.encodeSetText(name, "location", $$location$1));
       }
       if (twitter$1 !== undefined && !(initialTwitter !== undefined && twitter$1 === initialTwitter)) {
-        calls.push(OnChainOperations.encodeSetText(name, "twitter", twitter$1));
+        calls.push(L2Resolver.encodeSetText(name, "twitter", twitter$1));
       }
       if (telegram$1 !== undefined && !(initialTelegram !== undefined && telegram$1 === initialTelegram)) {
-        calls.push(OnChainOperations.encodeSetText(name, "telegram", telegram$1));
+        calls.push(L2Resolver.encodeSetText(name, "telegram", telegram$1));
       }
       if (github$1 !== undefined && !(initialGithub !== undefined && github$1 === initialGithub)) {
-        calls.push(OnChainOperations.encodeSetText(name, "github", github$1));
+        calls.push(L2Resolver.encodeSetText(name, "github", github$1));
       }
       if (website$1 !== undefined && !(initialWebsite !== undefined && website$1 === initialWebsite)) {
-        calls.push(OnChainOperations.encodeSetText(name, "website", website$1));
+        calls.push(L2Resolver.encodeSetText(name, "website", website$1));
       }
       if (email$1 !== undefined && !(initialEmail !== undefined && email$1 === initialEmail)) {
-        calls.push(OnChainOperations.encodeSetText(name, "email", email$1));
+        calls.push(L2Resolver.encodeSetText(name, "email", email$1));
       }
       if (avatar$1 !== undefined && !(initialAvatar !== undefined && avatar$1 === initialAvatar)) {
-        calls.push(OnChainOperations.encodeSetText(name, "avatar", avatar$1));
+        calls.push(L2Resolver.encodeSetText(name, "avatar", avatar$1));
       }
       try {
         console.log("Attempting to save to blockchain");
-        await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls);
+        await L2Resolver.multicallWithNodeCheck(walletClient, name, calls);
         console.log("Successfully saved to blockchain");
         setLoading(function (param) {
               return false;

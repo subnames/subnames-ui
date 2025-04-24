@@ -4,12 +4,14 @@ import * as Icons from "./Icons.res.mjs";
 import * as Utils from "../Utils.res.mjs";
 import * as React from "react";
 import * as Caml_obj from "rescript/lib/es6/caml_obj.js";
+import * as Registry from "../contracts/Registry.res.mjs";
 import * as Constants from "../Constants.res.mjs";
+import * as Controller from "../contracts/Controller.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as BaseRegistrar from "../contracts/BaseRegistrar.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 var initialState = {
   value: "",
@@ -110,7 +112,7 @@ function InputPanel(props) {
                 };
         });
     try {
-      var available = await OnChainOperations.available(value);
+      var available = await Controller.available(value);
       if (available) {
         return setState(function (prev) {
                     return {
@@ -126,8 +128,8 @@ function InputPanel(props) {
                           };
                   });
       }
-      var owner = await OnChainOperations.owner(value);
-      var expiryInt = await OnChainOperations.nameExpires(value);
+      var owner = await Registry.owner(value);
+      var expiryInt = await BaseRegistrar.nameExpires(value);
       var isOwnedByUser$1 = isWalletConnected ? await isOwnedByUser(owner) : undefined;
       return setState(function (prev) {
                   return {

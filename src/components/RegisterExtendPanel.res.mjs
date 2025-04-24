@@ -5,10 +5,11 @@ import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
 import * as Constants from "../Constants.res.mjs";
+import * as Controller from "../contracts/Controller.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
+import * as BaseRegistrar from "../contracts/BaseRegistrar.res.mjs";
 import * as Core__Promise from "@rescript/core/src/Core__Promise.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 function RegisterExtendPanel(props) {
   var __buttonType = props.buttonType;
@@ -199,7 +200,7 @@ function RegisterExtendPanel(props) {
                     return true;
                   });
               var walletClient = OnChainOperationsCommon.buildWalletClient();
-              var handleTransactionError = function (exn) {
+              var handleTransactionError = function (_exn) {
                 setIsWaitingForConfirmation(function (param) {
                       return false;
                     });
@@ -209,7 +210,7 @@ function RegisterExtendPanel(props) {
                   console.error("Transaction error:", exnStr);
                   errorMessage = exnStr.includes("OutOfFund") ? "Insufficient funds. Please make sure you have enough RING tokens to cover the transaction fee and the registration cost." : "Transaction rejected or failed";
                 }
-                catch (exn$1){
+                catch (exn){
                   errorMessage = "Transaction rejected or failed";
                 }
                 setOnChainStatus(function (param) {
@@ -222,12 +223,12 @@ function RegisterExtendPanel(props) {
               };
               switch (action) {
                 case "Register" :
-                    Core__Promise.$$catch(OnChainOperations.register(walletClient, name, years, undefined, (function (status) {
+                    Core__Promise.$$catch(Controller.register(walletClient, name, years, undefined, (function (status) {
                                   setOnChainStatus(function (param) {
                                         return status;
                                       });
                                 })).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                              return BaseRegistrar.nameExpires(name).then(function (expiry) {
                                           var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,
@@ -240,8 +241,8 @@ function RegisterExtendPanel(props) {
                           }));
                     return ;
                 case "Extend" :
-                    Core__Promise.$$catch(OnChainOperations.renew(walletClient, name, years).then(function () {
-                              return OnChainOperations.nameExpires(name).then(function (expiry) {
+                    Core__Promise.$$catch(Controller.renew(walletClient, name, years).then(function () {
+                              return BaseRegistrar.nameExpires(name).then(function (expiry) {
                                           var expiryDate = new Date(Number(expiry * 1000n));
                                           onSuccess({
                                                 action: action,

@@ -22,7 +22,7 @@ let make = (
   })
   let (isCalculatingFee, setIsCalculatingFee) = React.useState(_ => false)
   let (isWaitingForConfirmation, setIsWaitingForConfirmation) = React.useState(() => false)
-  let (onChainStatus, setOnChainStatus) = React.useState(() => OnChainOperations.Simulating)
+  let (onChainStatus, setOnChainStatus) = React.useState(() => Controller.Simulating)
 
   let calculateFee = async years => {
     switch action {
@@ -78,7 +78,7 @@ let make = (
     let walletClient = OnChainOperationsCommon.buildWalletClient()
     
     // Helper function to handle transaction errors and re-enable the button
-    let handleTransactionError = exn => {
+    let handleTransactionError = _exn => {
       setIsWaitingForConfirmation(_ => false)
       
       // Check if the error is related to insufficient funds
@@ -96,15 +96,15 @@ let make = (
         | _ => "Transaction rejected or failed"
         }
       
-      setOnChainStatus(_ => OnChainOperations.Failed(errorMessage))
+      setOnChainStatus(_ => Controller.Failed(errorMessage))
       Promise.resolve()
     }
     
     switch action {
     | Types.Register =>
-      let _ = OnChainOperations.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))
+      let _ = Controller.register(walletClient->Option.getUnsafe, name, years, None, status => setOnChainStatus(_ => status))
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+          BaseRegistrar.nameExpires(name)->Promise.then(expiry => {
             let expiryDate = expiry
             ->BigInt.mul(1000n)
             ->BigInt.toFloat
@@ -118,9 +118,9 @@ let make = (
         })
         ->Promise.catch(exn => handleTransactionError(exn))
     | Types.Extend =>
-      let _ = OnChainOperations.renew(walletClient->Option.getUnsafe, name, years)
+      let _ = Controller.renew(walletClient->Option.getUnsafe, name, years)
         ->Promise.then(_ => {
-          OnChainOperations.nameExpires(name)->Promise.then(expiry => {
+          BaseRegistrar.nameExpires(name)->Promise.then(expiry => {
             let expiryDate = expiry
             ->BigInt.mul(1000n)
             ->BigInt.toFloat
@@ -243,7 +243,7 @@ let make = (
       </div>
 
       {switch onChainStatus {
-      | OnChainOperations.Failed(errorMessage) => 
+      | Controller.Failed(errorMessage) => 
           <div className="mb-4 mx-1 p-4 bg-red-50 border border-red-200 rounded-lg dark:bg-red-900/20 dark:border-red-800/30">
             <div className="flex items-start gap-3">
               <div className="text-red-500 dark:text-red-400 mt-0.5">

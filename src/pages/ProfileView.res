@@ -1,6 +1,5 @@
 
 open OnChainOperationsCommon
-open OnChainOperations
 
 @module("../color.mjs") external stringToRgba: (string, float) => string = "default"
 type config = {
@@ -20,21 +19,21 @@ module UseAccount = {
 }
 
 let loadProfile = async (name: string) => {
-  let description = await getText(name, "description")
-  let location = await getText(name, "location")
-  let twitter = await getText(name, "twitter")
-  let telegram = await getText(name, "telegram")
-  let github = await getText(name, "github")
-  let website = await getText(name, "website")
-  let email = await getText(name, "email")
-  let avatar = await getText(name, "avatar")
+  let description = await L2Resolver.getText(name, "description")
+  let location = await L2Resolver.getText(name, "location")
+  let twitter = await L2Resolver.getText(name, "twitter")
+  let telegram = await L2Resolver.getText(name, "telegram")
+  let github = await L2Resolver.getText(name, "github")
+  let website = await L2Resolver.getText(name, "website")
+  let email = await L2Resolver.getText(name, "email")
+  let avatar = await L2Resolver.getText(name, "avatar")
 
   (description, location, twitter, telegram, github, website, email, avatar)
 }
 
 let getNameExpiry = async (name: string) => {
   try {
-    let expiry = await nameExpires(name)
+    let expiry = await BaseRegistrar.nameExpires(name)
     expiry
   } catch {
   | Exn.Error(e) => {
@@ -97,7 +96,7 @@ let make = (~name: string) => {
     let checkOwnership = async () => {
       if account.isConnected {
         try {
-          let owner = await getTokenOwner(name)
+          let owner = await BaseRegistrar.getTokenOwner(name)
           let currentAddress = await getCurrentAddress()
           switch currentAddress {
           | Some(currentAddr) => {

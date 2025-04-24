@@ -19,7 +19,7 @@ import * as ReverseRegistrar from "../ReverseRegistrar.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
 import * as RegisterExtendPanel from "./RegisterExtendPanel.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 function NamesList(props) {
   var account = Wagmi.useAccount();

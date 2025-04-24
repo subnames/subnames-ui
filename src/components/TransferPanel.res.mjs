@@ -4,14 +4,16 @@ import * as Viem from "viem";
 import * as Icons from "./Icons.res.mjs";
 import * as React from "react";
 import * as Js_exn from "rescript/lib/es6/js_exn.js";
+import * as Registry from "../contracts/Registry.res.mjs";
 import * as Constants from "../Constants.res.mjs";
 import * as Belt_Array from "rescript/lib/es6/belt_Array.js";
+import * as L2Resolver from "../contracts/L2Resolver.res.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as BaseRegistrar from "../contracts/BaseRegistrar.res.mjs";
 import * as Caml_js_exceptions from "rescript/lib/es6/caml_js_exceptions.js";
-import * as OnChainOperationsCommon from "../OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "../contracts/OnChainOperationsCommon.res.mjs";
 
 function shortenHash(hash) {
   var length = hash.length;
@@ -355,7 +357,7 @@ function TransferPanel(props) {
     var currentAddress = await OnChainOperationsCommon.currentAddress(walletClient);
     var tokenId = BigInt(Viem.keccak256(name));
     await executeStep(0, "Set Address", (async function () {
-            var currentAddrOnChain = await OnChainOperations.getAddr(name);
+            var currentAddrOnChain = await L2Resolver.getAddr(name);
             if (currentAddrOnChain !== undefined && Caml_option.valFromOption(currentAddrOnChain) === Viem.getAddress(recipientAddress)) {
               console.log("Address for " + name + " is already set to " + recipientAddress + ", skipping setAddr step");
               return {
@@ -363,7 +365,7 @@ function TransferPanel(props) {
                       txHash: undefined
                     };
             }
-            var hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress);
+            var hash = await L2Resolver.setAddr(walletClient, name, recipientAddress);
             return {
                     value: undefined,
                     txHash: hash
@@ -371,7 +373,7 @@ function TransferPanel(props) {
           }));
     await executeStep(1, "Clear Name", (async function () {
             if (Core__Option.isSome(primaryName) && Core__Option.getExn(primaryName, undefined).name === name) {
-              var hash = await OnChainOperations.setName(walletClient, "");
+              var hash = await L2Resolver.setName(walletClient, "");
               return {
                       value: undefined,
                       txHash: hash
@@ -384,11 +386,11 @@ function TransferPanel(props) {
                   };
           }));
     await executeStep(2, "Reclaim Token", (async function () {
-            var newOwner = await OnChainOperations.getOwner(tokenId);
+            var newOwner = await Registry.getOwner(tokenId);
             var normalizedNewOwner = Viem.getAddress(newOwner);
             var normalizedRecipient = Viem.getAddress(recipientAddress);
             if (normalizedNewOwner !== normalizedRecipient) {
-              var hash = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress);
+              var hash = await BaseRegistrar.reclaim(walletClient, tokenId, recipientAddress);
               return {
                       value: undefined,
                       txHash: hash
@@ -401,12 +403,12 @@ function TransferPanel(props) {
                   };
           }));
     await executeStep(3, "Transfer Token", (async function () {
-            var currentTokenOwner = await OnChainOperations.getTokenOwner(name);
+            var currentTokenOwner = await BaseRegistrar.getTokenOwner(name);
             var normalizedCurrentTokenOwner = Viem.getAddress(currentTokenOwner);
             var normalizedRecipient = Viem.getAddress(recipientAddress);
             console.log("Current token owner: " + normalizedCurrentTokenOwner);
             if (normalizedCurrentTokenOwner !== normalizedRecipient) {
-              var hash = await OnChainOperations.safeTransferFrom(walletClient, currentAddress, normalizedRecipient, tokenId);
+              var hash = await BaseRegistrar.safeTransferFrom(walletClient, currentAddress, normalizedRecipient, tokenId);
               return {
                       value: undefined,
                       txHash: hash

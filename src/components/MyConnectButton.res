@@ -31,7 +31,7 @@ module ConnectButton = {
 let updatePrimaryName = (account, setPrimaryName) => {
   account->Option.map(async acc => {
     // Js.log(`Resolving name for address: ${acc.address}`)
-    let resolvedName = await OnChainOperations.name(acc.address)
+    let resolvedName = await L2Resolver.name(acc.address)
     // Js.log(`Resolved name: ${resolvedName}`)
 
     if resolvedName == "" {
@@ -44,7 +44,7 @@ let updatePrimaryName = (account, setPrimaryName) => {
       }
 
       let subname = fullName->String.split(".")->Array.get(0)->Option.getExn
-      let expiresBigInt = await OnChainOperations.nameExpires(subname)
+      let expiresBigInt = await BaseRegistrar.nameExpires(subname)
       let primaryName: NameContext.primaryName = {name: subname, expires: expiresBigInt, fullName}
       setPrimaryName(_ => Some(primaryName))
     }

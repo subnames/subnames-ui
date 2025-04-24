@@ -268,7 +268,7 @@ let make = (
 
       // Step 1: Set Address
       await executeStep(0, "Set Address", async () => {
-        let currentAddrOnChain = await OnChainOperations.getAddr(name)
+        let currentAddrOnChain = await L2Resolver.getAddr(name)
         
         switch currentAddrOnChain {
         | Some(addr) if addr == getAddress(recipientAddress) => {
@@ -278,7 +278,7 @@ let make = (
           }
         | _ => {
             // Address needs to be updated
-            let hash = await OnChainOperations.setAddr(walletClient, name, recipientAddress)
+            let hash = await L2Resolver.setAddr(walletClient, name, recipientAddress)
             {value: (), txHash: Some(hash)}
           }
         }
@@ -287,7 +287,7 @@ let make = (
       // Step 2: Clear Name
       await executeStep(1, "Clear Name", async () => {
         if primaryName->Option.isSome && (primaryName->Option.getExn).name == name {
-          let hash = await OnChainOperations.setName(walletClient, "")
+          let hash = await L2Resolver.setName(walletClient, "")
           {value: (), txHash: Some(hash)} 
         } else {
           Console.log(`This name is not primary, skipping clear name step`)
@@ -298,12 +298,12 @@ let make = (
       // Step 3: Reclaim Token
       await executeStep(2, "Reclaim Token", async () => {
         // Verify that the reclaim operation was successful by checking the new owner
-        let newOwner = await OnChainOperations.getOwner(tokenId)
+        let newOwner = await Registry.getOwner(tokenId)
         let normalizedNewOwner = getAddress(newOwner)
         let normalizedRecipient = getAddress(recipientAddress)
         
         if (normalizedNewOwner !== normalizedRecipient) { // has not been reclaimed
-          let hash = await OnChainOperations.reclaim(walletClient, tokenId, recipientAddress)
+          let hash = await BaseRegistrar.reclaim(walletClient, tokenId, recipientAddress)
           {value: (), txHash: Some(hash)}
         } else {
           // Skip reclaim step if the token is already owned by the recipient
@@ -315,14 +315,14 @@ let make = (
       // Step 4: Transfer Token
       await executeStep(3, "Transfer Token", async () => {
         // Check if the token already belongs to the recipient
-        let currentTokenOwner = await OnChainOperations.getTokenOwner(name)
+        let currentTokenOwner = await BaseRegistrar.getTokenOwner(name)
         let normalizedCurrentTokenOwner = getAddress(currentTokenOwner)
         let normalizedRecipient = getAddress(recipientAddress)
         Console.log(`Current token owner: ${normalizedCurrentTokenOwner}`)
         
         if (normalizedCurrentTokenOwner !== normalizedRecipient) {
           // Only transfer if the token is not already owned by the recipient
-          let hash = await OnChainOperations.safeTransferFrom(
+          let hash = await BaseRegistrar.safeTransferFrom(
             walletClient,
             currentAddress,
             normalizedRecipient,
