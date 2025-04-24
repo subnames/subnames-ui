@@ -2,7 +2,7 @@
 
 import * as Viem from "viem";
 import * as Constants from "../Constants.res.mjs";
-import Sha3Mjs from "./sha3.mjs";
+import Sha3Mjs from "../sha3.mjs";
 import * as Caml_option from "rescript/lib/es6/caml_option.js";
 import * as Chains from "viem/chains";
 

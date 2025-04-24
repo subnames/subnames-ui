@@ -71,7 +71,7 @@ let waitForTransactionReceiptWithRetry = async (publicClient, hash, ~maxRetries=
   await attempt(1)
 }
 
-@module("./sha3.mjs") external sha3HexAddress: string => string = "default"
+@module("../sha3.mjs") external sha3HexAddress: string => string = "default"
 
 let publicClient = createPublicClient({
   "chain": targetChain,
