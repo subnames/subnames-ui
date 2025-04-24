@@ -2,9 +2,10 @@
 
 import * as React from "react";
 import * as Constants from "../Constants.res.mjs";
+import * as L2Resolver from "../contracts/L2Resolver.res.mjs";
 import * as NameContext from "../NameContext.res.mjs";
 import * as Core__Option from "@rescript/core/src/Core__Option.res.mjs";
-import * as OnChainOperations from "../OnChainOperations.res.mjs";
+import * as BaseRegistrar from "../contracts/BaseRegistrar.res.mjs";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
 
 var Custom = {};
@@ -15,7 +16,7 @@ var ConnectButton = {
 
 function updatePrimaryName(account, setPrimaryName) {
   return Core__Option.map(account, (async function (acc) {
-                var resolvedName = await OnChainOperations.name(acc.address);
+                var resolvedName = await L2Resolver.name(acc.address);
                 if (resolvedName === "") {
                   return setPrimaryName(function (param) {
                               
@@ -23,7 +24,7 @@ function updatePrimaryName(account, setPrimaryName) {
                 }
                 var fullName = resolvedName.endsWith(Constants.sld) ? resolvedName : resolvedName + "." + Constants.sld;
                 var subname = Core__Option.getExn(fullName.split(".")[0], undefined);
-                var expiresBigInt = await OnChainOperations.nameExpires(subname);
+                var expiresBigInt = await BaseRegistrar.nameExpires(subname);
                 var primaryName = {
                   fullName: fullName,
                   name: subname,

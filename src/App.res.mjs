@@ -13,7 +13,7 @@ import * as MyConnectButton from "./components/MyConnectButton.res.mjs";
 import * as RescriptReactRouter from "@rescript/react/src/RescriptReactRouter.res.mjs";
 import * as ReactQuery from "@tanstack/react-query";
 import * as Rainbowkit from "@rainbow-me/rainbowkit";
-import * as OnChainOperationsCommon from "./OnChainOperationsCommon.res.mjs";
+import * as OnChainOperationsCommon from "./contracts/OnChainOperationsCommon.res.mjs";
 
 var queryClient = new ReactQuery.QueryClient();
 

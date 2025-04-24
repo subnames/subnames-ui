@@ -230,65 +230,65 @@ let make = (
           let calls = []
           switch (description, initialDescription) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "description", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "description", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "description", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "description", value))
           | _ => ()
           }
           switch (location, initialLocation) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "location", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "location", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "location", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "location", value))
           | _ => ()
           }
           switch (twitter, initialTwitter) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "twitter", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "twitter", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "twitter", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "twitter", value))
           | _ => ()
           }
           switch (telegram, initialTelegram) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "telegram", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "telegram", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "telegram", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "telegram", value))
           | _ => ()
           }
           switch (github, initialGithub) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "github", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "github", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "github", value))
           | _ => ()
           }
           switch (website, initialWebsite) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "website", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "website", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "website", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "website", value))
           | _ => ()
           }
           switch (email, initialEmail) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "email", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "email", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "email", value))
           | _ => ()
           }
           switch (avatar, initialAvatar) {
           | (Some(value), Some(initial)) if value != initial =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "avatar", value))
           | (Some(value), None) =>
-            calls->Array.push(OnChainOperations.encodeSetText(name, "avatar", value))
+            calls->Array.push(L2Resolver.encodeSetText(name, "avatar", value))
           | _ => ()
           }
 
           // Save profile to blockchain
           try {
             Console.log("Attempting to save to blockchain")
-            let _ = await OnChainOperations.multicallWithNodeCheck(walletClient, name, calls)
+            let _ = await L2Resolver.multicallWithNodeCheck(walletClient, name, calls)
             Console.log("Successfully saved to blockchain")
             setLoading(_ => false)
             // Call onSave with the updated profile data

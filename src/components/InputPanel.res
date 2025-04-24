@@ -82,7 +82,7 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
   let checkNameAvailability = async value => {
     setState(prev => {...prev, isChecking: true, isAvailable: false, owner: None, expiryDate: None})
     try {
-      let available = await OnChainOperations.available(value)
+      let available = await Controller.available(value)
       if available {
         setState(prev => {
           ...prev,
@@ -91,8 +91,8 @@ let make = (~onNext: (string, Types.action) => unit, ~isWalletConnected: bool, ~
         })
       } else {
          // If name is not available, check ownership and expiry
-        let owner = await OnChainOperations.owner(value)
-        let expiryInt = await OnChainOperations.nameExpires(value)
+        let owner = await Registry.owner(value)
+        let expiryInt = await BaseRegistrar.nameExpires(value)
         let isOwnedByUser = isWalletConnected ? Some(await isOwnedByUser(owner)) : None
         setState(prev => {
           ...prev,
